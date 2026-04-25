@@ -1,0 +1,2202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BGB Command v5 — VHA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════
+   DESIGN TOKENS — DARK (default) & LIGHT
+═══════════════════════════════════ */
+:root{
+  /* Dark mode */
+  --bg:#16181d;--bg2:#1e2128;--bg3:#252830;--bg4:#2c3038;--bg5:#333740;
+  --border:#33373f;--border2:#3d4249;
+  --text:#e2e6ed;--text2:#9ca5b4;--text3:#636d7e;--text4:#454d5c;
+  --gold:#d4a441;--gold2:#e8bc5a;--gold-dim:rgba(212,164,65,0.12);
+  --cyan:#38b2c8;--cyan2:#5dcfe0;--cyan-dim:rgba(56,178,200,0.1);
+  --red:#e05555;--red-dim:rgba(224,85,85,0.1);
+  --green:#3db878;--green-dim:rgba(61,184,120,0.1);
+  --orange:#d4833a;
+  --alloy:#f0c840;
+  --a-color:#e8bc5a;--b-color:#5dcfe0;
+  --shadow:0 2px 8px rgba(0,0,0,0.3);
+  --shadow-lg:0 4px 20px rgba(0,0,0,0.4);
+  --radius:8px;--radius-sm:5px;--radius-lg:12px;
+  --font-body:'Inter','Barlow',sans-serif;
+  --font-mono:'Share Tech Mono',monospace;
+  --step-active:var(--gold2);
+}
+/* Light mode overrides */
+body.light{
+  --bg:#f5f6f8;--bg2:#ffffff;--bg3:#f0f1f4;--bg4:#e8eaed;--bg5:#dfe1e6;
+  --border:#d0d3da;--border2:#bdc1cb;
+  --text:#1a1d23;--text2:#4a5263;--text3:#7a8299;--text4:#9ba3b5;
+  --shadow:0 2px 8px rgba(0,0,0,0.08);--shadow-lg:0 4px 20px rgba(0,0,0,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--font-body);font-size:15px;line-height:1.5;
+  min-height:100vh;overflow-x:hidden;
+  transition:background .3s,color .3s;
+}
+
+/* ═══ HEADER ═══ */
+.hdr{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;
+  height:60px;position:sticky;top:0;z-index:300;
+  box-shadow:var(--shadow);
+}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-em{
+  width:38px;height:38px;border-radius:var(--radius-sm);
+  background:var(--gold-dim);border:1px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.logo-t{font-size:18px;font-weight:700;color:var(--text);letter-spacing:.5px}
+.logo-s{font-size:12px;color:var(--text3);margin-top:1px}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.data-badge{
+  font-family:var(--font-mono);font-size:11px;color:var(--text3);
+  background:var(--bg3);border:1px solid var(--border);
+  padding:3px 9px;border-radius:20px;
+}
+/* Day/Night toggle */
+.theme-tog{
+  width:48px;height:26px;border-radius:13px;
+  background:var(--bg4);border:1px solid var(--border2);
+  cursor:pointer;position:relative;transition:all .3s;
+  display:flex;align-items:center;padding:3px;
+  flex-shrink:0;
+}
+.theme-tog::after{
+  content:'🌙';font-size:14px;width:20px;height:20px;
+  border-radius:50%;background:var(--bg2);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .3s;line-height:1;
+}
+body.light .theme-tog::after{content:'☀️';transform:translateX(22px)}
+body.light .theme-tog{background:var(--gold-dim);border-color:var(--gold)}
+
+/* ═══ STEP NAV ═══ */
+.step-nav{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:0;display:flex;overflow-x:auto;
+  position:sticky;top:60px;z-index:290;
+  scrollbar-width:none;
+}
+.step-nav::-webkit-scrollbar{display:none}
+.step-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 20px;cursor:pointer;
+  background:none;border:none;border-bottom:3px solid transparent;
+  color:var(--text3);font-size:14px;font-weight:500;
+  transition:all .2s;white-space:nowrap;position:relative;
+  font-family:var(--font-body);
+}
+.step-btn:hover{color:var(--text2);background:var(--bg3)}
+.step-btn.on{color:var(--text);border-bottom-color:var(--gold2)}
+.step-num{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--bg4);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--text3);
+  flex-shrink:0;transition:all .2s;
+}
+.step-btn.on .step-num{background:var(--gold);border-color:var(--gold);color:#000}
+.step-btn.done .step-num{background:var(--green);border-color:var(--green);color:#fff}
+.step-btn.done .step-num::after{content:'✓'}
+.step-lbl{font-size:14px}
+.step-divider{width:1px;background:var(--border);align-self:stretch;margin:10px 0;flex-shrink:0}
+.settings-btn{
+  margin-left:auto;padding:14px 20px;cursor:pointer;
+  background:none;border:none;border-bottom:3px solid transparent;
+  color:var(--text3);font-size:14px;display:flex;align-items:center;gap:6px;
+  font-family:var(--font-body);transition:all .2s;white-space:nowrap;
+}
+.settings-btn:hover{color:var(--text2);background:var(--bg3)}
+.settings-btn.on{color:var(--text);border-bottom-color:var(--border2)}
+
+/* ═══ COPY BAR ═══ */
+#copy-bar{
+  display:none;position:sticky;top:121px;z-index:180;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:8px 1.5rem;box-shadow:var(--shadow);
+}
+.copy-bar-inner{max-width:1500px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.copy-bar-label{font-size:12px;color:var(--text3);font-weight:600;white-space:nowrap}
+
+/* ═══ LAYOUT ═══ */
+.main{padding:1.5rem;max-width:1500px;margin:0 auto}
+.mtc{display:none}
+.mtc.on{display:block;animation:fadeUp .18s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ SECTION HEADERS ═══ */
+.sec-hd{display:flex;align-items:center;gap:10px;margin:1.5rem 0 .75rem}
+.sec-hd h3{font-size:15px;font-weight:600;color:var(--text)}
+.sec-hd::after{content:'';flex:1;height:1px;background:var(--border)}
+.hr{border:none;border-top:1px solid var(--border);margin:1.5rem 0}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.card-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+
+/* ═══ INFO BOXES ═══ */
+.ibox{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.6}
+.sbox{background:var(--green-dim);border:1px solid rgba(61,184,120,0.3);border-left:3px solid var(--green);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--green);margin-bottom:.75rem}
+.ebox{background:var(--red-dim);border:1px solid rgba(224,85,85,0.3);border-left:3px solid var(--red);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:.75rem}
+
+/* ═══ BUTTONS ═══ */
+.btn{
+  font-size:13px;font-weight:600;padding:8px 16px;border-radius:var(--radius-sm);
+  cursor:pointer;border:1px solid var(--border2);background:var(--bg3);
+  color:var(--text2);transition:all .15s;display:inline-flex;align-items:center;
+  gap:6px;font-family:var(--font-body);white-space:nowrap;
+}
+.btn:hover{background:var(--bg4);color:var(--text);border-color:var(--border2)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-g{border-color:var(--gold);color:var(--gold2);background:var(--gold-dim)}
+.btn-g:hover{background:rgba(212,164,65,0.2)}
+.btn-c{border-color:var(--cyan);color:var(--cyan2);background:var(--cyan-dim)}
+.btn-c:hover{background:rgba(56,178,200,0.18)}
+.btn-r{border-color:var(--red);color:var(--red);background:var(--red-dim)}
+.btn-gr{border-color:var(--green);color:var(--green);background:var(--green-dim)}
+.btn-a{border-color:var(--a-color);color:var(--a-color);background:rgba(232,188,90,0.08)}
+.btn-b{border-color:var(--b-color);color:var(--b-color);background:rgba(93,207,224,0.08)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin:.75rem 0}
+
+/* ═══ FORM ELEMENTS ═══ */
+.fl{font-size:12px;font-weight:600;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.inp{
+  width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);
+  color:var(--text);padding:9px 12px;font-size:14px;margin-bottom:8px;outline:none;
+  transition:border-color .15s;font-family:var(--font-body);
+}
+.inp:focus{border-color:var(--cyan)}
+.inp::placeholder{color:var(--text4)}
+textarea.inp{resize:vertical;line-height:1.6}
+
+/* ═══ TOGGLE SWITCH ═══ */
+.tog-row{display:flex;align-items:center;gap:10px;margin:.5rem 0}
+.tog-lbl{font-size:14px;color:var(--text2)}
+.tog{position:relative;width:40px;height:22px;cursor:pointer;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tog-tr{position:absolute;inset:0;background:var(--bg4);border:1px solid var(--border2);border-radius:11px;transition:.2s}
+.tog input:checked+.tog-tr{background:var(--gold-dim);border-color:var(--gold)}
+.tog-th{position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--text3);border-radius:50%;transition:.2s}
+.tog input:checked~.tog-th{left:21px;background:var(--gold2)}
+
+/* ═══ STATUS MESSAGES ═══ */
+.ist{font-size:13px;color:var(--text3);min-height:16px;margin-top:4px}
+.ist.ok{color:var(--green)}.ist.er{color:var(--red)}.ist.ld{color:var(--cyan2)}
+.err{color:var(--red);font-size:13px;margin-top:4px}
+
+/* ═══ ROSTER GRID — 4 col ═══ */
+.roster3{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+@media(max-width:1200px){.roster3{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.roster3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.roster3{grid-template-columns:1fr}}
+.ri{
+  display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:6px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:7px 10px;font-size:13px;border-left:3px solid transparent;
+  transition:border-color .2s;
+}
+.ri.no-cp{opacity:.45}
+.ri-no{font-family:var(--font-mono);font-size:11px;color:var(--text3);text-align:right}
+.ri-n{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ri-cp{font-family:var(--font-mono);font-size:11px;color:var(--text3)}
+.ri.absent-red{border-left-color:var(--red);background:rgba(224,85,85,0.04)}
+.ri.absent-red .ri-n{color:#e07070}
+.ri.no-turn-green{border-left-color:var(--green);background:rgba(61,184,120,0.04)}
+.ri.no-turn-green .ri-n{color:#5dd4a0}
+.ri.normal-attend{border-left-color:var(--green)}
+.legend-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:.75rem;font-size:13px}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* ═══ IMPORT ═══ */
+.imp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.dz{
+  border:2px dashed var(--border2);border-radius:var(--radius);padding:24px;
+  text-align:center;cursor:pointer;transition:all .2s;color:var(--text3);font-size:13px;
+  margin-bottom:8px;
+}
+.dz:hover,.dz.over{border-color:var(--gold);color:var(--gold2);background:var(--gold-dim)}
+
+/* ═══ SELECT / OCR ═══ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:800px){.two-col{grid-template-columns:1fr}}
+.side-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.side-head{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.side-head.team-a{border-bottom-color:rgba(232,188,90,0.3)}
+.side-head.team-b{border-bottom-color:rgba(93,207,224,0.3)}
+.side-ttl{font-size:15px;font-weight:700;letter-spacing:.5px}
+.ttl-a{color:var(--a-color)}.ttl-b{color:var(--b-color)}
+.side-body{padding:14px}
+.multi-drop{
+  border:2px dashed var(--border2);border-radius:var(--radius);padding:20px;
+  text-align:center;cursor:pointer;transition:all .2s;color:var(--text3);
+  font-size:13px;margin-bottom:10px;
+}
+.multi-drop:hover{border-color:var(--gold);color:var(--gold2);background:var(--gold-dim)}
+.img-thumbs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.img-thumb{width:52px;height:52px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--border2);cursor:pointer;transition:opacity .15s}
+.img-thumb:hover{opacity:.7}
+.player-list{display:flex;flex-direction:column;gap:3px;max-height:300px;overflow-y:auto}
+.pl-item{
+  display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:6px;
+  padding:7px 10px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-sm);font-size:13px;
+}
+.pl-name{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-role{font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;cursor:pointer;letter-spacing:.5px}
+.role-s{background:rgba(212,164,65,0.15);color:var(--gold2);border:1px solid rgba(212,164,65,0.3)}
+.role-b{background:rgba(56,178,200,0.12);color:var(--cyan2);border:1px solid rgba(56,178,200,0.25)}
+.pl-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;font-weight:bold;padding:0 3px;line-height:1;opacity:.6}
+.pl-del:hover{opacity:1}
+.counts-bar{display:flex;gap:20px;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:.75rem;flex-wrap:wrap}
+.cnt{font-size:13px;display:flex;align-items:center;gap:6px}
+.cnt-n{font-size:20px;font-weight:700}
+
+/* Missing player autocomplete */
+.missing-box{background:var(--red-dim);border:1px solid rgba(224,85,85,0.25);border-radius:var(--radius);padding:12px;margin-top:10px}
+.missing-ttl{font-size:13px;font-weight:600;color:var(--red);margin-bottom:8px}
+.missing-counts{font-size:13px;margin-bottom:10px;display:flex;gap:14px}
+.mc-s{color:var(--gold2)}.mc-b{color:var(--cyan2)}
+.ac-role-sel{display:flex;gap:6px;margin-bottom:8px}
+.ac-rs{font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;border:1px solid;background:none;font-family:var(--font-body)}
+.ac-rs-s{border-color:var(--gold);color:var(--gold2)}
+.ac-rs-s.sel{background:var(--gold);color:#000}
+.ac-rs-b{border-color:var(--cyan);color:var(--cyan2)}
+.ac-rs-b.sel{background:var(--cyan);color:#000}
+.ac-wrap{position:relative}
+.ac-inp{width:100%;background:var(--bg3);border:1px solid rgba(224,85,85,0.4);border-radius:var(--radius-sm);color:var(--text);padding:8px 12px;font-size:14px;outline:none;font-family:var(--font-body)}
+.ac-inp:focus{border-color:var(--red)}
+.ac-inp::placeholder{color:var(--text4)}
+.ac-drop{position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);z-index:500;max-height:200px;overflow-y:auto;display:none;box-shadow:var(--shadow-lg)}
+.ac-item{padding:9px 12px;font-size:13px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover,.ac-item.active{background:var(--bg3)}
+.ac-name{color:var(--text)}
+.ac-cp{font-family:var(--font-mono);font-size:11px;color:var(--text3)}
+
+/* ═══ TEAMS ═══ */
+.sub-tab-bar{display:flex;gap:0;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:4px;width:fit-content;margin-bottom:1.25rem}
+.stb{font-size:14px;font-weight:600;padding:7px 22px;border:none;border-radius:6px;background:none;color:var(--text3);cursor:pointer;transition:all .2s;font-family:var(--font-body)}
+.stb.on-a{background:var(--gold);color:#000}
+.stb.on-b{background:var(--cyan);color:#000}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.tc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.tc-alloy{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold-dim)}
+.tc-h{background:var(--bg3);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;justify-content:space-between}
+.tc-ttl{font-size:13px;font-weight:700;color:var(--text3)}
+.tc-alloy .tc-ttl{color:var(--gold2)}
+.tc-b{padding:3px 0}
+.tc-p{padding:7px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);font-size:13px}
+.tc-p:last-child{border-bottom:none}
+.tc-n{flex:1;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-cp{font-family:var(--font-mono);font-size:11px;color:var(--text3);transition:opacity .2s}
+.tc-cp.hide{opacity:0;width:0;overflow:hidden}
+.dot-y{width:6px;height:6px;border-radius:50%;background:var(--alloy);flex-shrink:0}
+.dot-x{width:6px;flex-shrink:0}
+.sub-pills{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:.5rem}
+@media(max-width:900px){.sub-pills{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:550px){.sub-pills{grid-template-columns:repeat(2,1fr)}}
+.sp{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:var(--radius-sm);padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.sp-label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase}
+.sp-n{font-size:13px;color:var(--text2)}
+.sp-cp{font-family:var(--font-mono);font-size:11px;color:var(--text3);transition:opacity .2s}
+.sp-cp.hide{opacity:0}
+.logic-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-top:1rem;font-size:13px;color:var(--text2);line-height:1.8}
+.logic-box strong{color:var(--gold2)}
+
+/* Copy box */
+.copy-box{background:var(--bg2);border:1px solid var(--border3,var(--border));border-radius:var(--radius);overflow:hidden;margin-top:1rem}
+.copy-hd{background:var(--bg3);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.copy-ttl{font-size:13px;font-weight:600;color:var(--text2)}
+.copy-body{padding:14px;font-family:var(--font-mono);font-size:13px;color:var(--cyan2);line-height:2;white-space:pre-wrap;word-break:break-word;max-height:320px;overflow-y:auto}
+
+/* Phase toggle */
+.phase-bar{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:4px;width:fit-content;margin-bottom:1.25rem}
+.ph-btn{font-size:13px;font-weight:600;padding:6px 18px;border:none;border-radius:6px;background:none;color:var(--text3);cursor:pointer;transition:all .2s;font-family:var(--font-body)}
+.ph-btn.on{background:var(--gold);color:#000}
+
+/* ═══ ATTENDANCE ═══ */
+.att-grid{display:flex;flex-direction:column;gap:4px;max-height:420px;overflow-y:auto}
+.att-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s;font-size:13px}
+.att-row:hover{background:var(--bg3)}
+.att-n{color:var(--text)}
+.att-b{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.5px}
+.ab-p{background:var(--green-dim);color:var(--green);border:1px solid rgba(61,184,120,0.3)}
+.ab-a{background:var(--red-dim);color:var(--red);border:1px solid rgba(224,85,85,0.3)}
+.unverified-row{background:var(--red-dim);border:1px solid rgba(224,85,85,0.25);border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.unverified-thumb{width:44px;height:44px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid rgba(224,85,85,0.4);cursor:pointer;flex-shrink:0}
+.unverified-name{font-size:13px;color:var(--red);flex:1}
+
+/* ═══ LOG TABLE ═══ */
+.log-tbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:.5rem}
+.log-tbl th{text-align:left;padding:8px 10px;background:var(--bg3);color:var(--text3);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+.log-tbl td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text2)}
+.log-tbl tr:last-child td{border-bottom:none}
+.log-tbl tr:hover td{background:var(--bg3)}
+
+/* ═══ SETTINGS ═══ */
+.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.set-ttl{font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--green);color:#fff;font-weight:700;font-size:13px;padding:10px 20px;border-radius:var(--radius);opacity:0;transition:opacity .2s;pointer-events:none;z-index:8000;box-shadow:var(--shadow-lg)}
+.toast.show{opacity:1}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:700px){
+  .main{padding:1rem}
+  .hdr{padding:0 1rem}
+  .step-btn{padding:12px 14px}
+  .step-lbl{display:none}
+  .two-col{grid-template-columns:1fr}
+}
+</style></style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo">
+    <div class="logo-em">⚔</div>
+    <div>
+      <div class="logo-t">BGB Command</div>
+      <div class="logo-s">Black Gold Battlefield · VHA Alliance</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="data-badge" id="stamp">Updated: 24 Apr 2026</div>
+    <div class="theme-tog" onclick="toggleTheme()" title="Toggle day/night"></div>
+  </div>
+</header>
+
+<nav class="step-nav">
+  <button class="step-btn on" id="step-roster" onclick="msw('roster')">
+    <div class="step-num">1</div>
+    <span class="step-lbl">Roster</span>
+  </button>
+  <div class="step-divider"></div>
+  <button class="step-btn" id="step-import" onclick="msw('import')">
+    <div class="step-num">2</div>
+    <span class="step-lbl">Import Data</span>
+  </button>
+  <div class="step-divider"></div>
+  <button class="step-btn" id="step-select" onclick="msw('select')">
+    <div class="step-num">3</div>
+    <span class="step-lbl">Register Players</span>
+  </button>
+  <div class="step-divider"></div>
+  <button class="step-btn" id="step-teams" onclick="msw('teams')">
+    <div class="step-num">4</div>
+    <span class="step-lbl">Team Formation</span>
+  </button>
+  <div class="step-divider"></div>
+  <button class="step-btn" id="step-attend" onclick="msw('attend')">
+    <div class="step-num">5</div>
+    <span class="step-lbl">Attendance</span>
+  </button>
+  <button class="settings-btn" id="step-settings" onclick="msw('settings')">
+    ⚙ Settings
+  </button>
+</nav>
+
+<div id="copy-bar">
+  <div class="copy-bar-inner">
+    <span class="copy-bar-label">Copy Formation:</span>
+    <button class="btn btn-a" onclick="doCopyForSide('A')" id="copy-bar-a">📋 Team A</button>
+    <button class="btn btn-b" onclick="doCopyForSide('B')" id="copy-bar-b">📋 Team B</button>
+    <button class="btn" onclick="doCopyBoth()">📋 Both Teams</button>
+    <button class="btn btn-gr" onclick="copyBGBRecord()">📊 Save to Sheets</button>
+    <span id="copy-bar-msg" style="font-size:13px;color:var(--green);opacity:0;transition:opacity .3s"></span>
+  </div>
+</div>
+<div class="main">
+
+<!-- ═══════════════ ROSTER ═══════════════ -->
+<div id="mt-roster" class="mtc on">
+  <div class="acts">
+    <button class="btn btn-c" onclick="quickFetch()">↻ Refresh Roster</button>
+    <button class="btn btn-g" onclick="fetchColorCoding()">Update Color Coding</button>
+    <button class="btn" onclick="msw('import')">+ Import</button>
+  </div>
+  <div id="rf-st" class="ist"></div>
+  <div class="legend-row">
+    <div class="legend-item"><div class="legend-dot" style="background:#e07070"></div><span style="color:#e07070" id="legend-red">Absent 4+ weeks</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:#5dd4a0"></div><span style="color:#5dd4a0" id="legend-green">No turn 4+ weeks</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--text2)"></div><span style="color:var(--text2)">Active</span></div>
+  </div>
+  <div class="roster3" id="roster-grid"></div>
+</div>
+
+<!-- ═══════════════ IMPORT ═══════════════ -->
+<div id="mt-import" class="mtc">
+  <div class="sec">Import Roster Data</div>
+  <div class="ibox">Update roster from <strong>Google Sheets</strong>, <strong>CSV</strong>, or <strong>manual paste</strong>. Columns needed: Name + First Car CP.</div>
+  <div class="imp-grid">
+    <div class="imp-card">
+      <div class="imp-ttl">📊 Google Sheets</div>
+      <div class="fl">Spreadsheet URL</div>
+      <input class="inp" id="gs-url" value="https://docs.google.com/spreadsheets/d/1fGhmeRAgKmd6a4z1Q-LBSfPL2qRqYhpK6PticIlooeo/edit"/>
+      <div class="fl">Tab Name</div>
+      <input class="inp" id="gs-tab" value="First Car3"/>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+        <div><div class="fl">Name Col</div><input class="inp" id="gs-cn" value="B" maxlength="2" style="text-transform:uppercase"/></div>
+        <div><div class="fl">CP Col</div><input class="inp" id="gs-cc" value="D" maxlength="2" style="text-transform:uppercase"/></div>
+      </div>
+      <button class="btn btn-c" onclick="impSheets()">Fetch ↗</button>
+      <div id="gs-st" class="ist"></div>
+    </div>
+    <div class="imp-card">
+      <div class="imp-ttl">📁 CSV Upload</div>
+      <div class="fl" style="margin-bottom:6px">Export from Sheets: File → Download → CSV</div>
+      <div class="dz" onclick="document.getElementById('csv-f').click()" ondragover="dzo(event,'csv-dz')" ondragleave="dzl('csv-dz')" ondrop="czd(event)" id="csv-dz">
+        <input type="file" id="csv-f" accept=".csv" style="display:none" onchange="csvUp(event)">
+        <div style="font-size:24px;margin-bottom:4px">📂</div>
+        Drop CSV or click to browse
+      </div>
+      <div id="csv-st" class="ist"></div>
+    </div>
+    <div class="imp-card">
+      <div class="imp-ttl">✏️ Manual Paste</div>
+      <div class="fl" style="margin-bottom:4px">One per line: Name,CP</div>
+      <textarea id="paste-a" class="inp" style="height:110px;resize:vertical;line-height:1.7" placeholder="Nick•倪,3360&#10;XryderZ,3770"></textarea>
+      <div class="acts"><button class="btn btn-c" onclick="impPaste()">Import ↗</button><button class="btn" onclick="document.getElementById('paste-a').value=''">Clear</button></div>
+      <div id="ps-st" class="ist"></div>
+    </div>
+  </div>
+  <div id="imp-prev" style="display:none">
+    <div class="hr"></div>
+    <div class="sec">Preview</div>
+    <div id="ip-info" class="ibox"></div>
+    <div id="ip-grid" class="roster3" style="margin-bottom:10px"></div>
+    <div class="acts">
+      <button class="btn btn-g" onclick="applyImp()">✓ Apply Roster</button>
+      <button class="btn btn-r" onclick="cancelImp()">✗ Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SELECT ═══════════════ -->
+<div id="mt-select" class="mtc">
+  <div class="sec">Step 1 — Scan BGB Participant Screenshots</div>
+  <div class="ibox">Upload screenshots from the BGB Participants page (Team A & Team B). Multiple screenshots per team — Claude AI will extract names and roles automatically. Set the <strong>BGB Session</strong> before scanning.</div>
+
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:1rem">
+    <div>
+      <div class="fl">BGB Session (YYYY-M-W)</div>
+      <input class="inp" id="bgb-sess" style="width:160px;margin-bottom:0" placeholder="e.g. 20260426W4" value="">
+    </div>
+    <div style="margin-top:14px">
+      <button class="btn btn-c" onclick="autoSetDate()">Use today</button>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <!-- TEAM A -->
+    <div class="side-panel">
+      <div class="side-head team-a">
+        <span class="side-ttl ttl-a">⚔ Team A</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span id="a-count" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--a-color)">0 players</span>
+          <button class="btn btn-a" onclick="scanTeam('A')" id="scan-a-btn">🔍 2-Pass Scan</button>
+        </div>
+      </div>
+      <div class="side-body">
+        <div class="multi-drop" id="dz-a" onclick="document.getElementById('img-a').click()" ondragover="dzo(event,'dz-a')" ondragleave="dzl('dz-a')" ondrop="imgDrop(event,'A')">
+          <input type="file" id="img-a" accept="image/*" multiple style="display:none" onchange="imgSel(event,'A')">
+          <div style="font-size:22px;margin-bottom:4px">📸</div>
+          Drop screenshots or click · Multiple allowed
+        </div>
+        <div id="thumbs-a" class="img-thumbs"></div>
+        <div id="st-a" class="ist"></div>
+        <div id="list-a" class="player-list" style="margin-top:8px"></div>
+        <div id="missing-a"></div>
+      </div>
+    </div>
+    <!-- TEAM B -->
+    <div class="side-panel">
+      <div class="side-head team-b">
+        <span class="side-ttl ttl-b">🛡 Team B</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span id="b-count" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--b-color)">0 players</span>
+          <button class="btn btn-b" onclick="scanTeam('B')" id="scan-b-btn">🔍 2-Pass Scan</button>
+        </div>
+      </div>
+      <div class="side-body">
+        <div class="multi-drop" id="dz-b" onclick="document.getElementById('img-b').click()" ondragover="dzo(event,'dz-b')" ondragleave="dzl('dz-b')" ondrop="imgDrop(event,'B')">
+          <input type="file" id="img-b" accept="image/*" multiple style="display:none" onchange="imgSel(event,'B')">
+          <div style="font-size:22px;margin-bottom:4px">📸</div>
+          Drop screenshots or click · Multiple allowed
+        </div>
+        <div id="thumbs-b" class="img-thumbs"></div>
+        <div id="st-b" class="ist"></div>
+        <div id="list-b" class="player-list" style="margin-top:8px"></div>
+        <div id="missing-b"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+  <div class="acts">
+    <button class="btn btn-g" id="gen-btn" onclick="genTeams()" disabled>Generate Teams ↗</button>
+    <button class="btn" onclick="clearSelect()">Clear All</button>
+  </div>
+  <div id="sel-err" style="color:var(--red);font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:4px"></div>
+</div>
+
+<!-- ═══════════════ TEAMS ═══════════════ -->
+<div id="mt-teams" class="mtc">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:1rem">
+    <div class="sub-tab-bar">
+      <button class="stb on-a" id="stb-a" onclick="showTeamSide('A')">⚔ Team A</button>
+      <button class="stb" id="stb-b" onclick="showTeamSide('B')">🛡 Team B</button>
+    </div>
+    <div class="tog-row">
+      <label class="tog"><input type="checkbox" id="cp-tog" onchange="togCP()"><div class="tog-tr"></div><div class="tog-th"></div></label>
+      <span class="tog-lbl">Show Main Car CP</span>
+    </div>
+  </div>
+  <div id="teams-area"><div style="color:var(--text3);font-size:12px;font-family:'Share Tech Mono',monospace;padding:2rem 0">← Scan participants in Select tab first.</div></div>
+  <div id="copy-area" style="display:none">
+    <div class="hr"></div>
+    <div class="copy-box">
+      <div class="copy-hd"><span class="copy-ttl">Copy-Ready Format</span><button class="btn btn-g" onclick="doCopy()">📋 Copy</button></div>
+      <div class="copy-body" id="copy-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ ATTENDANCE ═══════════════ -->
+<div id="mt-attend" class="mtc">
+  <div class="sec">Post-Battle Attendance</div>
+  <div class="ibox">Upload post-battle screenshots (~9 photos). Claude AI will cross-reference against your <strong>registered participant list</strong> from the Select tab — names unrecognized from that list will be flagged for manual review. Set the BGB event code before scanning.</div>
+  <div id="att-reg-list" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:10px 12px;margin-bottom:.75rem;font-size:11px;font-family:'Share Tech Mono',monospace;color:var(--text2);max-height:100px;overflow-y:auto"></div>
+
+  <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem">
+    <div><div class="fl">BGB Session</div><input class="inp" id="att-sess" style="width:160px;margin-bottom:0" placeholder="e.g. 20260426W4"/></div>
+    <div><div class="fl">Alliance Filter</div><input class="inp" id="att-alli" style="width:100px;margin-bottom:0" value="VHA"/></div>
+    <button class="btn btn-c" style="margin-bottom:1px" onclick="syncSession()">Sync from Select</button>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1rem">
+    <div>
+      <div class="sec">Upload Screenshots</div>
+      <div class="multi-drop" id="att-dz" onclick="document.getElementById('att-imgs').click()" ondragover="dzo(event,'att-dz')" ondragleave="dzl('att-dz')" ondrop="attDrop(event)" style="min-height:120px">
+        <input type="file" id="att-imgs" accept="image/*" multiple style="display:none" onchange="attSel(event)">
+        <div style="font-size:26px;margin-bottom:5px">📸</div>
+        Drop post-battle screenshots<br><span style="font-size:10px;opacity:.5">Multiple files, ~9 screenshots</span>
+      </div>
+      <div id="att-thumbs" class="img-thumbs" style="margin-top:6px"></div>
+      <div class="acts">
+        <button class="btn btn-g" onclick="runAttOCR()">🔍 Scan with Claude AI</button>
+        <button class="btn btn-r" onclick="clearAtt()">Clear</button>
+      </div>
+      <div id="att-st" class="ist"></div>
+    </div>
+    <div>
+      <div class="sec">Results</div>
+      <div id="att-results" class="att-grid" style="min-height:200px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px">
+        <div style="color:var(--text3);font-size:11px;font-family:'Share Tech Mono',monospace">Upload screenshots to begin.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+  <div class="sec">Absent Log</div>
+  <div class="acts">
+    <button class="btn btn-g" onclick="copyAbsent()">📋 Copy for Sheets</button>
+    <button class="btn btn-r" onclick="clearLog()">Clear Log</button>
+  </div>
+  <div id="sh-save-st" class="ist"></div>
+  <div id="absent-log"></div>
+</div>
+
+<!-- ═══════════════ SETTINGS ═══════════════ -->
+<div id="mt-settings" class="mtc">
+  <div class="sec">Configuration</div>
+  <div class="set-grid">
+    <div class="set-card">
+      <div class="set-ttl">🤖 Claude AI — OCR</div>
+      <div class="fl">Anthropic API Key</div>
+      <input class="inp" id="api-k" type="password" placeholder="sk-ant-..."/>
+      <p style="font-size:11px;color:var(--text3);line-height:1.5;margin:4px 0 8px">Get at <strong style="color:var(--text2)">console.anthropic.com</strong> → API Keys. Stored locally in your browser only.</p>
+      <div class="acts"><button class="btn btn-g" onclick="saveKey()">Save Key</button><button class="btn" onclick="testKey()">Test</button></div>
+      <div id="api-st" class="ist"></div>
+    </div>
+    <div class="set-card">
+      <div class="set-ttl">📊 Google Sheets</div>
+      <div class="fl">Sheet ID</div>
+      <input class="inp" id="cfg-sid" value="1fGhmeRAgKmd6a4z1Q-LBSfPL2qRqYhpK6PticIlooeo"/>
+      <div class="fl">Roster Tab</div>
+      <input class="inp" id="cfg-rt" value="First Car3"/>
+      <div class="fl">BGB Record Tab</div>
+      <input class="inp" id="cfg-bgbt" value="BGB Record"/>
+      <div class="fl">Absent Tab</div>
+      <input class="inp" id="cfg-at" value="BGB Absent"/>
+      <button class="btn btn-g" onclick="saveCfg()">Save Config</button>
+      <div id="cfg-st" class="ist"></div>
+    </div>
+    <div class="set-card">
+      <div class="set-ttl">💾 Save / Load Data</div>
+      <p style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:10px">Export all app data (BGB records, absent log, roster) to a JSON file. Share this file with teammates so they see the same color coding on their roster.</p>
+      <div class="acts">
+        <button class="btn btn-g" onclick="exportJSON()">Export JSON</button>
+        <button class="btn btn-c" onclick="document.getElementById('import-json-f').click()">Import JSON</button>
+        <input type="file" id="import-json-f" accept=".json" style="display:none" onchange="importJSON(event)">
+      </div>
+      <div id="json-st" class="ist"></div>
+    </div>
+
+    <div class="set-card">
+      <div class="set-ttl">⚙ App Settings</div>
+      <div class="fl">Alliance Name</div>
+      <input class="inp" id="cfg-alli" value="VHA"/>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px">
+        <div>
+          <div class="fl" style="color:#e07070">Red threshold (weeks)</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="range" id="cfg-red-w" min="1" max="12" value="4" step="1"
+              oninput="document.getElementById('red-w-val').textContent=this.value+'w'"
+              style="flex:1;accent-color:#e07070">
+            <span id="red-w-val" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#e07070;width:24px">4w</span>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">Absent this many weeks = red</div>
+        </div>
+        <div>
+          <div class="fl" style="color:#5dd4a0">Green threshold (weeks)</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="range" id="cfg-green-w" min="1" max="12" value="4" step="1"
+              oninput="document.getElementById('green-w-val').textContent=this.value+'w'"
+              style="flex:1;accent-color:#5dd4a0">
+            <span id="green-w-val" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#5dd4a0;width:24px">4w</span>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">No turn this many weeks = green</div>
+        </div>
+      </div>
+
+      <div class="tog-row" style="margin:8px 0">
+        <label class="tog"><input type="checkbox" id="cfg-cp" onchange="document.getElementById('cp-tog').checked=this.checked;togCP()"><div class="tog-tr"></div><div class="tog-th"></div></label>
+        <span class="tog-lbl">Show CP by default</span>
+      </div>
+      <button class="btn btn-g" onclick="saveApp()">Save</button>
+      <div id="app-st" class="ist"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  ROSTER DATA — 24 Apr 2026
+// ══════════════════════════════════════════════
+const BUILTIN=[
+  {n:"ﾒ Neilson ツ",cp:7210},{n:"Ap9910",cp:6640},{n:"ﾒFalconViper",cp:5710},
+  {n:"ACKROBAT",cp:4780},{n:"XryderZ",cp:3770},{n:"ひとり hitori",cp:3730},
+  {n:"Nick•倪",cp:3360},{n:"ṃḿ． Ñæ°",cp:3300},{n:"宇智波斑Madara",cp:2650},
+  {n:"•Ponchan•",cp:2620},{n:"CMPO",cp:2590},{n:"Vikxis 风之子",cp:2130},
+  {n:"Xedbşk",cp:1950},{n:"EzioAuditore",cp:1910},{n:"ﾒ Miki 瓜瓜 ツ",cp:1860},
+  {n:"ﾒFreya",cp:1850},{n:"范范國 Fan",cp:1830},{n:"ﾒ NENG ツ",cp:1800},
+  {n:"CTZombie",cp:1790},{n:"Max-420",cp:1770},{n:"MinJoooo ツ",cp:1750},
+  {n:"ﾒ LiLi ツ",cp:1730},{n:"Empo 亗",cp:1700},{n:"Horton 近隣",cp:1660},
+  {n:"GevinNav",cp:1620},{n:"ﾒDyno",cp:1590},{n:"LouﾒIvory",cp:1580},
+  {n:"Sabb0",cp:1570},{n:"SlothSsS",cp:1500},{n:"Rui-m1130",cp:1490},
+  {n:"f-f",cp:1460},{n:"Nefala/Cоnquest",cp:1450},{n:"神打與小師妹 Gd",cp:1440},
+  {n:"ﾒDoha",cp:1430},{n:"Dawn-T",cp:1420},{n:"Wtfraks",cp:1400},
+  {n:"ﾒ kazzyu",cp:1400},{n:"N O U R",cp:1250},{n:"ﾒ晴天Sünnÿ ∝",cp:1230},
+  {n:"MalKoh",cp:1230},{n:"Chuckles 66",cp:1190},{n:"General Zoomer",cp:1130},
+  {n:"Nerostream",cp:1100},{n:"Vipervix€n",cp:1100},{n:"Go Go Fish Go",cp:1090},
+  {n:"Summer 小紅毛丹",cp:1070},{n:"QUÈÉN",cp:1110},{n:"artemis",cp:1060},
+  {n:"Fyyan",cp:1060},{n:"ZEe",cp:1050},{n:"Starfire辣妹子",cp:1050},
+  {n:"Aseem97/MeloLune",cp:1030},{n:"大蕃薯 QQ",cp:1000},{n:"TöP︵¹๛",cp:976},
+  {n:"Kyubi332",cp:970},{n:"ProfSeven7",cp:950},{n:"Princesse MéLo",cp:916},
+  {n:"Heilysnow",cp:904},{n:"WorstPirate",cp:888},{n:"Wini or Xia0",cp:872},
+  {n:"•Pluto冥王星•",cp:857},{n:"RiBaN",cp:853},{n:"mila-",cp:852},
+  {n:"•MARIA",cp:848},{n:"†CoronaViruz ツ",cp:840},{n:"İBERROO",cp:838},
+  {n:"ﾒ Ġħøśτツ",cp:833},{n:"JDM本田烂仔",cp:814},{n:"Tomahawkk",cp:810},
+  {n:"Suddd",cp:806},{n:"Enimish",cp:785},{n:"ﾒ Tom Tammy ツ",cp:764},
+  {n:"Hemger",cp:762},{n:"Rajat Luthra",cp:742},{n:"ﾒ女乃昔Grimace",cp:724},
+  {n:"Finnicus",cp:719},{n:"-JK-",cp:704},{n:"Wesssssss",cp:701},
+  {n:"Bee如神助",cp:678},{n:"Jane ヅ",cp:665},{n:"ﾒ Ivory",cp:640},
+  {n:"sQluffy",cp:620},{n:"ﾒ農夫Super",cp:610},{n:"Aki",cp:610},
+  {n:"王子Kunnn",cp:601},{n:"鳳之營 Feng",cp:600},{n:"Dani Ordemann",cp:592},
+  {n:"ﾒ Evon",cp:592},{n:"Tiffion in Noah",cp:586},{n:"Sn-af-u",cp:503},
+  {n:"Pauli",cp:0},{n:"Jenny-Ariel",cp:0},{n:"Randa",cp:0},
+  {n:"Anna贝薾",cp:0},{n:"Audi Lê",cp:0},{n:"The NightStalker",cp:0},
+  {n:"Wonker",cp:0},{n:"Zoro くん",cp:0},{n:"ﾒ 强势进厂 Eu",cp:0},{n:"微笑鯨魚whale",cp:0}
+];
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let ROSTER=[...BUILTIN].sort((a,b)=>b.cp-a.cp);
+let cfg={sid:'1fGhmeRAgKmd6a4z1Q-LBSfPL2qRqYhpK6PticIlooeo',rTab:'First Car3',bgbTab:'BGB Record',abTab:'BGB Absent',alli:'VHA',apiKey:'',redWeeks:4,greenWeeks:4};
+let showCP=false;
+let teamA={images:[],starters:[],subs:[]};
+let teamB={images:[],starters:[],subs:[]};
+let teamsGenerated=null; // {A:{teams,alloy,subs}, B:{teams,alloy,subs}}
+let currentTeamSide='A';
+let imgFiles={A:[],B:[]};
+let attImgs=[];
+let attResults=[];
+let absentLog=[];
+let pendingImp=null;
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+function init(){
+  // Restore theme
+  if(localStorage.getItem('bgb_theme')==='light') document.body.classList.add('light');
+  try{
+    const c=localStorage.getItem('bgb4_cfg');if(c)cfg=Object.assign(cfg,JSON.parse(c));
+    const r=localStorage.getItem('bgb4_roster');if(r)ROSTER=JSON.parse(r);
+    const l=localStorage.getItem('bgb4_log');if(l)absentLog=JSON.parse(l);
+  }catch(e){}
+  document.getElementById('api-k').value=cfg.apiKey||'';
+  document.getElementById('cfg-sid').value=cfg.sid;
+  document.getElementById('cfg-rt').value=cfg.rTab;
+  document.getElementById('cfg-bgbt').value=cfg.bgbTab;
+  document.getElementById('cfg-at').value=cfg.abTab;
+  document.getElementById('cfg-alli').value=cfg.alli;
+  document.getElementById('att-alli').value=cfg.alli;
+  // Restore threshold sliders
+  if(cfg.redWeeks){
+    document.getElementById('cfg-red-w').value=cfg.redWeeks;
+    document.getElementById('red-w-val').textContent=cfg.redWeeks+'w';
+  }
+  if(cfg.greenWeeks){
+    document.getElementById('cfg-green-w').value=cfg.greenWeeks;
+    document.getElementById('green-w-val').textContent=cfg.greenWeeks+'w';
+  }
+  renderRoster();renderLog();autoSetDate();
+}
+
+// ══════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════
+function fcp(n){
+  if(!n||n===0)return'N/A';
+  // Format with dot as thousands separator: 3000 → 3.000, 1230 → 1.230
+  return Math.round(n).toLocaleString('de-DE');
+}
+function norm(s){return s.toLowerCase().replace(/\s+/g,'').replace(/[^\w\u3000-\u9fff\u4e00-\u9fff]/g,'')}
+function getCPfromRoster(name){
+  const matched=ROSTER.find(p=>{const nm=norm(name);const pn=norm(p.n);return pn===nm||pn.includes(nm)||nm.includes(pn);});
+  return matched?matched.cp:0;
+}
+
+// Levenshtein distance for fuzzy matching
+function levenshtein(a,b){
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+
+// Match OCR name to roster — handles special chars AI cannot read
+// Returns roster player object if confident match found, else null
+function fuzzyMatchRoster(ocrName){
+  const trimmed=ocrName.trim();
+  if(!trimmed) return null;
+  const oNorm=norm(trimmed);
+
+  // 1. Exact norm match
+  let match=ROSTER.find(p=>norm(p.n)===oNorm);
+  if(match) return match;
+
+  // 2. Contains match (OCR got partial name)
+  match=ROSTER.find(p=>norm(p.n).includes(oNorm)||oNorm.includes(norm(p.n)));
+  if(match&&Math.abs(norm(match.n).length-oNorm.length)<=4) return match;
+
+  // 3. Levenshtein fuzzy — only if norm length similar (within 40%)
+  let best=null,bestDist=Infinity;
+  for(const p of ROSTER){
+    const pNorm=norm(p.n);
+    if(Math.abs(pNorm.length-oNorm.length)>Math.max(3,oNorm.length*0.4)) continue;
+    const d=levenshtein(oNorm,pNorm);
+    const threshold=Math.max(2,Math.floor(oNorm.length*0.35));
+    if(d<bestDist&&d<=threshold){bestDist=d;best=p;}
+  }
+  return best; // null if no close match
+}
+function colI(l){l=l.toUpperCase().trim();let r=0;for(let i=0;i<l.length;i++)r=r*26+(l.charCodeAt(i)-64);return r-1;}
+function pCP(s){if(!s)return 0;const n=parseFloat(s.toString().replace(/,/g,'').trim());return isNaN(n)?0:n;}
+function esc(s){return s.replace(/'/g,"\\'").replace(/</g,'&lt;')}
+function today(){const d=new Date();return`${d.getFullYear()}-${d.getMonth()+1}-${Math.ceil(d.getDate()/7)}`}
+function autoSetDate(){const v=today();document.getElementById('bgb-sess').value=v;document.getElementById('att-sess').value=v;}
+function toast(msg='Copied!'){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+function msw(t){
+  document.querySelectorAll('.mtc').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.step-btn,.settings-btn').forEach(e=>e.classList.remove('on'));
+  document.getElementById('mt-'+t).classList.add('on');
+  const btn=document.getElementById('step-'+t);
+  if(btn) btn.classList.add('on');
+}
+
+function toggleTheme(){
+  document.body.classList.toggle('light');
+  localStorage.setItem('bgb_theme',document.body.classList.contains('light')?'light':'dark');
+}
+function dzo(e,id){e.preventDefault();document.getElementById(id).classList.add('over')}
+function dzl(id){document.getElementById(id).classList.remove('over')}
+
+// ══════════════════════════════════════════════
+//  ROSTER
+// ══════════════════════════════════════════════
+function renderRoster(){
+  const el=document.getElementById('roster-grid');
+  const sorted=ROSTER.filter(p=>p.cp>0).sort((a,b)=>b.cp-a.cp);
+  const nocp=ROSTER.filter(p=>p.cp===0);
+  let h='';
+  [...sorted,...nocp].forEach((p,i)=>{
+    const status=rosterStatus[norm(p.n)]||'';
+    const cls=`ri${p.cp===0?' no-cp':''} ${status}`.trim();
+    h+=`<div class="${cls}">
+      <span class="ri-no">${p.cp>0?i+1:'—'}</span>
+      <span class="ri-n">${p.n}</span>
+      <span class="ri-cp">${p.cp>0?fcp(p.cp):''}</span>
+    </div>`;
+  });
+  el.innerHTML=h;
+}
+
+// Try multiple fetch strategies to bypass CORS
+async function fetchSheet(sid, tab, ni, ci){
+  const gvizUrl=`https://docs.google.com/spreadsheets/d/${sid}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}&headers=1`;
+  const proxies=[
+    u=>u, // direct first
+    u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,
+    u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+  ];
+  let lastErr='';
+  for(const proxy of proxies){
+    try{
+      const res=await fetch(proxy(gvizUrl),{cache:'no-cache'});
+      if(!res.ok)throw new Error(`HTTP ${res.status}`);
+      const txt=await res.text();
+      const m=txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+      if(!m)throw new Error('Could not parse response');
+      const rows=JSON.parse(m[1]).table.rows;
+      const players=[];
+      rows.forEach(r=>{
+        if(!r||!r.c)return;
+        const name=r.c[ni]&&r.c[ni].v!=null?String(r.c[ni].v).trim():'';
+        const cp=r.c[ci]&&r.c[ci].v!=null?Number(r.c[ci].v):0;
+        if(name&&name.toLowerCase()!=='name'&&name.toLowerCase()!=='nama'&&!/^\d+$/.test(name))
+          players.push({n:name,cp});
+      });
+      if(!players.length)throw new Error('No players found — check tab name and column settings');
+      return players;
+    }catch(e){lastErr=e.message;continue;}
+  }
+  throw new Error(lastErr+' — ensure sheet is public (Anyone with link can view)');
+}
+
+async function quickFetch(){
+  const st=document.getElementById('rf-st');
+  st.className='ist ld';st.textContent='Fetching...';
+  try{
+    const ni=colI(document.getElementById('gs-cn').value||'B');
+    const ci=colI(document.getElementById('gs-cc').value||'D');
+    const players=await fetchSheet(cfg.sid,cfg.rTab,ni,ci);
+    players.sort((a,b)=>b.cp-a.cp);
+    ROSTER=players;
+    localStorage.setItem('bgb4_roster',JSON.stringify(ROSTER));
+    const now=new Date();
+    document.getElementById('stamp').textContent=`DATA: ${now.getDate()}/${['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][now.getMonth()]}/${now.getFullYear()}`;
+    st.className='ist ok';st.textContent=`✓ ${players.length} players refreshed`;
+    renderRoster();
+  }catch(e){st.className='ist er';st.textContent='✗ '+e.message;}
+}
+
+// ══════════════════════════════════════════════
+//  IMPORT
+// ══════════════════════════════════════════════
+async function impSheets(){
+  const urlRaw=document.getElementById('gs-url').value.trim();
+  const tab=document.getElementById('gs-tab').value.trim();
+  const ni=colI(document.getElementById('gs-cn').value||'B');
+  const ci=colI(document.getElementById('gs-cc').value||'D');
+  const st=document.getElementById('gs-st');
+  const m=urlRaw.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if(!m){st.className='ist er';st.textContent='✗ Invalid URL';return;}
+  st.className='ist ld';st.textContent='Fetching...';
+  try{
+    const players=await fetchSheet(m[1],tab,ni,ci);
+    players.sort((a,b)=>b.cp-a.cp);
+    st.className='ist ok';st.textContent=`✓ ${players.length} players loaded`;
+    showImpPrev(players,'Google Sheets');
+  }catch(e){st.className='ist er';st.textContent='✗ '+e.message;}
+}
+function czd(e){e.preventDefault();dzl('csv-dz');const f=e.dataTransfer.files[0];if(f)csvProc(f);}
+function csvUp(e){const f=e.target.files[0];if(f)csvProc(f);}
+function csvProc(file){
+  const st=document.getElementById('csv-st');st.className='ist ld';st.textContent='Reading...';
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const ps=parseCSV(e.target.result);
+      if(!ps.length){st.className='ist er';st.textContent='✗ No valid data';return;}
+      ps.sort((a,b)=>b.cp-a.cp);
+      st.className='ist ok';st.textContent=`✓ ${ps.length} players from ${file.name}`;
+      showImpPrev(ps,'CSV: '+file.name);
+    }catch(e){st.className='ist er';st.textContent='✗ '+e.message;}
+  };
+  r.readAsText(file,'UTF-8');
+}
+function parseCSV(txt){
+  const lines=txt.split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2)return[];
+  const hdr=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/"/g,''));
+  let ni=hdr.findIndex(h=>h.includes('name')||h==='nama');
+  let ci=hdr.findIndex(h=>h.includes('first car')||h.includes('cp'));
+  if(ni<0)ni=1;if(ci<0)ci=3;
+  return lines.slice(1).map(l=>{
+    const c=l.split(',').map(x=>x.trim().replace(/"/g,''));
+    const name=(c[ni]||'').trim();
+    return name&&name.length>1&&!/^\d+$/.test(name)?{n:name,cp:pCP(c[ci])}:null;
+  }).filter(Boolean);
+}
+function impPaste(){
+  const txt=document.getElementById('paste-a').value.trim();
+  const st=document.getElementById('ps-st');
+  if(!txt){st.className='ist er';st.textContent='✗ Nothing to import';return;}
+  const ps=txt.split('\n').map(l=>{
+    const p=l.trim().split(',');
+    if(p.length<2)return null;
+    return p[0].trim()?{n:p[0].trim(),cp:pCP(p[p.length-1])}:null;
+  }).filter(Boolean);
+  if(!ps.length){st.className='ist er';st.textContent='✗ Format: Name,CP per line';return;}
+  ps.sort((a,b)=>b.cp-a.cp);
+  showImpPrev(ps,'Manual paste');
+}
+function showImpPrev(ps,src){
+  pendingImp=ps;
+  document.getElementById('ip-info').innerHTML=`<strong>${src}</strong> — ${ps.length} players. Review then Apply.`;
+  let h='';ps.forEach((p,i)=>h+=`<div class="ri"><span class="ri-no">${i+1}</span><span class="ri-n">${p.n}</span><span class="ri-cp">${fcp(p.cp)}</span></div>`);
+  document.getElementById('ip-grid').innerHTML=h;
+  const el=document.getElementById('imp-prev');el.style.display='block';el.scrollIntoView({behavior:'smooth'});
+}
+function applyImp(){if(!pendingImp)return;ROSTER=pendingImp;localStorage.setItem('bgb4_roster',JSON.stringify(ROSTER));pendingImp=null;document.getElementById('imp-prev').style.display='none';renderRoster();msw('roster');toast('Roster updated!');}
+function cancelImp(){pendingImp=null;document.getElementById('imp-prev').style.display='none';}
+
+// ══════════════════════════════════════════════
+//  SELECT — IMAGE HANDLING
+// ══════════════════════════════════════════════
+function imgSel(e,side){addImgs(Array.from(e.target.files),side);}
+function imgDrop(e,side){e.preventDefault();dzl('dz-'+side.toLowerCase());addImgs(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')),side);}
+function addImgs(files,side){
+  const key=side;
+  imgFiles[key]=[...imgFiles[key],...files];
+  renderThumbs(side);
+}
+function renderThumbs(side){
+  const el=document.getElementById('thumbs-'+side.toLowerCase());
+  el.innerHTML='';
+  imgFiles[side].forEach((f,i)=>{
+    const url=URL.createObjectURL(f);
+    const img=document.createElement('img');
+    img.src=url;img.className='img-thumb';img.title='Click to remove';
+    img.onclick=()=>{imgFiles[side].splice(i,1);renderThumbs(side);};
+    el.appendChild(img);
+  });
+  document.getElementById('gen-btn').disabled=!(imgFiles.A.length||imgFiles.B.length||teamA.starters.length||teamB.starters.length);
+}
+
+async function callAPI(apiKey, model, maxTokens, imageB64, imageMtype, promptText){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body:JSON.stringify({
+      model,
+      max_tokens:maxTokens,
+      messages:[{role:'user',content:[
+        {type:'image',source:{type:'base64',media_type:imageMtype,data:imageB64}},
+        {type:'text',text:promptText}
+      ]}]
+    })
+  });
+  const data=await res.json();
+  if(data.error) throw new Error(data.error.message);
+  return data.content[0].text.trim();
+}
+
+async function scanTeam(side){
+  const apiKey=cfg.apiKey||document.getElementById('api-k').value.trim();
+  if(!apiKey){alert('Set Anthropic API key in Settings tab first.');return;}
+  const files=imgFiles[side];
+  if(!files.length){alert(`Upload ${side==='A'?'Team A':'Team B'} screenshots first.`);return;}
+  const st=document.getElementById('st-'+side.toLowerCase());
+  const btn=document.getElementById('scan-'+side.toLowerCase()+'-btn');
+  btn.disabled=true;
+
+  // playerMap: normKey → {name, role, confirmed}
+  // confirmed=true means Sonnet has verified the role
+  const playerMap={};
+  const teamLetter=side; // 'A' or 'B'
+
+  for(let i=0;i<files.length;i++){
+    // ── PASS 1: Haiku extracts all names + tentative role (full res) ──
+    st.className='ist ld';
+    st.textContent=`Image ${i+1}/${files.length} — Pass 1: extracting names (Haiku)...`;
+
+    const b64=await fileToB64(files[i]); // full resolution, no resize
+    const mtype=files[i].type||'image/jpeg';
+
+    const pass1Prompt=`This is a Dark War Survival game screenshot showing the BGB Participants panel for Team ${teamLetter}.
+
+TASK: Extract every visible player name and their role.
+
+UI LAYOUT of each player row (left to right):
+[Avatar] [Player Name] [Left Icon] [Right Icon]
+
+The Left Icon and Right Icon are either:
+- A gold/yellow letter "${teamLetter}" = this role APPLIES to the player
+- A red circle with a slash (no-entry sign) = this role does NOT apply
+
+RULES:
+- Gold "${teamLetter}" on LEFT = STARTER
+- Gold "${teamLetter}" on RIGHT = SUBSTITUTE  
+- Red slash on LEFT, gold on RIGHT = SUBSTITUTE
+- Gold on LEFT, red slash on RIGHT = STARTER
+- Skip rows with R1/R2/R3/R4 rank badges — not players
+- Skip header rows like "Starter: 20/20" or "Substitute: 10/10"
+
+Return ONLY valid JSON, no explanation, no markdown:
+{"players":[{"name":"exact player name","role":"starter"},{"name":"exact player name","role":"sub"}]}`;
+
+    let pass1Names=[];
+    try{
+      const txt=await callAPI(apiKey,'claude-haiku-4-5-20251001',800,b64,mtype,pass1Prompt);
+      const jm=txt.match(/\{[\s\S]*\}/);
+      if(jm){
+        const parsed=JSON.parse(jm[0]);
+        if(parsed.players&&Array.isArray(parsed.players)){
+          pass1Names=parsed.players.filter(p=>p.name&&p.name.length>1);
+        }
+      }
+    }catch(e){ console.warn('Pass1 error img '+i,e); continue; }
+
+    if(!pass1Names.length) continue;
+
+    // ── PASS 2: Sonnet verifies roles for names Haiku found ──
+    st.textContent=`Image ${i+1}/${files.length} — Pass 2: verifying roles (Sonnet)...`;
+
+    const nameList=pass1Names.map(p=>p.name).join('\n');
+    const pass2Prompt=`Dark War Survival BGB screenshot, Team ${teamLetter}.
+
+I need you to determine the role of each player listed below by looking at their row in the image.
+
+For each player row, the layout is:
+[Avatar] [Name] [LEFT icon] [RIGHT icon]
+
+The icons are:
+- Gold/yellow letter "${teamLetter}" = role APPLIES
+- Red circle with slash = role does NOT apply
+
+RULE: Gold "${teamLetter}" on the LEFT = STARTER. Gold "${teamLetter}" on the RIGHT = SUBSTITUTE.
+
+Players to check (one per line):
+${nameList}
+
+Return ONLY valid JSON, no markdown, no explanation:
+{"players":[{"name":"exact name as shown","role":"starter or sub"}]}
+
+Use the EXACT player names as I listed them. Do not modify names.`;
+
+    let pass2Result=[];
+    try{
+      const txt2=await callAPI(apiKey,'claude-sonnet-4-6',600,b64,mtype,pass2Prompt);
+      const jm2=txt2.match(/\{[\s\S]*\}/);
+      if(jm2){
+        const parsed2=JSON.parse(jm2[0]);
+        if(parsed2.players&&Array.isArray(parsed2.players)){
+          pass2Result=parsed2.players;
+        }
+      }
+    }catch(e){
+      console.warn('Pass2 error, using Pass1 roles',e);
+      pass2Result=pass1Names; // fallback to Haiku result
+    }
+
+    // Merge: prefer Sonnet role, fallback to Haiku role
+    const pass2Map={};
+    pass2Result.forEach(p=>{ if(p.name) pass2Map[norm(p.name)]=p.role==='sub'?'sub':'starter'; });
+
+    // Build per-image player list — skip duplicates already seen in earlier images
+    const imgPlayers=[];
+    pass1Names.forEach(p=>{
+      const key=norm(p.name);
+      if(!key||key.length<2) return;
+      const role=pass2Map[key]||(p.role==='sub'?'sub':'starter');
+      const confirmed=!!pass2Map[key];
+
+      // Try fuzzy match to roster to fix unreadable special chars
+      const matched=fuzzyMatchRoster(p.name);
+      const finalName=matched?matched.n:p.name.trim();
+      const finalCP=matched?matched.cp:0;
+      const finalKey=matched?norm(matched.n):key;
+
+      if(playerMap[finalKey]){
+        // Already seen in a previous image — skip from display but update role if Sonnet confirmed
+        if(!playerMap[finalKey].confirmed&&confirmed){
+          playerMap[finalKey].role=role;
+          playerMap[finalKey].confirmed=true;
+        }
+        return; // ← skip duplicate in this image
+      }
+
+      // New player — add to this image group AND playerMap
+      imgPlayers.push({
+        n:finalName,
+        cp:finalCP,
+        role,
+        confirmed,
+        rawName:finalName!==p.name.trim()?p.name.trim():null // store original if fuzzy-corrected
+      });
+      playerMap[finalKey]={name:finalName, role, confirmed};
+    });
+
+    // Store this image group
+    const imgGroup={
+      imgName:files[i].name||`Image ${i+1}`,
+      imgIdx:i+1,
+      players:imgPlayers
+    };
+    if(side==='A') teamA.images.push(imgGroup);
+    else teamB.images.push(imgGroup);
+
+    st.textContent=`Image ${i+1}/${files.length} — done. ${Object.keys(playerMap).length} unique players so far...`;
+  }
+
+  // ── FLATTEN unique players (no sort yet — sort happens at genTeams) ──
+  const allUnique=Object.values(playerMap).map(p=>({
+    n:p.name,
+    cp:getCPfromRoster(p.name),
+    role:p.role,
+    confirmed:p.confirmed||false
+  }));
+  // Store flat lists too (unsorted, for missing count)
+  if(side==='A'){
+    teamA.starters=allUnique.filter(p=>p.role==='starter');
+    teamA.subs=allUnique.filter(p=>p.role==='sub');
+  } else {
+    teamB.starters=allUnique.filter(p=>p.role==='starter');
+    teamB.subs=allUnique.filter(p=>p.role==='sub');
+  }
+
+  const total=allUnique.length;
+  const stCount=allUnique.filter(p=>p.role==='starter').length;
+  const subCount=allUnique.filter(p=>p.role==='sub').length;
+  const unconfirmed=allUnique.filter(p=>!p.confirmed).length;
+  st.className='ist ok';
+  st.textContent=`✓ ${total} unique players — ${stCount} starters, ${subCount} subs${unconfirmed>0?' · '+unconfirmed+' role(s) from Haiku fallback':' · all roles Sonnet-verified'}`;
+  btn.disabled=false;
+  renderPlayerList(side);
+  document.getElementById(side==='A'?'a-count':'b-count').textContent=`${total} players`;
+  document.getElementById('gen-btn').disabled=false;
+}
+
+function renderPlayerList(side){
+  const el=document.getElementById('list-'+side.toLowerCase());
+  const data=side==='A'?teamA:teamB;
+  const stCount=data.starters.length;
+  const subCount=data.subs.length;
+  const missingS=Math.max(0,20-stCount);
+  const missingB=Math.max(0,10-subCount);
+
+  if(!data.images||!data.images.length){
+    // No scan data — show empty
+    el.innerHTML='';
+    renderMissingBox(side,20,10);
+    return;
+  }
+
+  // Status header
+  const sOk=stCount===20?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--red)">'+stCount+'/20 (-'+missingS+')</span>';
+  const bOk=subCount===10?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--orange)">'+subCount+'/10 (-'+missingB+')</span>';
+  let html=`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;margin-bottom:8px;display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+    <span>STARTERS: ${sOk}</span>
+    <span>SUBS: ${bOk}</span>
+    <span style="color:var(--text3);font-size:9px">(click role to toggle · × to remove)</span>
+  </div>`;
+
+  // Build a flat indexed list across ALL images for toggle/remove (global idx)
+  const flatAll=[];
+  data.images.forEach(img=>img.players.forEach(p=>flatAll.push(p)));
+
+  // Also include manually-added players not from any image
+  // (added via autocomplete — these live in starters/subs but not in images)
+  const imgNames=new Set(flatAll.map(p=>norm(p.n)));
+  const manualPlayers=[...data.starters,...data.subs].filter(p=>!imgNames.has(norm(p.n)));
+
+  // Render per-image groups
+  let flatIdx=0;
+  data.images.forEach((img,gi)=>{
+    if(!img.players.length) return;
+    html+=`<div style="margin-bottom:10px">`;
+    html+=`<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:4px;padding:3px 6px;background:var(--bg4);border-radius:2px;display:inline-block">📸 ${img.imgName} (${img.players.length} players)</div>`;
+    img.players.forEach(p=>{
+      const idx=flatIdx++;
+      const corrected=p.rawName
+        ?`<span style="font-size:8px;color:var(--cyan2);margin-left:4px;background:rgba(47,184,204,0.1);border:1px solid rgba(47,184,204,0.25);padding:1px 4px;border-radius:2px">fuzzy: OCR="${p.rawName}"</span>`
+        :'';
+      html+=`<div class="pl-item" id="pli-${side}-${idx}">
+        <span class="pl-name">${p.n}${corrected}${!p.cp?'<span style="font-size:9px;color:var(--orange);margin-left:3px">[?CP]</span>':''}</span>
+        <span class="pl-role ${p.role==='starter'?'role-s':'role-b'}" onclick="toggleRoleFlat('${side}',${idx})" title="Click to toggle role" style="cursor:pointer">${p.role==='starter'?'STR':'SUB'}</span>
+        <button class="pl-del" onclick="removePlFlat('${side}',${idx})" title="Remove player" style="color:var(--red);font-size:14px;font-weight:bold">×</button>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+
+  // Manual additions section
+  if(manualPlayers.length){
+    html+=`<div style="margin-bottom:10px">`;
+    html+=`<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--green);margin-bottom:4px;padding:3px 6px;background:var(--bg4);border-radius:2px;display:inline-block">✚ Manually added (${manualPlayers.length})</div>`;
+    manualPlayers.forEach((p,mi)=>{
+      html+=`<div class="pl-item">
+        <span class="pl-name">${p.n}</span>
+        <span class="pl-role ${p.role==='starter'?'role-s':'role-b'}" onclick="toggleManual('${side}','${p.n.replace(/'/g,"\'")}','${p.role}')" title="Click to toggle" style="cursor:pointer">${p.role==='starter'?'STR':'SUB'}</span>
+        <button class="pl-del" onclick="removeManual('${side}','${p.n.replace(/'/g,"\'")}')">×</button>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  el.innerHTML=html;
+  renderMissingBox(side, missingS, missingB);
+}
+
+// Toggle role using flat index across images
+function toggleRoleFlat(side,flatIdx){
+  const data=side==='A'?teamA:teamB;
+  let cur=0;
+  for(const img of data.images){
+    for(let j=0;j<img.players.length;j++){
+      if(cur===flatIdx){
+        img.players[j].role=img.players[j].role==='starter'?'sub':'starter';
+        // Sync to starters/subs flat lists
+        rebuildFlatLists(side);
+        renderPlayerList(side);
+        return;
+      }
+      cur++;
+    }
+  }
+}
+
+function removePlFlat(side,flatIdx){
+  const data=side==='A'?teamA:teamB;
+  let cur=0;
+  for(const img of data.images){
+    for(let j=0;j<img.players.length;j++){
+      if(cur===flatIdx){
+        img.players.splice(j,1);
+        rebuildFlatLists(side);
+        renderPlayerList(side);
+        const total=data.starters.length+data.subs.length;
+        document.getElementById(side==='A'?'a-count':'b-count').textContent=`${total} players`;
+        return;
+      }
+      cur++;
+    }
+  }
+}
+
+function toggleManual(side,name,currentRole){
+  const data=side==='A'?teamA:teamB;
+  const newRole=currentRole==='starter'?'sub':'starter';
+  const fromArr=currentRole==='starter'?data.starters:data.subs;
+  const toArr=newRole==='starter'?data.starters:data.subs;
+  const idx=fromArr.findIndex(p=>p.n===name);
+  if(idx>=0){
+    const [p]=fromArr.splice(idx,1);
+    p.role=newRole;
+    toArr.push(p);
+  }
+  renderPlayerList(side);
+}
+
+function removeManual(side,name){
+  const data=side==='A'?teamA:teamB;
+  data.starters=data.starters.filter(p=>p.n!==name);
+  data.subs=data.subs.filter(p=>p.n!==name);
+  renderPlayerList(side);
+  const total=data.starters.length+data.subs.length;
+  document.getElementById(side==='A'?'a-count':'b-count').textContent=`${total} players`;
+}
+
+function rebuildFlatLists(side){
+  const data=side==='A'?teamA:teamB;
+  const allFromImgs=[];
+  data.images.forEach(img=>img.players.forEach(p=>allFromImgs.push(p)));
+  // Keep manually-added (not in any image)
+  const imgNames=new Set(allFromImgs.map(p=>norm(p.n)));
+  const manuals=[...data.starters,...data.subs].filter(p=>!imgNames.has(norm(p.n)));
+  const combined=[...allFromImgs,...manuals];
+  data.starters=combined.filter(p=>p.role==='starter');
+  data.subs=combined.filter(p=>p.role==='sub');
+}
+
+function renderMissingBox(side, missingS, missingB){
+  const el=document.getElementById('missing-'+side.toLowerCase());
+  if(!el) return;
+  if(missingS===0&&missingB===0){el.innerHTML='';return;}
+
+  // Default role: fill starters first, then subs
+  const defaultRole=missingS>0?'starter':'sub';
+
+  el.innerHTML=`<div class="missing-box">
+    <div class="missing-ttl">⚠ MISSING PLAYERS — add manually</div>
+    <div class="missing-counts">
+      ${missingS>0?`<span class="mc-s">${missingS} starter${missingS>1?'s':''} missing</span>`:''}
+      ${missingB>0?`<span class="mc-b">${missingB} sub${missingB>1?'s':''} missing</span>`:''}
+    </div>
+    <div class="ac-role-sel">
+      <button class="ac-rs ac-rs-s${defaultRole==='starter'?' sel':''}" id="mrs-s-${side}" onclick="setMissingRole('${side}','starter')">STR</button>
+      <button class="ac-rs ac-rs-b${defaultRole==='sub'?' sel':''}" id="mrs-b-${side}" onclick="setMissingRole('${side}','sub')">SUB</button>
+    </div>
+    <div class="ac-wrap">
+      <input class="ac-inp" id="ac-inp-${side}" placeholder="Type name to search roster..." 
+        oninput="acSearch('${side}',this.value)" 
+        onkeydown="acKey(event,'${side}')"
+        autocomplete="off"/>
+      <div class="ac-drop" id="ac-drop-${side}"></div>
+    </div>
+  </div>`;
+
+  // Store default role
+  if(!window._missingRole) window._missingRole={};
+  window._missingRole[side]=defaultRole;
+}
+
+let _acSelected={A:-1,B:-1};
+let _acResults={A:[],B:[]};
+
+function setMissingRole(side,role){
+  if(!window._missingRole) window._missingRole={};
+  window._missingRole[side]=role;
+  document.getElementById('mrs-s-'+side).className='ac-rs ac-rs-s'+(role==='starter'?' sel':'');
+  document.getElementById('mrs-b-'+side).className='ac-rs ac-rs-b'+(role==='sub'?' sel':'');
+}
+
+function acSearch(side,val){
+  const drop=document.getElementById('ac-drop-'+side);
+  if(!val||val.trim().length<1){drop.style.display='none';return;}
+  const q=val.trim().toLowerCase();
+  const qNorm=norm(val);
+  const data=side==='A'?teamA:teamB;
+
+  // Build set of already-added players (from images + manuals)
+  const allAdded=new Set();
+  if(data.images) data.images.forEach(img=>img.players.forEach(p=>allAdded.add(norm(p.n))));
+  data.starters.forEach(p=>allAdded.add(norm(p.n)));
+  data.subs.forEach(p=>allAdded.add(norm(p.n)));
+
+  // Score each roster player
+  const scored=[];
+  for(const p of ROSTER){
+    if(allAdded.has(norm(p.n))) continue; // already in list
+    const pLow=p.n.toLowerCase();
+    const pNorm=norm(p.n);
+    let score=0;
+
+    // Exact substring match — highest priority
+    if(pLow.includes(q)||pNorm.includes(qNorm)) score=100;
+    // Start-of-word match
+    else if(pLow.startsWith(q)||pNorm.startsWith(qNorm)) score=90;
+    // Fuzzy levenshtein — only if query is 3+ chars
+    else if(q.length>=3){
+      const dist=levenshtein(qNorm,pNorm.substring(0,Math.min(pNorm.length,qNorm.length+3)));
+      const threshold=Math.max(1,Math.floor(q.length*0.4));
+      if(dist<=threshold) score=Math.max(10,60-dist*10);
+    }
+    if(score>0) scored.push({p,score});
+  }
+
+  // Sort by score desc, take top 8
+  scored.sort((a,b)=>b.score-a.score);
+  const results=scored.slice(0,8).map(s=>s.p);
+
+  _acResults[side]=results;
+  _acSelected[side]=-1;
+
+  if(!results.length){
+    drop.innerHTML=`<div class="ac-item" style="color:var(--text3);cursor:default;font-size:11px">No match found in roster</div>`;
+    drop.style.display='block';
+    return;
+  }
+
+  drop.innerHTML=results.map((p,i)=>`
+    <div class="ac-item" id="ac-item-${side}-${i}" onclick="acPick('${side}',${i})">
+      <span class="ac-name">${p.n}</span>
+      <span class="ac-cp">${p.cp?fcp(p.cp):'N/A'}</span>
+    </div>`).join('');
+  drop.style.display='block';
+}
+
+function acKey(e,side){
+  const results=_acResults[side]||[];
+  if(!results.length) return;
+  if(e.key==='ArrowDown'){
+    e.preventDefault();
+    _acSelected[side]=Math.min(_acSelected[side]+1,results.length-1);
+    acHighlight(side);
+  } else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    _acSelected[side]=Math.max(_acSelected[side]-1,-1);
+    acHighlight(side);
+  } else if(e.key==='Enter'){
+    e.preventDefault();
+    if(_acSelected[side]>=0) acPick(side,_acSelected[side]);
+    else if(results.length===1) acPick(side,0);
+  } else if(e.key==='Escape'){
+    document.getElementById('ac-drop-'+side).style.display='none';
+  }
+}
+
+function acHighlight(side){
+  const results=_acResults[side]||[];
+  results.forEach((_,i)=>{
+    const el=document.getElementById('ac-item-'+side+'-'+i);
+    if(el) el.className='ac-item'+(i===_acSelected[side]?' active':'');
+  });
+}
+
+function acPick(side,idx){
+  const p=_acResults[side][idx];
+  if(!p) return;
+  const role=window._missingRole&&window._missingRole[side]?window._missingRole[side]:'starter';
+  const player={n:p.n,cp:p.cp,role};
+
+  const data=side==='A'?teamA:teamB;
+  if(role==='starter') data.starters.push(player);
+  else data.subs.push(player);
+  // Don't sort here — sort happens at genTeams time
+
+  // Clear input
+  const inp=document.getElementById('ac-inp-'+side);
+  if(inp) inp.value='';
+  document.getElementById('ac-drop-'+side).style.display='none';
+  _acResults[side]=[];_acSelected[side]=-1;
+
+  renderPlayerList(side);
+  const total=data.starters.length+data.subs.length;
+  document.getElementById(side==='A'?'a-count':'b-count').textContent=`${total} players`;
+  document.getElementById('gen-btn').disabled=false;
+}
+
+// Close autocomplete when clicking outside
+document.addEventListener('click',e=>{
+  ['A','B'].forEach(side=>{
+    const drop=document.getElementById('ac-drop-'+side);
+    const inp=document.getElementById('ac-inp-'+side);
+    if(drop&&inp&&!drop.contains(e.target)&&e.target!==inp){
+      drop.style.display='none';
+    }
+  });
+});
+
+// Legacy stubs — replaced by toggleRoleFlat/removePlFlat
+function toggleRole(side,idx){ toggleRoleFlat(side,idx); }
+function removePl(side,idx){ removePlFlat(side,idx); }
+
+function clearSelect(){
+  teamA={images:[],starters:[],subs:[]};teamB={images:[],starters:[],subs:[]};
+  imgFiles={A:[],B:[]};
+  ['a','b'].forEach(s=>{
+    document.getElementById('thumbs-'+s).innerHTML='';
+    document.getElementById('list-'+s).innerHTML='';
+    const mis=document.getElementById('missing-'+s);
+    if(mis) mis.innerHTML='';
+    document.getElementById('st-'+s).textContent='';
+    document.getElementById(s+'-count').textContent='0 players';
+    // Reset file input value so same files can be re-uploaded after clear
+    const inp=document.getElementById('img-'+s);
+    if(inp) inp.value='';
+  });
+  document.getElementById('gen-btn').disabled=true;
+  document.getElementById('sel-err').textContent='';
+}
+
+// ══════════════════════════════════════════════
+//  GENERATE TEAMS
+// ══════════════════════════════════════════════
+function genTeams(){
+  document.getElementById('sel-err').textContent='';
+  function buildSide(data,side){
+    // Sort by CP only at generation time (display is per-image order)
+    const starters=[...data.starters].sort((a,b)=>b.cp-a.cp);
+    const subs=[...data.subs].sort((a,b)=>b.cp-a.cp);
+    if(starters.length<2)return null;
+    const p=starters;
+    const alloy=[p[0],p[1],p[2],p[3]].filter(Boolean);
+    const t={};
+    t[10]=[p[0],p[7]].filter(Boolean);
+    t[9]=[p[1],p[6]].filter(Boolean);
+    t[8]=[p[2],p[5]].filter(Boolean);
+    t[7]=[p[3],p[4]].filter(Boolean);
+    const rest=p.slice(8),n=rest.length;
+    for(let i=6;i>=1;i--){
+      const hi=6-i,lo=n-1-hi;
+      t[i]=[];
+      if(rest[hi])t[i].push(rest[hi]);
+      if(lo>hi&&rest[lo])t[i].push(rest[lo]);
+    }
+    return{teams:t,alloy,subs};
+  }
+  const resA=buildSide(teamA,'A');
+  const resB=buildSide(teamB,'B');
+  if(!resA&&!resB){document.getElementById('sel-err').textContent='Need at least 2 starters in Team A or B.';return;}
+  teamsGenerated={A:resA,B:resB};
+  msw('teams');
+  showTeamSide(resA?'A':'B');
+  saveToSheetsAuto();
+  showCopyBar();
+}
+
+// ══════════════════════════════════════════════
+//  RENDER TEAMS
+// ══════════════════════════════════════════════
+function showTeamSide(side){
+  currentTeamSide=side;
+  document.getElementById('stb-a').className='stb'+(side==='A'?' on-a':'');
+  document.getElementById('stb-b').className='stb'+(side==='B'?' on-b':'');
+  renderTeamSide(side);
+}
+function togCP(){showCP=document.getElementById('cp-tog').checked;if(teamsGenerated)renderTeamSide(currentTeamSide);}
+
+function renderTeamSide(side){
+  const area=document.getElementById('teams-area');
+  const res=teamsGenerated&&teamsGenerated[side];
+  if(!res){area.innerHTML=`<div style="color:var(--text3);font-size:12px;font-family:'Share Tech Mono',monospace;padding:2rem 0">No data for Team ${side}.</div>`;document.getElementById('copy-area').style.display='none';return;}
+  const {teams,alloy,subs}=res;
+  const cpCls=showCP?'':'hide';
+  let h='';
+
+  // Alloy + Teams 7-10 + Teams 1-6 all in one grid
+  h+=`<div class="sec">Alloy Squad</div>`;
+  h+=`<div class="team-grid" style="margin-bottom:1rem">`;
+  h+=`<div class="tc tc-alloy"><div class="tc-h"><span class="tc-ttl">[ALLOY] Top 4</span></div><div class="tc-b">`;
+  alloy.forEach(p=>h+=`<div class="tc-p"><div class="dot-y"></div><span class="tc-n">${p.n}</span><span class="tc-cp ${cpCls}">${fcp(p.cp)}</span></div>`);
+  h+=`</div></div></div>`;
+
+  h+=`<div class="sec">Team 7–10 · Top 8 Players (Phase 1: 2 players · Phase 2: 1 remains after alloy)</div>`;
+  h+=`<div class="team-grid">`;
+  for(let t=10;t>=7;t--){
+    h+=`<div class="tc"><div class="tc-h"><span class="tc-ttl">Team ${t}</span></div><div class="tc-b">`;
+    (teams[t]||[]).forEach((p,i)=>h+=`<div class="tc-p">${i===0?'<div class="dot-y"></div>':'<div class="dot-x"></div>'}<span class="tc-n">${p.n}</span><span class="tc-cp ${cpCls}">${fcp(p.cp)}</span></div>`);
+    h+=`</div></div>`;
+  }
+  h+=`</div>`;
+
+  h+=`<div class="sec" style="margin-top:1rem">Team 1–6</div>`;
+  h+=`<div class="team-grid">`;
+  for(let t=6;t>=1;t--){
+    h+=`<div class="tc"><div class="tc-h"><span class="tc-ttl">Team ${t}</span></div><div class="tc-b">`;
+    (teams[t]||[]).forEach(p=>h+=`<div class="tc-p"><div class="dot-x"></div><span class="tc-n">${p.n}</span><span class="tc-cp ${cpCls}">${fcp(p.cp)}</span></div>`);
+    h+=`</div></div>`;
+  }
+  h+=`</div>`;
+
+  // Always show substitute section
+  h+=`<div class="sec" style="margin-top:1rem">Substitutes · Standby</div>`;
+  if(subs&&subs.length){
+    h+=`<div class="sub-pills">`;
+    subs.forEach((p,i)=>h+=`<div class="sp" style="flex-direction:column;align-items:flex-start;gap:2px"><span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3)">SUB ${i+1}</span><span class="sp-n">${p.n}</span><span class="sp-cp ${cpCls}">${fcp(p.cp)}</span></div>`);
+    h+=`</div>`;
+  } else {
+    h+=`<div style="color:var(--text3);font-size:11px;font-family:'Share Tech Mono',monospace">No substitutes assigned.</div>`;
+  }
+
+  // Logic explanation
+  h+=`<div class="logic-box">
+    <strong>Team Formation Logic</strong><br>
+    Players sorted by <strong>Main Car CP</strong> (highest → lowest).<br>
+    <strong>Team 7–10:</strong> Top 8 players, snake draft — T10: Rank1+Rank8 | T9: Rank2+Rank7 | T8: Rank3+Rank6 | T7: Rank4+Rank5.<br>
+    <strong>Alloy Squad:</strong> Rank 1–4 (one from each T7–10) dispatched at 10-min mark. Remaining: Rank 5–8 stay solo.<br>
+    <strong>Team 1–6:</strong> Rank 9–20, snake draft — T6: Rank9+Rank20 | T5: Rank10+Rank19 | ... | T1: Rank14+Rank15.
+  </div>`;
+
+  area.innerHTML=h;
+  buildCopyText(side,res);
+  document.getElementById('copy-area').style.display='block';
+}
+
+function buildCopyText(side,res){
+  const {teams,alloy,subs}=res;
+  const lines=[`=== TEAM ${side} ===`,``,`[ALLOY] ${alloy.map(p=>p.n).join(' + ')}`,``];
+  for(let t=10;t>=7;t--){if(teams[t]&&teams[t].length)lines.push(`Team ${t}: ${teams[t].map(p=>p.n).join(' + ')}`);}
+  lines.push('');
+  for(let t=6;t>=1;t--){if(teams[t]&&teams[t].length)lines.push(`Team ${t}: ${teams[t].map(p=>p.n).join(' + ')}`);}
+  if(subs&&subs.length){lines.push('');lines.push(`[SUB] ${subs.map(p=>p.n).join(' | ')}`);}
+  document.getElementById('copy-body').textContent=lines.join('\n');
+}
+
+function doCopy(){navigator.clipboard.writeText(document.getElementById('copy-body').textContent).then(()=>toast('Copied!'));}
+
+// ══════════════════════════════════════════════
+//  AUTO SAVE TO SHEETS (BGB Record)
+// ══════════════════════════════════════════════
+async function saveToSheetsAuto(){
+  const sess=document.getElementById('bgb-sess').value.trim()||today();
+  // Build TSV rows for Google Sheets — since OAuth is needed for write,
+  // we prepare a copy-ready TSV and notify user
+  const rows=[];
+  ['A','B'].forEach(side=>{
+    const data=side==='A'?teamA:teamB;
+    [...data.starters.map(p=>({...p,role:'Starter'})),...data.subs.map(p=>({...p,role:'Substitute'}))].forEach(p=>{
+      rows.push([`BGB ${sess}`,p.n,`Team ${side}`,p.role,fcp(p.cp)].join('\t'));
+    });
+  });
+  if(!rows.length)return;
+  const tsv=['Date\tName\tTeam\tRole\tMain Car CP',...rows].join('\n');
+  localStorage.setItem('bgb4_lastrecord',tsv);
+  // Show notification in teams tab
+  setTimeout(()=>{
+    const notice=document.createElement('div');
+    notice.className='sbox';
+    notice.innerHTML=`✓ BGB Record ready — <button class="btn btn-gr" onclick="copyRecord()" style="margin-left:8px">📋 Copy to paste in Sheets tab "${document.getElementById('cfg-bgbt').value}"</button>`;
+    const area=document.getElementById('teams-area');
+    if(area&&!area.querySelector('.sbox'))area.insertBefore(notice,area.firstChild);
+  },300);
+}
+
+function copyRecord(){
+  const tsv=localStorage.getItem('bgb4_lastrecord');
+  if(tsv)navigator.clipboard.writeText(tsv).then(()=>toast('BGB Record copied!'));
+}
+
+// ══════════════════════════════════════════════
+//  ATTENDANCE OCR
+// ══════════════════════════════════════════════
+function syncSession(){document.getElementById('att-sess').value=document.getElementById('bgb-sess').value;}
+function attSel(e){attImgs=[...attImgs,...Array.from(e.target.files)];renderAttThumbs();}
+function attDrop(e){e.preventDefault();dzl('att-dz');attImgs=[...attImgs,...Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'))];renderAttThumbs();}
+function renderAttThumbs(){
+  const el=document.getElementById('att-thumbs');el.innerHTML='';
+  attImgs.forEach((f,i)=>{
+    const url=URL.createObjectURL(f);
+    const img=document.createElement('img');
+    img.src=url;img.className='img-thumb';img.title='Click to remove';
+    img.onclick=()=>{attImgs.splice(i,1);renderAttThumbs();};
+    el.appendChild(img);
+  });
+}
+function clearAtt(){
+  attImgs=[];
+  document.getElementById('att-thumbs').innerHTML='';
+  document.getElementById('att-st').textContent='';
+  document.getElementById('att-results').innerHTML='<div style="color:var(--text3);font-size:11px;font-family:\'Share Tech Mono\',monospace">Upload screenshots to begin.</div>';
+  // Reset file input so same files can be re-selected
+  const inp=document.getElementById('att-imgs');
+  if(inp) inp.value='';
+}
+
+async function runAttOCR(){
+  const apiKey=cfg.apiKey||document.getElementById('api-k').value.trim();
+  if(!apiKey){alert('Set API key in Settings.');return;}
+  if(!attImgs.length){alert('Upload post-battle screenshots first.');return;}
+  const alli=document.getElementById('att-alli').value.trim()||cfg.alli;
+  const st=document.getElementById('att-st');
+
+  // Build registered list for AI context
+  const registered=[...teamA.starters,...teamA.subs,...teamB.starters,...teamB.subs];
+  const regList=registered.map(p=>p.n).join('\n');
+  const hasRegistered=registered.length>0;
+  showAttRegisteredList();
+
+  const detectedPerImg=[];
+  const detectedAll=new Set();
+
+  for(let i=0;i<attImgs.length;i++){
+    st.className='ist ld';
+    st.textContent=`Scanning ${i+1}/${attImgs.length}...`;
+    const b64=await fileToB64(attImgs[i]);
+    const mtype=attImgs[i].type||'image/jpeg';
+    const imgUrl=URL.createObjectURL(attImgs[i]);
+
+    const prompt=hasRegistered
+      ?`Dark War Survival post-battle screenshot. Alliance: [${alli}].
+
+Registered players for this BGB:
+${regList}
+
+From this screenshot, which registered players are visible? Also flag any [${alli}] members NOT in the list above.
+Return ONLY JSON: {"found":["name from registered list"],"unverified":["name not in list"]}`
+      :`Dark War Survival post-battle screenshot. Find all [${alli}] players. Return ONLY JSON array: ["name1","name2"]`;
+
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:600,
+          messages:[{role:'user',content:[
+            {type:'image',source:{type:'base64',media_type:mtype,data:b64}},
+            {type:'text',text:prompt}
+          ]}]
+        })
+      });
+      const data=await res.json();
+      if(data.error) continue;
+      const txt=data.content[0].text.trim();
+      const imgResult={imgUrl,names:[],unverified:[]};
+
+      if(hasRegistered){
+        const jm=txt.match(/\{[\s\S]*\}/);
+        if(jm){
+          try{
+            const parsed=JSON.parse(jm[0]);
+            if(parsed.found) parsed.found.forEach(n=>{if(n){imgResult.names.push(n.trim());detectedAll.add(n.trim());}});
+            if(parsed.unverified) parsed.unverified.forEach(n=>{if(n) imgResult.unverified.push(n.trim());});
+          }catch(e){}
+        }
+      } else {
+        const jm=txt.match(/\[[\s\S]*?\]/);
+        if(jm){try{JSON.parse(jm[0]).forEach(n=>{if(n){imgResult.names.push(n.trim());detectedAll.add(n.trim());}});}catch(e){}}
+      }
+      detectedPerImg.push(imgResult);
+    }catch(e){console.warn('Att OCR error',e);}
+  }
+
+  st.className='ist ok';
+  st.textContent=`✓ ${detectedAll.size} players identified across ${attImgs.length} screenshots`;
+  processAttendance([...detectedAll],detectedPerImg);
+}
+
+function processAttendance(detectedNames, detectedPerImg=[]){
+  // Get all registered players (from both teams)
+  const registered=[];
+  const addReg=(data,side)=>[...data.starters,...data.subs].forEach(p=>registered.push({...p,side,inRoster:true}));
+  addReg(teamA,'A');addReg(teamB,'B');
+
+  const detNorm=detectedNames.map(n=>norm(n));
+
+  attResults=registered.map(p=>{
+    const pn=norm(p.n);
+    const present=detNorm.some(d=>d===pn||d.includes(pn)||pn.includes(d));
+    return{...p,present};
+  });
+
+  // Add detected not in registered
+  detectedNames.forEach(dn=>{
+    const pn=norm(dn);
+    const inReg=registered.some(p=>norm(p.n)===pn||norm(p.n).includes(pn)||pn.includes(norm(p.n)));
+    if(!inReg) attResults.push({n:dn,cp:getCPfromRoster(dn),side:'?',present:true,inRoster:false});
+  });
+
+  renderAttResults();
+}
+
+// Store per-image data for unverified display
+let _attPerImg=[];
+
+function renderAttResults(){
+  const el=document.getElementById('att-results');
+  if(!attResults.length){el.innerHTML='<div style="color:var(--text3);font-size:11px">No results.</div>';return;}
+
+  // Registered players — present/absent
+  let html=attResults.map((r,i)=>`
+    <div class="att-row" id="ar-${i}" onclick="togAtt(${i})">
+      <span class="att-n">${r.n}${!r.inRoster?'<span style="font-size:9px;color:var(--text3);margin-left:4px">[ext]</span>':''}</span>
+      <span style="font-size:9px;color:var(--text3);font-family:var(--font-mono)">T${r.side}</span>
+      <span class="att-b ${r.present?'ab-p':'ab-a'}">${r.present?'PRESENT':'ABSENT'}</span>
+    </div>`).join('');
+
+  // Unverified section — names AI found not in registered list
+  const allUnverified=[];
+  _attPerImg.forEach(img=>{
+    (img.unverified||[]).forEach(name=>{
+      const already=allUnverified.find(u=>norm(u.name)===norm(name));
+      if(!already) allUnverified.push({name,imgUrl:img.imgUrl});
+    });
+  });
+
+  if(allUnverified.length){
+    html+=`<div style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--red);margin-bottom:5px">UNVERIFIED — not in registered list (${allUnverified.length})</div>`;
+    allUnverified.forEach(u=>{
+      html+=`<div class="unverified-row">
+        <img class="unverified-thumb" src="${u.imgUrl}" onclick="window.open(this.src)" title="Click to enlarge screenshot">
+        <span class="unverified-name">${u.name}</span>
+        <span style="font-size:9px;color:var(--text3)">Not registered</span>
+      </div>`;
+    });
+  }
+
+  el.innerHTML=html;
+  syncAbsentLog();
+}
+
+function togAtt(i){
+  attResults[i].present=!attResults[i].present;
+  const row=document.getElementById('ar-'+i);
+  const b=row.querySelector('.att-b');
+  b.className='att-b '+(attResults[i].present?'ab-p':'ab-a');
+  b.textContent=attResults[i].present?'PRESENT':'ABSENT';
+  syncAbsentLog();
+}
+
+function syncAbsentLog(){
+  const sess=document.getElementById('att-sess').value.trim()||today();
+  const absents=attResults.filter(r=>!r.present&&r.inRoster);
+  absents.forEach(a=>{
+    const exists=absentLog.find(l=>l.n===a.n&&l.date===sess);
+    if(!exists)absentLog.push({n:a.n,cp:a.cp,side:a.side,date:sess});
+  });
+  localStorage.setItem('bgb4_log',JSON.stringify(absentLog));
+  renderLog();
+}
+
+function renderLog(){
+  const el=document.getElementById('absent-log');
+  if(!absentLog.length){el.innerHTML='<div style="color:var(--text3);font-size:11px;font-family:\'Share Tech Mono\',monospace;padding:.5rem 0">No absent records.</div>';return;}
+  el.innerHTML=`<table class="log-tbl"><thead><tr><th>#</th><th>Name</th><th>Team</th><th>Main Car CP</th><th>Absent Date</th></tr></thead><tbody>`+
+    absentLog.map((l,i)=>`<tr><td>${i+1}</td><td>${l.n}</td><td>${l.side||'?'}</td><td>${fcp(l.cp)}</td><td>BGB ${l.date}</td></tr>`).join('')+
+    `</tbody></table>`;
+}
+
+function copyAbsent(){
+  const tsv=['No\tName\tTeam\tMain Car CP\tAbsent Date',...absentLog.map((l,i)=>`${i+1}\t${l.n}\t${l.side||'?'}\t${fcp(l.cp)}\tBGB ${l.date}`)].join('\n');
+  navigator.clipboard.writeText(tsv).then(()=>toast('Absent log copied!'));
+  document.getElementById('sh-save-st').className='ist ok';
+  document.getElementById('sh-save-st').textContent='✓ Copied! Paste into Sheets tab "'+cfg.abTab+'"';
+}
+function clearLog(){if(confirm('Clear all absent records?')){absentLog=[];localStorage.removeItem('bgb4_log');renderLog();}}
+
+// ══════════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════════
+function saveKey(){cfg.apiKey=document.getElementById('api-k').value.trim();localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));document.getElementById('api-st').className='ist ok';document.getElementById('api-st').textContent='✓ Saved locally';}
+async function testKey(){
+  const key=document.getElementById('api-k').value.trim();
+  const st=document.getElementById('api-st');
+  if(!key){st.className='ist er';st.textContent='✗ Enter key first';return;}
+  st.className='ist ld';st.textContent='Testing...';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:5,messages:[{role:'user',content:'Hi'}]})});
+    const d=await r.json();
+    if(d.error){st.className='ist er';st.textContent='✗ '+d.error.message;}
+    else{st.className='ist ok';st.textContent='✓ API key working!';}
+  }catch(e){st.className='ist er';st.textContent='✗ Connection error';}
+}
+function saveCfg(){cfg.sid=document.getElementById('cfg-sid').value.trim();cfg.rTab=document.getElementById('cfg-rt').value.trim();cfg.bgbTab=document.getElementById('cfg-bgbt').value.trim();cfg.abTab=document.getElementById('cfg-at').value.trim();localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));document.getElementById('cfg-st').className='ist ok';document.getElementById('cfg-st').textContent='✓ Saved';}
+function saveApp(){
+  cfg.alli=document.getElementById('cfg-alli').value.trim();
+  cfg.redWeeks=parseInt(document.getElementById('cfg-red-w').value)||4;
+  cfg.greenWeeks=parseInt(document.getElementById('cfg-green-w').value)||4;
+  localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));
+  document.getElementById('att-alli').value=cfg.alli;
+  document.getElementById('app-st').className='ist ok';
+  document.getElementById('app-st').textContent=`✓ Saved — Red: ${cfg.redWeeks}w, Green: ${cfg.greenWeeks}w`;
+}
+
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+
+// Resize image before sending to API — saves ~60-70% tokens
+// Max width 800px is enough for Claude to read game UI text
+function resizeAndEncode(file, maxW=800){
+  return new Promise((res,rej)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const scale=Math.min(1, maxW/img.width);
+        const w=Math.round(img.width*scale);
+        const h=Math.round(img.height*scale);
+        const canvas=document.createElement('canvas');
+        canvas.width=w; canvas.height=h;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        // Use JPEG quality 0.82 — sharp enough for text, much smaller
+        const dataUrl=canvas.toDataURL('image/jpeg',0.82);
+        res({b64:dataUrl.split(',')[1], mtype:'image/jpeg'});
+      };
+      img.onerror=rej;
+      img.src=e.target.result;
+    };
+    reader.onerror=rej;
+    reader.readAsDataURL(file);
+  });
+}
+
+// Legacy — kept for attendance OCR
+function fileToB64(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=e=>res(e.target.result.split(',')[1]);
+    r.onerror=rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  COPY BAR
+// ══════════════════════════════════════════════
+function showCopyBar(){
+  document.getElementById('copy-bar').style.display='block';
+}
+
+function buildTeamCopyText(side){
+  const res=teamsGenerated&&teamsGenerated[side];
+  if(!res)return null;
+  const {teams,alloy,subs}=res;
+  const lines=[`=== TEAM ${side} ===`,''];
+  lines.push(`[ALLOY] ${alloy.map(p=>p.n).join(' + ')}`,'');
+  for(let t=10;t>=7;t--){if(teams[t]&&teams[t].length)lines.push(`Team ${t}: ${teams[t].map(p=>p.n).join(' + ')}`);}
+  lines.push('');
+  for(let t=6;t>=1;t--){if(teams[t]&&teams[t].length)lines.push(`Team ${t}: ${teams[t].map(p=>p.n).join(' + ')}`);}
+  if(subs&&subs.length){lines.push('');lines.push(`[SUB] ${subs.map(p=>p.n).join(' | ')}`);}
+  return lines.join('\n');
+}
+
+function doCopyForSide(side){
+  const txt=buildTeamCopyText(side);
+  if(!txt){showBarMsg('No Team '+side+' data yet');return;}
+  navigator.clipboard.writeText(txt).then(()=>showBarMsg('Team '+side+' copied!'));
+}
+
+function doCopyBoth(){
+  const parts=[];
+  if(teamsGenerated&&teamsGenerated.A){const t=buildTeamCopyText('A');if(t)parts.push(t);}
+  if(teamsGenerated&&teamsGenerated.B){const t=buildTeamCopyText('B');if(t)parts.push(t);}
+  if(!parts.length){showBarMsg('No team data yet');return;}
+  navigator.clipboard.writeText(parts.join('\n\n')).then(()=>showBarMsg('Both teams copied!'));
+}
+
+function copyBGBRecord(){
+  const tsv=localStorage.getItem('bgb4_lastrecord');
+  if(!tsv){showBarMsg('Generate teams first');return;}
+  navigator.clipboard.writeText(tsv).then(()=>showBarMsg('BGB Record copied — paste into Sheets!'));
+}
+
+function showBarMsg(msg){
+  const el=document.getElementById('copy-bar-msg');
+  el.textContent=msg;el.style.opacity='1';
+  setTimeout(()=>el.style.opacity='0',2500);
+}
+
+// ══════════════════════════════════════════════
+//  COLOR CODING — fetch BGB Record + BGB Absent from Sheets
+// ══════════════════════════════════════════════
+let rosterStatus={}; // name -> 'absent-red' | 'no-turn-green' | 'normal' | ''
+
+function todayCode(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const dd=String(d.getDate()).padStart(2,'0');
+  const w=Math.ceil(d.getDate()/7);
+  return `${y}${m}${dd}W${w}`;
+}
+
+function autoSetDate(){
+  const v=todayCode();
+  document.getElementById('bgb-sess').value=v;
+  document.getElementById('att-sess').value=v;
+}
+
+// Parse YYYYMMWN code to a comparable value (ms since epoch, use date part only)
+function codeToDate(code){
+  if(!code) return null;
+  const m=code.match(/^(\d{4})(\d{2})(\d{2})/);
+  if(!m) return null;
+  return new Date(parseInt(m[1]),parseInt(m[2])-1,parseInt(m[3]));
+}
+
+// Is date more than 4 weeks ago from today?
+function olderThanWeeks(date, weeks){
+  if(!date) return false;
+  const ms=Date.now()-date.getTime();
+  return ms>(weeks*7*24*60*60*1000);
+}
+// Legacy alias
+function olderThan4Weeks(date){ return olderThanWeeks(date,cfg.redWeeks||4); }
+
+async function fetchColorCoding(){
+  const st=document.getElementById('rf-st');
+  st.className='ist ld';st.textContent='Fetching BGB history for color coding...';
+  try{
+    // Fetch BGB Record tab — columns: Date | Name | Team | Role | CP
+    const recordRows=await fetchSheetRaw(cfg.sid, cfg.bgbTab||'BGB Record');
+    // Fetch BGB Absent tab — columns: No | Name | Team | CP | Absent Date
+    const absentRows=await fetchSheetRaw(cfg.sid, cfg.abTab||'BGB Absent');
+
+    // Build: last participated date per player
+    const lastParticipated={}; // normName -> Date
+    recordRows.forEach(r=>{
+      if(!r.c||r.c.length<2) return;
+      const dateStr=r.c[0]&&r.c[0].v?String(r.c[0].v).trim():'';
+      const name=r.c[1]&&r.c[1].v?String(r.c[1].v).trim():'';
+      if(!name||!dateStr) return;
+      const d=codeToDate(dateStr.replace('BGB ',''));
+      if(!d) return;
+      const key=norm(name);
+      if(!lastParticipated[key]||d>lastParticipated[key]) lastParticipated[key]=d;
+    });
+
+    // Build: last attended (not absent) per player from absent log
+    // A player who is in absent log was REGISTERED but ABSENT
+    const lastAbsent={}; // normName -> Date (most recent absent)
+    absentRows.forEach(r=>{
+      if(!r.c||r.c.length<2) return;
+      const name=r.c[1]&&r.c[1].v?String(r.c[1].v).trim():'';
+      const dateStr=r.c[4]&&r.c[4].v?String(r.c[4].v).trim():
+                    r.c[3]&&r.c[3].v?String(r.c[3].v).trim():'';
+      if(!name||!dateStr) return;
+      const d=codeToDate(dateStr.replace('BGB ',''));
+      if(!d) return;
+      const key=norm(name);
+      if(!lastAbsent[key]||d>lastAbsent[key]) lastAbsent[key]=d;
+    });
+
+    // Compute status for each roster player
+    rosterStatus={};
+    ROSTER.forEach(p=>{
+      const key=norm(p.n);
+      const lastPart=lastParticipated[key]||null;
+      const lastAbs=lastAbsent[key]||null;
+
+      const rW=cfg.redWeeks||4;
+      const gW=cfg.greenWeeks||4;
+      if(!lastPart){
+        // Never participated
+        rosterStatus[key]='no-turn-green';
+      } else if(lastAbs&&lastAbs>=lastPart){
+        // Last event they were registered but absent
+        if(olderThanWeeks(lastPart,rW)) rosterStatus[key]='absent-red';
+        else rosterStatus[key]='normal-attend';
+      } else {
+        // Last event they attended — check if overdue for a turn
+        if(olderThanWeeks(lastPart,gW)) rosterStatus[key]='no-turn-green';
+        else rosterStatus[key]='normal-attend';
+      }
+    });
+
+    st.className='ist ok';st.textContent='✓ Color coding updated';
+    renderRoster();
+  }catch(e){
+    st.className='ist er';st.textContent='✗ '+e.message;
+  }
+}
+
+// Fetch raw rows from a sheet tab (no column mapping)
+async function fetchSheetRaw(sid,tab){
+  const url=`https://docs.google.com/spreadsheets/d/${sid}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}&headers=1`;
+  const proxies=[u=>u,u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`];
+  let lastErr='';
+  for(const proxy of proxies){
+    try{
+      const res=await fetch(proxy(url),{cache:'no-cache'});
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      const txt=await res.text();
+      const m=txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+      if(!m) throw new Error('Parse error');
+      return JSON.parse(m[1]).table.rows||[];
+    }catch(e){lastErr=e.message;}
+  }
+  throw new Error(lastErr);
+}
+
+// ══════════════════════════════════════════════
+//  SAVE / LOAD JSON
+// ══════════════════════════════════════════════
+function exportJSON(){
+  const data={
+    version:'v5',
+    exportDate:new Date().toISOString(),
+    roster:ROSTER,
+    absentLog,
+    rosterStatus,
+    cfg:{sid:cfg.sid,rTab:cfg.rTab,bgbTab:cfg.bgbTab,abTab:cfg.abTab,alli:cfg.alli,redWeeks:cfg.redWeeks||4,greenWeeks:cfg.greenWeeks||4}
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`bgb_data_${todayCode()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  document.getElementById('json-st').className='ist ok';
+  document.getElementById('json-st').textContent='✓ Exported! Share this file with your team.';
+}
+
+function importJSON(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const st=document.getElementById('json-st');
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(data.roster) ROSTER=data.roster;
+      if(data.absentLog) absentLog=data.absentLog;
+      if(data.rosterStatus) rosterStatus=data.rosterStatus;
+      if(data.cfg){
+        if(data.cfg.sid) cfg.sid=data.cfg.sid;
+        if(data.cfg.alli) cfg.alli=data.cfg.alli;
+        if(data.cfg.bgbTab) cfg.bgbTab=data.cfg.bgbTab;
+        if(data.cfg.abTab) cfg.abTab=data.cfg.abTab;
+        if(data.cfg.redWeeks) cfg.redWeeks=data.cfg.redWeeks;
+        if(data.cfg.greenWeeks) cfg.greenWeeks=data.cfg.greenWeeks;
+      }
+      localStorage.setItem('bgb4_roster',JSON.stringify(ROSTER));
+      localStorage.setItem('bgb4_log',JSON.stringify(absentLog));
+      localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));
+      renderRoster();renderLog();
+      st.className='ist ok';
+      st.textContent=`✓ Imported from ${file.name} (${data.exportDate?new Date(data.exportDate).toLocaleDateString():'unknown date'})`;
+    }catch(err){
+      st.className='ist er';st.textContent='✗ Invalid JSON file: '+err.message;
+    }
+  };
+  r.readAsText(file);
+  e.target.value=''; // reset so same file can be re-imported
+}
+
+// ══════════════════════════════════════════════
+//  ATTENDANCE — with registered list context
+// ══════════════════════════════════════════════
+function showAttRegisteredList(){
+  const el=document.getElementById('att-reg-list');
+  if(!el) return;
+  const all=[...teamA.starters,...teamA.subs,...teamB.starters,...teamB.subs];
+  if(!all.length){el.style.display='none';return;}
+  el.style.display='block';
+  el.innerHTML='<strong style="color:var(--gold2)">Registered players ('+all.length+'):</strong> '+
+    all.map(p=>p.n).join(' · ');
+}
+
+// ══════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
