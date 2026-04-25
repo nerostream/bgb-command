@@ -366,6 +366,97 @@ textarea.inp{resize:vertical;line-height:1.6}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
+/* ═══ REVIEW MODAL ═══ */
+.review-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;display:flex;align-items:stretch}
+.review-panel{background:var(--bg2);display:flex;flex-direction:column;width:100%;max-width:900px;margin:auto;border-radius:var(--radius-lg);overflow:hidden;max-height:90vh}
+@media(min-width:700px){.review-panel{flex-direction:row;max-height:85vh}}
+.review-img-side{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--border)}
+@media(max-width:699px){.review-img-side{border-right:none;border-bottom:1px solid var(--border);max-height:45vh}}
+.review-img-hd{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.review-img-hd-title{font-size:14px;font-weight:600;color:var(--text)}
+.review-img-hd-sub{font-size:12px;color:var(--text3)}
+.review-img-viewer{flex:1;overflow:hidden;position:relative;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:zoom-in;min-height:150px}
+.review-img-viewer img{max-width:100%;max-height:100%;object-fit:contain}
+.review-img-strip{display:flex;gap:5px;padding:8px 12px;overflow-x:auto;border-top:1px solid var(--border);flex-shrink:0}
+.review-thumb{width:36px;height:36px;object-fit:cover;border-radius:var(--radius-sm);border:2px solid transparent;cursor:pointer;flex-shrink:0;opacity:.6;transition:all .15s}
+.review-thumb.on{border-color:var(--gold2);opacity:1}
+.review-thumb.done{border-color:var(--green);opacity:.8}
+.review-thumb.ph{background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text3)}
+.review-list-side{flex:1;display:flex;flex-direction:column;min-width:0;max-height:50vh}
+@media(min-width:700px){.review-list-side{max-height:100%;overflow:hidden}}
+.review-list-hd{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.review-list-hd-title{font-size:14px;font-weight:600;color:var(--text)}
+.confirm-pill{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--green-dim);color:var(--green);border:1px solid rgba(61,184,120,0.3)}
+.review-list-body{flex:1;overflow-y:auto;padding:4px 0}
+.review-section-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:6px 14px 3px;background:var(--bg3);position:sticky;top:0}
+.review-player-row{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border);transition:background .1s}
+.review-player-row:last-child{border-bottom:none}
+.review-player-row:hover{background:var(--bg3)}
+.rpr-name{flex:1;font-size:13px;color:var(--text);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rpr-src{font-size:10px;color:var(--text3);font-style:italic;margin-left:2px}
+.rpr-role{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;cursor:pointer;border:1px solid;flex-shrink:0}
+.rpr-role.s{background:rgba(212,164,65,0.15);color:var(--gold2);border-color:rgba(212,164,65,0.3)}
+.rpr-role.b{background:var(--cyan-dim);color:var(--cyan2);border-color:rgba(47,184,204,0.3)}
+.rpr-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;font-weight:bold;padding:0 4px;line-height:1;opacity:.6;flex-shrink:0}
+.rpr-del:hover{opacity:1}
+.rpr-status{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;cursor:pointer}
+.rpr-status.ok{background:var(--green-dim);border-color:var(--green);color:var(--green)}
+.rpr-status.unk{background:rgba(212,164,65,0.1);border-color:var(--gold);color:var(--gold2)}
+.rpr-status.miss{background:var(--red-dim);border-color:var(--red);color:var(--red)}
+.review-add-row{padding:10px 14px;border-top:1px solid var(--border);background:var(--bg3);flex-shrink:0}
+.review-add-label{font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:600}
+.review-add-inner{display:flex;gap:6px}
+.review-add-inner .ac-wrap{flex:1;position:relative}
+.review-add-inner .ac-inp{font-size:13px;padding:7px 10px}
+.review-role-mini{display:flex;gap:4px}
+.rrm{font-size:11px;padding:5px 10px;border-radius:var(--radius-sm);border:1px solid;cursor:pointer;background:none;font-family:var(--font-body);font-weight:600}
+.rrm.s{border-color:var(--gold);color:var(--gold2)}
+.rrm.s.sel{background:var(--gold);color:#000}
+.rrm.b{border-color:var(--cyan);color:var(--cyan2)}
+.rrm.b.sel{background:var(--cyan);color:#000}
+.review-footer{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:var(--bg2)}
+.review-footer .btn{flex:1;justify-content:center}
+/* Zoomed image overlay */
+.zoom-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:600;display:flex;align-items:center;justify-content:center;cursor:zoom-out}
+.zoom-overlay img{max-width:95vw;max-height:95vh;object-fit:contain}
+
+/* ═══ SPINNER ═══ */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--gold2);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner-lg{width:32px;height:32px;border-width:3px}
+
+/* ═══ SCAN PROGRESS ═══ */
+.scan-progress{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin:8px 0}
+.scan-img-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;color:var(--text2)}
+.scan-img-row:first-child{padding-top:0}
+.sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background .3s}
+.sdot-done{background:var(--green)}
+.sdot-active{background:var(--gold2)}
+.sdot-wait{background:var(--border2)}
+.spbar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:8px 0 4px}
+.spbar-fill{height:100%;background:var(--gold2);border-radius:2px;transition:width .4s ease}
+.sp-summary{font-size:11px;color:var(--text3);font-family:var(--font-mono)}
+
+/* ═══ BUTTON HIERARCHY ═══ */
+.btn-primary-lg{width:100%;padding:12px;font-size:15px;font-weight:600;border-radius:var(--radius);cursor:pointer;border:1px solid var(--gold);background:var(--gold-dim);color:var(--gold2);transition:all .15s;font-family:var(--font-body);display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}
+.btn-primary-lg:hover{background:rgba(212,164,65,0.25)}
+.btn-primary-lg:disabled{opacity:.4;cursor:not-allowed}
+.btn-secondary-row{display:flex;gap:8px}
+.btn-secondary-row .btn{flex:1;justify-content:center}
+
+/* ═══ EMPTY STATE ═══ */
+.empty-state-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem 1.5rem;text-align:center;margin:1rem 0}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.6}
+.empty-title{font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px}
+.empty-desc{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:1.25rem}
+.empty-action{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--gold-dim);border:1px solid var(--gold);color:var(--gold2);border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-body)}
+.empty-action:hover{background:rgba(212,164,65,0.22)}
+
+/* ═══ STEP STATUS ═══ */
+.step-btn .step-sub{font-size:10px;color:var(--text3);line-height:1.2;max-width:100px;white-space:normal;text-align:left}
+.step-btn.done .step-num::after{content:''}
+.step-btn.done .step-num{font-size:14px}
+
 /* ═══ RESPONSIVE — MOBILE FIRST ═══ */
 @media(max-width:700px){
   .main{padding:.75rem}
@@ -452,28 +543,23 @@ textarea.inp{resize:vertical;line-height:1.6}
 
 <nav class="step-nav">
   <button class="step-btn on" id="step-roster" onclick="msw('roster')">
-    <div class="step-num">1</div>
-    <span class="step-lbl">Roster</span>
-  </button>
-  <div class="step-divider"></div>
-  <button class="step-btn" id="step-import" onclick="msw('import')">
-    <div class="step-num">2</div>
-    <span class="step-lbl">Import Data</span>
+    <div class="step-num" id="snum-roster">1</div>
+    <div><span class="step-lbl">Roster</span><div class="step-sub" id="ssub-roster"></div></div>
   </button>
   <div class="step-divider"></div>
   <button class="step-btn" id="step-select" onclick="msw('select')">
-    <div class="step-num">3</div>
-    <span class="step-lbl">Register Players</span>
+    <div class="step-num" id="snum-select">2</div>
+    <div><span class="step-lbl">Register</span><div class="step-sub" id="ssub-select"></div></div>
   </button>
   <div class="step-divider"></div>
   <button class="step-btn" id="step-teams" onclick="msw('teams')">
-    <div class="step-num">4</div>
-    <span class="step-lbl">Team Formation</span>
+    <div class="step-num" id="snum-teams">3</div>
+    <div><span class="step-lbl">Teams</span><div class="step-sub" id="ssub-teams"></div></div>
   </button>
   <div class="step-divider"></div>
   <button class="step-btn" id="step-attend" onclick="msw('attend')">
-    <div class="step-num">5</div>
-    <span class="step-lbl">Attendance</span>
+    <div class="step-num" id="snum-attend">4</div>
+    <div><span class="step-lbl">Attendance</span><div class="step-sub" id="ssub-attend"></div></div>
   </button>
   <button class="settings-btn" id="step-settings" onclick="msw('settings')">
     ⚙ Settings
@@ -486,6 +572,8 @@ textarea.inp{resize:vertical;line-height:1.6}
     <button class="btn btn-a" onclick="doCopyForSide('A')" id="copy-bar-a">📋 Team A</button>
     <button class="btn btn-b" onclick="doCopyForSide('B')" id="copy-bar-b">📋 Team B</button>
     <button class="btn" onclick="doCopyBoth()">📋 Both Teams</button>
+    <button class="btn" onclick="copyWhatsApp()" style="border-color:#25D366;color:#25D366;background:rgba(37,211,102,0.08)">💬 WhatsApp</button>
+    <button class="btn" onclick="printFormation()">🖨 Print</button>
     <button class="btn btn-gr" onclick="copyBGBRecord()">📊 Save to Sheets</button>
     <span id="copy-bar-msg" style="font-size:13px;color:var(--green);opacity:0;transition:opacity .3s"></span>
   </div>
@@ -497,7 +585,7 @@ textarea.inp{resize:vertical;line-height:1.6}
   <div class="acts">
     <button class="btn btn-c" onclick="quickFetch()">↻ Refresh Roster</button>
     <button class="btn btn-g" onclick="fetchColorCoding()">Update Color Coding</button>
-    <button class="btn" onclick="msw('import')">+ Import</button>
+    <button class="btn" onclick="msw('settings')">⚙ Import / Settings</button>
   </div>
   <div id="rf-st" class="ist"></div>
   <div class="ibox" style="font-size:12px;margin-top:.5rem">Sheet structure: <strong>Col A</strong> = No. · <strong>Col B</strong> = Name · <strong>Col C</strong> = First Car CP · <strong>Col D</strong> = Watchtower. Change columns in Import tab if different.</div>
@@ -533,52 +621,7 @@ textarea.inp{resize:vertical;line-height:1.6}
 </div>
 
 <!-- ═══════════════ IMPORT ═══════════════ -->
-<div id="mt-import" class="mtc">
-  <div class="sec">Import Roster Data</div>
-  <div class="ibox">Update roster from <strong>Google Sheets</strong>, <strong>CSV</strong>, or <strong>manual paste</strong>. Columns needed: Name + First Car CP.</div>
-  <div class="imp-grid">
-    <div class="imp-card">
-      <div class="imp-ttl">📊 Google Sheets</div>
-      <div class="fl">Spreadsheet URL</div>
-      <input class="inp" id="gs-url" value="https://docs.google.com/spreadsheets/d/1fGhmeRAgKmd6a4z1Q-LBSfPL2qRqYhpK6PticIlooeo/edit"/>
-      <div class="fl">Tab Name</div>
-      <input class="inp" id="gs-tab" value="First Car3"/>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-        <div><div class="fl">Name Col</div><input class="inp" id="gs-cn" value="B" maxlength="2" style="text-transform:uppercase" oninput="cfg.nameCol=this.value"/></div>
-        <div><div class="fl">CP Col</div><input class="inp" id="gs-cc" value="C" maxlength="2" style="text-transform:uppercase" oninput="cfg.cpCol=this.value"/></div>
-      </div>
-      <button class="btn btn-c" onclick="impSheets()">Fetch ↗</button>
-      <div id="gs-st" class="ist"></div>
-    </div>
-    <div class="imp-card">
-      <div class="imp-ttl">📁 CSV Upload</div>
-      <div class="fl" style="margin-bottom:6px">Export from Sheets: File → Download → CSV</div>
-      <div class="dz" onclick="document.getElementById('csv-f').click()" ondragover="dzo(event,'csv-dz')" ondragleave="dzl('csv-dz')" ondrop="czd(event)" id="csv-dz">
-        <input type="file" id="csv-f" accept=".csv" style="display:none" onchange="csvUp(event)">
-        <div style="font-size:24px;margin-bottom:4px">📂</div>
-        Drop CSV or click to browse
-      </div>
-      <div id="csv-st" class="ist"></div>
-    </div>
-    <div class="imp-card">
-      <div class="imp-ttl">✏️ Manual Paste</div>
-      <div class="fl" style="margin-bottom:4px">One per line: Name,CP</div>
-      <textarea id="paste-a" class="inp" style="height:110px;resize:vertical;line-height:1.7" placeholder="Nick•倪,3360&#10;XryderZ,3770"></textarea>
-      <div class="acts"><button class="btn btn-c" onclick="impPaste()">Import ↗</button><button class="btn" onclick="document.getElementById('paste-a').value=''">Clear</button></div>
-      <div id="ps-st" class="ist"></div>
-    </div>
-  </div>
-  <div id="imp-prev" style="display:none">
-    <div class="hr"></div>
-    <div class="sec">Preview</div>
-    <div id="ip-info" class="ibox"></div>
-    <div id="ip-grid" class="roster3" style="margin-bottom:10px"></div>
-    <div class="acts">
-      <button class="btn btn-g" onclick="applyImp()">✓ Apply Roster</button>
-      <button class="btn btn-r" onclick="cancelImp()">✗ Cancel</button>
-    </div>
-  </div>
-</div>
+<div id="mt-import" class="mtc" style="display:none!important"></div>
 
 <!-- ═══════════════ SELECT ═══════════════ -->
 <div id="mt-select" class="mtc">
@@ -602,7 +645,7 @@ textarea.inp{resize:vertical;line-height:1.6}
         <span class="side-ttl ttl-a">⚔ Team A</span>
         <div style="display:flex;gap:6px;align-items:center">
           <span id="a-count" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--a-color)">0 players</span>
-          <button class="btn btn-a" onclick="scanTeam('A')" id="scan-a-btn">🔍 2-Pass Scan</button>
+          <button class="btn btn-a" onclick="scanTeam('A')" id="scan-a-btn">Scan Team A</button>
         </div>
       </div>
       <div class="side-body">
@@ -614,6 +657,7 @@ textarea.inp{resize:vertical;line-height:1.6}
         <div id="thumbs-a" class="img-thumbs"></div>
         <div id="st-a" class="ist"></div>
         <div id="list-a" class="player-list" style="margin-top:8px"></div>
+        <div id="review-btn-a"></div>
         <div id="missing-a"></div>
       </div>
     </div>
@@ -623,7 +667,7 @@ textarea.inp{resize:vertical;line-height:1.6}
         <span class="side-ttl ttl-b">🛡 Team B</span>
         <div style="display:flex;gap:6px;align-items:center">
           <span id="b-count" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--b-color)">0 players</span>
-          <button class="btn btn-b" onclick="scanTeam('B')" id="scan-b-btn">🔍 2-Pass Scan</button>
+          <button class="btn btn-b" onclick="scanTeam('B')" id="scan-b-btn">Scan Team B</button>
         </div>
       </div>
       <div class="side-body">
@@ -635,17 +679,21 @@ textarea.inp{resize:vertical;line-height:1.6}
         <div id="thumbs-b" class="img-thumbs"></div>
         <div id="st-b" class="ist"></div>
         <div id="list-b" class="player-list" style="margin-top:8px"></div>
+        <div id="review-btn-b"></div>
         <div id="missing-b"></div>
       </div>
     </div>
   </div>
 
   <div class="hr"></div>
-  <div class="acts">
-    <button class="btn btn-g" id="gen-btn" onclick="genTeams()" disabled>Generate Teams ↗</button>
-    <button class="btn" onclick="clearSelect()">Clear All</button>
+  <button class="btn-primary-lg" id="gen-btn" onclick="genTeams()" disabled>
+    Generate Teams →
+  </button>
+  <div class="btn-secondary-row">
+    <button class="btn" onclick="autoSel()">Auto-select top 20+10</button>
+    <button class="btn" onclick="clearSelect()">Clear all</button>
   </div>
-  <div id="sel-err" style="color:var(--red);font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:4px"></div>
+  <div id="sel-err" style="color:var(--red);font-size:12px;margin-top:8px"></div>
 </div>
 
 <!-- ═══════════════ TEAMS ═══════════════ -->
@@ -660,7 +708,7 @@ textarea.inp{resize:vertical;line-height:1.6}
       <span class="tog-lbl">Show Main Car CP</span>
     </div>
   </div>
-  <div id="teams-area"><div style="color:var(--text3);font-size:12px;font-family:'Share Tech Mono',monospace;padding:2rem 0">← Scan participants in Select tab first.</div></div>
+  <div id="teams-area"><div class="empty-state-card"><div class="empty-icon">⚔</div><div class="empty-title">No formation yet</div><div class="empty-desc">Scan your BGB screenshots in step 2, then come back here to generate teams.</div><button class="empty-action" onclick="msw('select')">← Back to step 2</button></div></div>
   <div id="copy-area" style="display:none">
     <div class="hr"></div>
     <div class="copy-box">
@@ -719,6 +767,53 @@ textarea.inp{resize:vertical;line-height:1.6}
 <div id="mt-settings" class="mtc">
   <div class="sec">Configuration</div>
   <div class="set-grid">
+
+    <div class="set-card" style="grid-column:1/-1">
+      <div class="set-ttl">📥 Import Roster Data</div>
+      <div class="ibox" style="margin-bottom:10px">Update roster from <strong>Google Sheets</strong>, <strong>CSV</strong>, or <strong>manual paste</strong>. Columns: Name (col B) + First Car CP (col C).</div>
+      <div class="imp-grid">
+        <div class="imp-card">
+          <div class="imp-ttl">📊 Google Sheets</div>
+          <div class="fl">Spreadsheet URL</div>
+          <input class="inp" id="gs-url" value="https://docs.google.com/spreadsheets/d/1fGhmeRAgKmd6a4z1Q-LBSfPL2qRqYhpK6PticIlooeo/edit"/>
+          <div class="fl">Tab Name</div>
+          <input class="inp" id="gs-tab" value="First Car3"/>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+            <div><div class="fl">Name Col</div><input class="inp" id="gs-cn" value="B" maxlength="2" style="text-transform:uppercase" oninput="cfg.nameCol=this.value"/></div>
+            <div><div class="fl">CP Col</div><input class="inp" id="gs-cc" value="C" maxlength="2" style="text-transform:uppercase" oninput="cfg.cpCol=this.value"/></div>
+          </div>
+          <button class="btn btn-c" onclick="impSheets()">Fetch ↗</button>
+          <div id="gs-st" class="ist"></div>
+        </div>
+        <div class="imp-card">
+          <div class="imp-ttl">📁 CSV Upload</div>
+          <div class="fl" style="margin-bottom:6px">Export from Sheets: File → Download → CSV</div>
+          <div class="dz" onclick="document.getElementById('csv-f').click()" ondragover="dzo(event,'csv-dz')" ondragleave="dzl('csv-dz')" ondrop="czd(event)" id="csv-dz">
+            <input type="file" id="csv-f" accept=".csv" style="display:none" onchange="csvUp(event)">
+            <div style="font-size:24px;margin-bottom:4px">📂</div>
+            Drop CSV or click to browse
+          </div>
+          <div id="csv-st" class="ist"></div>
+        </div>
+        <div class="imp-card">
+          <div class="imp-ttl">✏️ Manual Paste</div>
+          <div class="fl" style="margin-bottom:4px">One per line: Name,CP</div>
+          <textarea id="paste-a" class="inp" style="height:110px;resize:vertical;line-height:1.7" placeholder="Nick•倪,3360&#10;XryderZ,3770"></textarea>
+          <div class="acts"><button class="btn btn-c" onclick="impPaste()">Import ↗</button><button class="btn" onclick="document.getElementById('paste-a').value=''">Clear</button></div>
+          <div id="ps-st" class="ist"></div>
+        </div>
+      </div>
+      <div id="imp-prev" style="display:none">
+        <div class="hr"></div>
+        <div class="sec">Preview</div>
+        <div id="ip-info" class="ibox"></div>
+        <div id="ip-grid" class="roster3" style="margin-bottom:10px"></div>
+        <div class="acts">
+          <button class="btn btn-g" onclick="applyImp()">✓ Apply Roster</button>
+          <button class="btn btn-r" onclick="cancelImp()">✗ Cancel</button>
+        </div>
+      </div>
+    </div>
     <div class="set-card">
       <div class="set-ttl">🤖 Claude AI — OCR</div>
       <div class="fl">Anthropic API Key</div>
@@ -749,6 +844,12 @@ textarea.inp{resize:vertical;line-height:1.6}
         <input type="file" id="import-json-f" accept=".json" style="display:none" onchange="importJSON(event)">
       </div>
       <div id="json-st" class="ist"></div>
+    </div>
+
+    <div class="set-card" style="grid-column:1/-1">
+      <div class="set-ttl">📅 BGB Session History</div>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:10px;line-height:1.5">Last 8 BGB sessions are saved automatically when you generate teams. Load a past session to view or copy its formation.</p>
+      <div id="bgb-history-list"></div>
     </div>
 
     <div class="set-card">
@@ -791,6 +892,64 @@ textarea.inp{resize:vertical;line-height:1.6}
 
 </div><!-- /main -->
 <div class="toast" id="toast">Copied!</div>
+
+<!-- ═══ REVIEW MODAL ═══ -->
+<div id="review-overlay" class="review-overlay" style="display:none" onclick="if(event.target===this)closeReview()">
+  <div class="review-panel">
+    <!-- LEFT: Image viewer -->
+    <div class="review-img-side">
+      <div class="review-img-hd">
+        <div>
+          <div class="review-img-hd-title" id="rev-img-title">Screenshot 1</div>
+          <div class="review-img-hd-sub" id="rev-img-sub"></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn" id="rev-prev" onclick="revNavImg(-1)">← Prev</button>
+          <button class="btn" id="rev-next" onclick="revNavImg(1)">Next →</button>
+        </div>
+      </div>
+      <div class="review-img-viewer" id="rev-img-viewer" onclick="zoomImg(this.querySelector('img')?.src)">
+        <div id="rev-img-placeholder" style="color:var(--text3);font-size:13px;text-align:center;padding:2rem">
+          No screenshot available<br><span style="font-size:11px">Upload screenshots before scanning</span>
+        </div>
+      </div>
+      <div class="review-img-strip" id="rev-img-strip"></div>
+    </div>
+
+    <!-- RIGHT: Player list -->
+    <div class="review-list-side">
+      <div class="review-list-hd">
+        <span class="review-list-hd-title" id="rev-list-title">Players — Team A</span>
+        <span class="confirm-pill" id="rev-confirm-count">0 confirmed</span>
+      </div>
+      <div class="review-list-body" id="rev-list-body"></div>
+      <!-- Add missing player row -->
+      <div class="review-add-row">
+        <div class="review-add-label">Add missing player</div>
+        <div class="review-add-inner">
+          <div class="ac-wrap">
+            <input class="ac-inp" id="rev-ac-inp" placeholder="Type name..." oninput="revAcSearch(this.value)" onkeydown="revAcKey(event)" autocomplete="off"/>
+            <div class="ac-drop" id="rev-ac-drop"></div>
+          </div>
+          <div class="review-role-mini">
+            <button class="rrm s sel" id="rev-role-s" onclick="revSetRole('starter')">STR</button>
+            <button class="rrm b" id="rev-role-b" onclick="revSetRole('sub')">SUB</button>
+          </div>
+        </div>
+      </div>
+      <div class="review-footer">
+        <button class="btn btn-g" onclick="revConfirmAll()">✓ Confirm all</button>
+        <button class="btn btn-c" onclick="revNextImg()">Next image →</button>
+        <button class="btn" onclick="closeReview()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Zoom overlay -->
+<div id="zoom-overlay" class="zoom-overlay" style="display:none" onclick="this.style.display='none'">
+  <img id="zoom-img" src="">
+</div>
 
 <script>
 // ══════════════════════════════════════════════
@@ -921,8 +1080,15 @@ let pendingImp=null;
 const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 function init(){
-  // Restore theme
   if(localStorage.getItem('bgb_theme')==='light') document.body.classList.add('light');
+  // Restore last refresh timestamp
+  const lr=localStorage.getItem('bgb4_lastrefresh');
+  if(lr){
+    const d=new Date(lr);
+    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const timeStr=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+    document.getElementById('stamp').textContent='Roster: '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear()+' '+timeStr;
+  }
   try{
     const c=localStorage.getItem('bgb4_cfg');if(c)cfg=Object.assign(cfg,JSON.parse(c));
     const r=localStorage.getItem('bgb4_roster');if(r)ROSTER=JSON.parse(r);
@@ -943,6 +1109,25 @@ function init(){
   if(cfg.greenWeeks){
     document.getElementById('cfg-green-w').value=cfg.greenWeeks;
     document.getElementById('green-w-val').textContent=cfg.greenWeeks+'w';
+  }
+  // Load BGB history
+  try{
+    const h=localStorage.getItem('bgb4_history');
+    if(h) bgbHistory=JSON.parse(h);
+    const curr=localStorage.getItem('bgb4_currentsess');
+    if(curr){
+      const s=JSON.parse(curr);
+      teamsGenerated=s.teamsGenerated||null;
+      if(teamsGenerated) showCopyBar();
+    }
+  }catch(e){}
+  // Restore scan progress on refresh
+  const hadProgress=loadScanProgress();
+  if(hadProgress){
+    const banner=document.createElement('div');
+    banner.className='sbox';banner.style.cssText='margin:0;border-radius:0;text-align:center;font-size:13px;';
+    banner.innerHTML='✓ Scan progress restored from your last session. <button class="btn btn-r" style="margin-left:8px;font-size:11px;padding:3px 10px" onclick="this.parentElement.remove();clearScanProgress()">Clear</button>';
+    document.querySelector('.main').prepend(banner);
   }
   renderRoster();renderLog();autoSetDate();
   // Update hints for mobile
@@ -1009,7 +1194,7 @@ function esc(s){return s.replace(/'/g,"\\'").replace(/</g,'&lt;')}
 function today(){const d=new Date();return`${d.getFullYear()}-${d.getMonth()+1}-${Math.ceil(d.getDate()/7)}`}
 function autoSetDate(){const v=today();document.getElementById('bgb-sess').value=v;document.getElementById('att-sess').value=v;}
 function toast(msg='Copied!'){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
-const stepLabels={roster:'Roster',import:'Import Data',select:'Register Players',teams:'Team Formation',attend:'Attendance',settings:'Settings'};
+const stepLabels={roster:'Roster',select:'Register Players',teams:'Team Formation',attend:'Attendance',settings:'Settings'};
 
 function msw(t){
   document.querySelectorAll('.mtc').forEach(e=>e.classList.remove('on'));
@@ -1017,7 +1202,9 @@ function msw(t){
   document.getElementById('mt-'+t).classList.add('on');
   const btn=document.getElementById('step-'+t);
   if(btn) btn.classList.add('on');
-  // Update logo subtitle with current step on mobile
+  if(t==='teams'&&teamsGenerated) showCopyBar();
+  else hideCopyBar();
+  if(t==='settings') renderHistory();
   const sub=document.querySelector('.logo-s');
   if(sub&&isMobile) sub.textContent=stepLabels[t]||'BGB Command';
 }
@@ -1240,10 +1427,13 @@ async function quickFetch(){
     localStorage.setItem('bgb4_roster',JSON.stringify(ROSTER));
     const now=new Date();
     const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    document.getElementById('stamp').textContent='Updated: '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+    const timeStr=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+    document.getElementById('stamp').textContent='Roster: '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear()+' '+timeStr;
+    localStorage.setItem('bgb4_lastrefresh',new Date().toISOString());
     st.className='ist ok';
     st.textContent='✓ '+players.length+' players refreshed';
     renderRoster();
+    updateStepStatus();
   }catch(e){
     // Never touch ROSTER on error
     st.className='ist er';
@@ -1370,178 +1560,118 @@ async function callAPI(apiKey, model, maxTokens, imageB64, imageMtype, promptTex
 
 async function scanTeam(side){
   const apiKey=cfg.apiKey||document.getElementById('api-k').value.trim();
-  if(!apiKey){alert('Set Anthropic API key in Settings tab first.');return;}
+  if(!apiKey){alert('Set Anthropic API key in Settings.');return;}
   const files=imgFiles[side];
-  if(!files.length){alert(`Upload ${side==='A'?'Team A':'Team B'} screenshots first.`);return;}
+  if(!files.length){alert(`Upload Team ${side} screenshots first.`);return;}
   const st=document.getElementById('st-'+side.toLowerCase());
   const btn=document.getElementById('scan-'+side.toLowerCase()+'-btn');
   btn.disabled=true;
+  btn.innerHTML=`<div class="spinner"></div> Scanning...`;
 
-  // playerMap: normKey → {name, role, confirmed}
-  // confirmed=true means Sonnet has verified the role
+  const teamLetter=side;
   const playerMap={};
-  const teamLetter=side; // 'A' or 'B'
+
+  // Full roster as matching list — no discovery needed
+  const rosterList=ROSTER.map(p=>p.n).join('\n');
+
+  // Render initial progress UI
+  function renderScanProgress(current,results){
+    const rows=files.map((f,i)=>{
+      const r=results[i];
+      const cls=i<current?'sdot-done':i===current?'sdot-active':'sdot-wait';
+      const label=i<current?`${f.name||'Image '+(i+1)} · ${r||0} matched`
+        :i===current?`${f.name||'Image '+(i+1)} · scanning...`
+        :`${f.name||'Image '+(i+1)}`;
+      return `<div class="scan-img-row"><div class="sdot ${cls}"></div><span>${label}</span>${i===current?'<div class="spinner" style="margin-left:auto"></div>':''}</div>`;
+    }).join('');
+    const pct=current>=files.length?100:Math.round((current/files.length)*100);
+    const total=results.reduce((a,b)=>(a||0)+(b||0),0)||Object.keys(playerMap).length;
+    st.innerHTML=`<div class="scan-progress">${rows}<div class="spbar"><div class="spbar-fill" style="width:${pct}%"></div></div><div class="sp-summary">${total} players matched · image ${Math.min(current+1,files.length)} of ${files.length}</div></div>`;
+  }
+  const imgResults=new Array(files.length).fill(null);
 
   for(let i=0;i<files.length;i++){
-    // ── PASS 1: Haiku extracts all names + tentative role (full res) ──
-    st.className='ist ld';
-    st.textContent=`Image ${i+1}/${files.length} — Pass 1: extracting names (Haiku)...`;
+    renderScanProgress(i,imgResults);
 
-    const b64=await fileToB64(files[i]); // full resolution, no resize
+    const b64=await fileToB64(files[i]);
     const mtype=files[i].type||'image/jpeg';
 
-    const pass1Prompt=`This is a Dark War Survival game screenshot showing the BGB Participants panel for Team ${teamLetter}.
+    const prompt=`Dark War Survival — BGB Participants screenshot, Team ${teamLetter}.
 
-TASK: Extract every visible player name and their role.
+I have the COMPLETE ROSTER of all possible players. Your job is ONLY to match what you see in this screenshot to names from this roster — do NOT invent names.
 
-UI LAYOUT of each player row (left to right):
-[Avatar] [Player Name] [Left Icon] [Right Icon]
+ROSTER (match to these exact names):
+${rosterList}
 
-The Left Icon and Right Icon are either:
-- A gold/yellow letter "${teamLetter}" = this role APPLIES to the player
-- A red circle with a slash (no-entry sign) = this role does NOT apply
+ROLE DETECTION:
+- Each player row: [Avatar] [Name] [LEFT icon] [RIGHT icon]
+- Gold letter "${teamLetter}" on LEFT = STARTER
+- Gold letter "${teamLetter}" on RIGHT = SUBSTITUTE
+- Red circle/slash = that role does NOT apply to this player
+- Skip R1/R2/R3/R4 rank badge rows
+- Skip "Starter: 20/20" and "Substitute: 10/10" header rows
 
-RULES:
-- Gold "${teamLetter}" on LEFT = STARTER
-- Gold "${teamLetter}" on RIGHT = SUBSTITUTE  
-- Red slash on LEFT, gold on RIGHT = SUBSTITUTE
-- Gold on LEFT, red slash on RIGHT = STARTER
-- Skip rows with R1/R2/R3/R4 rank badges — not players
-- Skip header rows like "Starter: 20/20" or "Substitute: 10/10"
+Return ONLY valid JSON:
+{"found":[{"name":"exact name FROM ROSTER LIST above","role":"starter"},{"name":"exact name FROM ROSTER LIST above","role":"sub"}]}`;
 
-Return ONLY valid JSON, no explanation, no markdown:
-{"players":[{"name":"exact player name","role":"starter"},{"name":"exact player name","role":"sub"}]}`;
-
-    let pass1Names=[];
     try{
-      const txt=await callAPI(apiKey,'claude-haiku-4-5-20251001',800,b64,mtype,pass1Prompt);
+      const txt=await callAPI(apiKey,'claude-sonnet-4-6',1000,b64,mtype,prompt);
       const jm=txt.match(/\{[\s\S]*\}/);
-      if(jm){
-        const parsed=JSON.parse(jm[0]);
-        if(parsed.players&&Array.isArray(parsed.players)){
-          pass1Names=parsed.players.filter(p=>p.name&&p.name.length>1);
+      if(!jm) continue;
+      const parsed=JSON.parse(jm[0]);
+      const found=parsed.found||parsed.players||[];
+
+      found.forEach(p=>{
+        if(!p.name||p.name.length<1) return;
+        // Find in roster — exact first, then fuzzy
+        const rosterMatch=ROSTER.find(r=>r.n===p.name)||fuzzyMatchRoster(p.name);
+        const finalName=rosterMatch?rosterMatch.n:p.name.trim();
+        const finalCP=rosterMatch?rosterMatch.cp:0;
+        const finalKey=norm(finalName);
+        if(!finalKey||finalKey.length<2) return;
+        const role=p.role==='sub'?'sub':'starter';
+        if(!playerMap[finalKey]){
+          playerMap[finalKey]={name:finalName,role,confirmed:true,cp:finalCP};
         }
-      }
-    }catch(e){ console.warn('Pass1 error img '+i,e); continue; }
-
-    if(!pass1Names.length) continue;
-
-    // ── PASS 2: Sonnet verifies roles for names Haiku found ──
-    st.textContent=`Image ${i+1}/${files.length} — Pass 2: verifying roles (Sonnet)...`;
-
-    const nameList=pass1Names.map(p=>p.name).join('\n');
-    const pass2Prompt=`Dark War Survival BGB screenshot, Team ${teamLetter}.
-
-I need you to determine the role of each player listed below by looking at their row in the image.
-
-For each player row, the layout is:
-[Avatar] [Name] [LEFT icon] [RIGHT icon]
-
-The icons are:
-- Gold/yellow letter "${teamLetter}" = role APPLIES
-- Red circle with slash = role does NOT apply
-
-RULE: Gold "${teamLetter}" on the LEFT = STARTER. Gold "${teamLetter}" on the RIGHT = SUBSTITUTE.
-
-Players to check (one per line):
-${nameList}
-
-Return ONLY valid JSON, no markdown, no explanation:
-{"players":[{"name":"exact name as shown","role":"starter or sub"}]}
-
-Use the EXACT player names as I listed them. Do not modify names.`;
-
-    let pass2Result=[];
-    try{
-      const txt2=await callAPI(apiKey,'claude-sonnet-4-6',600,b64,mtype,pass2Prompt);
-      const jm2=txt2.match(/\{[\s\S]*\}/);
-      if(jm2){
-        const parsed2=JSON.parse(jm2[0]);
-        if(parsed2.players&&Array.isArray(parsed2.players)){
-          pass2Result=parsed2.players;
-        }
-      }
-    }catch(e){
-      console.warn('Pass2 error, using Pass1 roles',e);
-      pass2Result=pass1Names; // fallback to Haiku result
-    }
-
-    // Merge: prefer Sonnet role, fallback to Haiku role
-    const pass2Map={};
-    pass2Result.forEach(p=>{ if(p.name) pass2Map[norm(p.name)]=p.role==='sub'?'sub':'starter'; });
-
-    // Build per-image player list — skip duplicates already seen in earlier images
-    const imgPlayers=[];
-    pass1Names.forEach(p=>{
-      const key=norm(p.name);
-      if(!key||key.length<2) return;
-      const role=pass2Map[key]||(p.role==='sub'?'sub':'starter');
-      const confirmed=!!pass2Map[key];
-
-      // Try fuzzy match to roster to fix unreadable special chars
-      const matched=fuzzyMatchRoster(p.name);
-      const finalName=matched?matched.n:p.name.trim();
-      const finalCP=matched?matched.cp:0;
-      const finalKey=matched?norm(matched.n):key;
-
-      if(playerMap[finalKey]){
-        // Already seen in a previous image — skip from display but update role if Sonnet confirmed
-        if(!playerMap[finalKey].confirmed&&confirmed){
-          playerMap[finalKey].role=role;
-          playerMap[finalKey].confirmed=true;
-        }
-        return; // ← skip duplicate in this image
-      }
-
-      // New player — add to this image group AND playerMap
-      imgPlayers.push({
-        n:finalName,
-        cp:finalCP,
-        role,
-        confirmed,
-        rawName:finalName!==p.name.trim()?p.name.trim():null // store original if fuzzy-corrected
       });
-      playerMap[finalKey]={name:finalName, role, confirmed};
-    });
-
-    // Store this image group
-    const imgGroup={
-      imgName:files[i].name||`Image ${i+1}`,
-      imgIdx:i+1,
-      players:imgPlayers
-    };
-    if(side==='A') teamA.images.push(imgGroup);
-    else teamB.images.push(imgGroup);
-
-    st.textContent=`Image ${i+1}/${files.length} — done. ${Object.keys(playerMap).length} unique players so far...`;
+      imgResults[i]=Object.keys(playerMap).length-(i>0?imgResults.slice(0,i).reduce((a,b)=>(a||0)+(b||0),0):0);
+      renderScanProgress(i+1,imgResults);
+    }catch(e){
+      console.warn('Scan error img '+i,e);
+      st.textContent=`Image ${i+1}/${files.length} — error, skipping...`;
+    }
   }
 
-  // ── FLATTEN unique players (no sort yet — sort happens at genTeams) ──
-  const allUnique=Object.values(playerMap).map(p=>({
-    n:p.name,
-    cp:getCPfromRoster(p.name),
-    role:p.role,
-    confirmed:p.confirmed||false
+  // Build final lists
+  const allPlayers=Object.values(playerMap).map(p=>({
+    n:p.name, cp:p.cp||getCPfromRoster(p.name), role:p.role, confirmed:p.confirmed
   }));
-  // Store flat lists too (unsorted, for missing count)
-  if(side==='A'){
-    teamA.starters=allUnique.filter(p=>p.role==='starter');
-    teamA.subs=allUnique.filter(p=>p.role==='sub');
-  } else {
-    teamB.starters=allUnique.filter(p=>p.role==='starter');
-    teamB.subs=allUnique.filter(p=>p.role==='sub');
-  }
+  allPlayers.sort((a,b)=>b.cp-a.cp);
 
-  const total=allUnique.length;
-  const stCount=allUnique.filter(p=>p.role==='starter').length;
-  const subCount=allUnique.filter(p=>p.role==='sub').length;
-  const unconfirmed=allUnique.filter(p=>!p.confirmed).length;
+  let starters=allPlayers.filter(p=>p.role==='starter');
+  let subs=allPlayers.filter(p=>p.role==='sub');
+
+  // Hard cap
+  if(starters.length>20){ const excess=starters.splice(20); subs.push(...excess); subs.sort((a,b)=>b.cp-a.cp); }
+  if(subs.length>10) subs=subs.slice(0,10);
+
+  const data=side==='A'?teamA:teamB;
+  data.images=[{imgName:`${files.length} screenshot${files.length>1?'s':''} scanned`,imgIdx:1,players:allPlayers}];
+  data.starters=starters;
+  data.subs=subs;
+
+  const total=starters.length+subs.length;
   st.className='ist ok';
-  st.textContent=`✓ ${total} unique players — ${stCount} starters, ${subCount} subs${unconfirmed>0?' · '+unconfirmed+' role(s) from Haiku fallback':' · all roles Sonnet-verified'}`;
+  st.innerHTML=`<span style="color:var(--green)">✓ ${total} players matched — ${starters.length} starters, ${subs.length} subs</span>`;
   btn.disabled=false;
+  btn.innerHTML='Scan Team '+side;
   renderPlayerList(side);
+  // Show Review button
+  const revSlot=document.getElementById('review-btn-'+side.toLowerCase());
+  if(revSlot) revSlot.innerHTML=`<button class="btn btn-c" style="width:100%;justify-content:center;margin-top:8px" onclick="openReview('${side}')">🔍 Review Results — verify each screenshot</button>`;
   document.getElementById(side==='A'?'a-count':'b-count').textContent=`${total} players`;
   document.getElementById('gen-btn').disabled=false;
+  saveScanProgress(); // persist scan progress
 }
 
 function renderPlayerList(side){
@@ -1691,15 +1821,31 @@ function renderMissingBox(side, missingS, missingB){
   if(!el) return;
   if(missingS===0&&missingB===0){el.innerHTML='';return;}
 
-  // Default role: fill starters first, then subs
   const defaultRole=missingS>0?'starter':'sub';
+  const hasImages=imgFiles[side]&&imgFiles[side].length>0;
+
+  // Build list of missing names to show in re-scan button tooltip
+  const data=side==='A'?teamA:teamB;
+  const foundNames=new Set([...data.starters,...data.subs].map(p=>norm(p.n)));
+  const missingFromRoster=ROSTER.filter(p=>p.cp>0&&!foundNames.has(norm(p.n)));
+  const missingCount=missingS+missingB;
 
   el.innerHTML=`<div class="missing-box">
-    <div class="missing-ttl">⚠ MISSING PLAYERS — add manually</div>
+    <div class="missing-ttl">Missing Players</div>
     <div class="missing-counts">
       ${missingS>0?`<span class="mc-s">${missingS} starter${missingS>1?'s':''} missing</span>`:''}
       ${missingB>0?`<span class="mc-b">${missingB} sub${missingB>1?'s':''} missing</span>`:''}
     </div>
+
+    ${hasImages?`<div style="margin-bottom:10px">
+      <button class="btn btn-c" id="rescan-btn-${side}" onclick="rescanMissing('${side}')" style="width:100%;justify-content:center">
+        🔍 Re-scan for ${missingCount} missing player${missingCount>1?'s':''} 
+        <span style="font-size:11px;opacity:.7">(${missingFromRoster.length} candidates · focused scan)</span>
+      </button>
+      <div id="rescan-st-${side}" class="ist" style="margin-top:4px"></div>
+    </div>`:''}
+
+    <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Or add manually:</div>
     <div class="ac-role-sel">
       <button class="ac-rs ac-rs-s${defaultRole==='starter'?' sel':''}" id="mrs-s-${side}" onclick="setMissingRole('${side}','starter')">STR</button>
       <button class="ac-rs ac-rs-b${defaultRole==='sub'?' sel':''}" id="mrs-b-${side}" onclick="setMissingRole('${side}','sub')">SUB</button>
@@ -1713,9 +1859,108 @@ function renderMissingBox(side, missingS, missingB){
     </div>
   </div>`;
 
-  // Store default role
   if(!window._missingRole) window._missingRole={};
   window._missingRole[side]=defaultRole;
+}
+
+// ── RE-SCAN MISSING — only sends unfound names to Sonnet ──
+async function rescanMissing(side){
+  const apiKey=cfg.apiKey||document.getElementById('api-k').value.trim();
+  if(!apiKey){alert('Set API key in Settings.');return;}
+  const files=imgFiles[side];
+  if(!files.length){alert('No screenshots uploaded for this team.');return;}
+
+  const st=document.getElementById('rescan-st-'+side);
+  const btn=document.getElementById('rescan-btn-'+side);
+  if(btn) btn.disabled=true;
+  st.className='ist ld';
+
+  const data=side==='A'?teamA:teamB;
+  const teamLetter=side;
+
+  // Build list of ONLY missing names (not yet found)
+  const foundNames=new Set([...data.starters,...data.subs].map(p=>norm(p.n)));
+  const missingPlayers=ROSTER.filter(p=>!foundNames.has(norm(p.n)));
+
+  if(!missingPlayers.length){
+    st.className='ist ok';st.textContent='No missing players!';
+    if(btn) btn.disabled=false;
+    return;
+  }
+
+  const missingList=missingPlayers.map(p=>p.n).join('\n');
+  st.textContent=`Scanning ${files.length} image(s) for ${missingPlayers.length} missing players...`;
+
+  const newFound={};
+
+  for(let i=0;i<files.length;i++){
+    st.textContent=`Image ${i+1}/${files.length} — looking for ${missingPlayers.length} missing names...`;
+    const b64=await fileToB64(files[i]);
+    const mtype=files[i].type||'image/jpeg';
+
+    const prompt=`Dark War Survival — BGB Participants screenshot, Team ${teamLetter}.
+
+I already found some players. I need you to check if any of these SPECIFIC MISSING PLAYERS are visible in this screenshot:
+
+MISSING PLAYERS TO FIND:
+${missingList}
+
+ROLE DETECTION:
+- Gold letter "${teamLetter}" on LEFT = STARTER
+- Gold letter "${teamLetter}" on RIGHT = SUBSTITUTE
+- Only report players from the missing list above that you can actually see
+- Skip rank badge rows (R1/R2/R3/R4) and header rows
+
+Return ONLY valid JSON (empty array if none found):
+{"found":[{"name":"exact name from missing list","role":"starter or sub"}]}`;
+
+    try{
+      const txt=await callAPI(apiKey,'claude-sonnet-4-6',600,b64,mtype,prompt);
+      const jm=txt.match(/\{[\s\S]*\}/);
+      if(!jm) continue;
+      const parsed=JSON.parse(jm[0]);
+      const found=parsed.found||[];
+      found.forEach(p=>{
+        if(!p.name) return;
+        const rMatch=missingPlayers.find(r=>r.n===p.name)||fuzzyMatchRoster(p.name);
+        if(!rMatch) return;
+        const key=norm(rMatch.n);
+        if(!newFound[key]&&!foundNames.has(key)){
+          newFound[key]={n:rMatch.n,cp:rMatch.cp,role:p.role==='sub'?'sub':'starter'};
+        }
+      });
+    }catch(e){console.warn('Rescan error img '+i,e);}
+  }
+
+  // Add newly found players to existing lists
+  const newPlayers=Object.values(newFound);
+  newPlayers.forEach(p=>{
+    if(p.role==='starter') data.starters.push(p);
+    else data.subs.push(p);
+  });
+  data.starters.sort((a,b)=>b.cp-a.cp);
+  data.subs.sort((a,b)=>b.cp-a.cp);
+
+  // Update image groups for display
+  if(data.images.length>0){
+    const rescanGroup={
+      imgName:`Re-scan (${newPlayers.length} found)`,
+      imgIdx:data.images.length+1,
+      players:newPlayers
+    };
+    if(newPlayers.length>0) data.images.push(rescanGroup);
+  }
+
+  const found=newPlayers.length;
+  if(btn) btn.disabled=false;
+  st.className=found>0?'ist ok':'ist er';
+  st.textContent=found>0
+    ?`✓ Found ${found} more player${found>1?'s':''}!`
+    :`No additional players found in these screenshots`;
+
+  renderPlayerList(side);
+  const total=data.starters.length+data.subs.length;
+  document.getElementById(side==='A'?'a-count':'b-count').textContent=`${total} players`;
 }
 
 let _acSelected={A:-1,B:-1};
@@ -1849,6 +2094,10 @@ document.addEventListener('click',e=>{
 function toggleRole(side,idx){ toggleRoleFlat(side,idx); }
 function removePl(side,idx){ removePlFlat(side,idx); }
 
+function clearScanProgress(){
+  localStorage.removeItem('bgb4_scan');
+}
+
 function clearSelect(){
   teamA={images:[],starters:[],subs:[]};teamB={images:[],starters:[],subs:[]};
   imgFiles={A:[],B:[]};
@@ -1865,6 +2114,7 @@ function clearSelect(){
   });
   document.getElementById('gen-btn').disabled=true;
   document.getElementById('sel-err').textContent='';
+  localStorage.removeItem('bgb4_scan');
 }
 
 // ══════════════════════════════════════════════
@@ -1897,6 +2147,8 @@ function genTeams(){
   const resB=buildSide(teamB,'B');
   if(!resA&&!resB){document.getElementById('sel-err').textContent='Need at least 2 starters in Team A or B.';return;}
   teamsGenerated={A:resA,B:resB};
+  saveSession();
+  updateStepStatus();
   msw('teams');
   showTeamSide(resA?'A':'B');
   saveToSheetsAuto();
@@ -2197,10 +2449,25 @@ function syncAbsentLog(){
 
 function renderLog(){
   const el=document.getElementById('absent-log');
-  if(!absentLog.length){el.innerHTML='<div style="color:var(--text3);font-size:11px;font-family:\'Share Tech Mono\',monospace;padding:.5rem 0">No absent records.</div>';return;}
-  el.innerHTML=`<table class="log-tbl"><thead><tr><th>#</th><th>Name</th><th>Team</th><th>Main Car CP</th><th>Absent Date</th></tr></thead><tbody>`+
-    absentLog.map((l,i)=>`<tr><td>${i+1}</td><td>${l.n}</td><td>${l.side||'?'}</td><td>${fcp(l.cp)}</td><td>BGB ${l.date}</td></tr>`).join('')+
+  if(!absentLog.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:.5rem 0">No absent records.</div>';return;}
+  el.innerHTML=`<table class="log-tbl">
+    <thead><tr><th>#</th><th>Name</th><th>Team</th><th>Main Car CP</th><th>Absent Date</th><th style="width:36px"></th></tr></thead>
+    <tbody>`+
+    absentLog.map((l,i)=>`<tr>
+      <td>${i+1}</td>
+      <td>${l.n}</td>
+      <td>${l.side||'?'}</td>
+      <td>${fcp(l.cp)}</td>
+      <td>BGB ${l.date}</td>
+      <td><button onclick="deleteAbsent(${i})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;font-weight:bold;padding:0 4px;line-height:1" title="Remove">×</button></td>
+    </tr>`).join('')+
     `</tbody></table>`;
+}
+
+function deleteAbsent(idx){
+  absentLog.splice(idx,1);
+  localStorage.setItem('bgb4_log',JSON.stringify(absentLog));
+  renderLog();
 }
 
 function copyAbsent(){
@@ -2286,6 +2553,39 @@ function showCopyBar(){
   document.getElementById('copy-bar').style.display='block';
 }
 
+function updateStepStatus(){
+  // Step 1 Roster
+  const rosterOk=ROSTER.length>0;
+  const s1=document.getElementById('step-roster');
+  const sub1=document.getElementById('ssub-roster');
+  if(rosterOk){
+    s1&&s1.classList.add('done');
+    if(sub1) sub1.textContent=ROSTER.length+' players';
+  }
+
+  // Step 3 Register
+  const aTotal=teamA.starters.length+teamA.subs.length;
+  const bTotal=teamB.starters.length+teamB.subs.length;
+  const s3=document.getElementById('step-select');
+  const sub3=document.getElementById('ssub-select');
+  if(aTotal>0||bTotal>0){
+    if(sub3) sub3.textContent=`A:${teamA.starters.length}/20 · B:${teamB.starters.length}/20`;
+    if(aTotal>=30&&bTotal>=30) s3&&s3.classList.add('done');
+  }
+
+  // Step 4 Teams
+  const s4=document.getElementById('step-teams');
+  const sub4=document.getElementById('ssub-teams');
+  if(teamsGenerated){
+    s4&&s4.classList.add('done');
+    const sess=document.getElementById('bgb-sess')?.value||'';
+    if(sub4&&sess) sub4.textContent=sess;
+  }
+}
+function hideCopyBar(){
+  document.getElementById('copy-bar').style.display='none';
+}
+
 function buildTeamCopyText(side){
   const res=teamsGenerated&&teamsGenerated[side];
   if(!res)return null;
@@ -2325,12 +2625,88 @@ function showBarMsg(msg){
   setTimeout(()=>el.style.opacity='0',2500);
 }
 
+function copyWhatsApp(){
+  if(!teamsGenerated){showBarMsg('Generate teams first');return;}
+  const parts=[];
+  ['A','B'].forEach(side=>{
+    const res=teamsGenerated[side];
+    if(!res) return;
+    const {teams,alloy,subs}=res;
+    const sess=document.getElementById('bgb-sess')?.value||'';
+    const lines=[`*BGB ${sess} — Team ${side}*`,''];
+    lines.push(`*[ALLOY]* ${alloy.map(p=>p.n).join(' + ')}`,'');
+    for(let t=10;t>=7;t--) if(teams[t]?.length) lines.push(`*Team ${t}:* ${teams[t].map(p=>p.n).join(' + ')}`);
+    lines.push('');
+    for(let t=6;t>=1;t--) if(teams[t]?.length) lines.push(`*Team ${t}:* ${teams[t].map(p=>p.n).join(' + ')}`);
+    if(subs?.length) lines.push('',`*[SUB]* ${subs.map(p=>p.n).join(' | ')}`);
+    parts.push(lines.join('\n'));
+  });
+  navigator.clipboard.writeText(parts.join('\n\n')).then(()=>showBarMsg('WhatsApp format copied!'));
+}
+
+function printFormation(){
+  if(!teamsGenerated){showBarMsg('Generate teams first');return;}
+  const sess=document.getElementById('bgb-sess')?.value||'';
+  let html=`<!DOCTYPE html><html><head><title>BGB ${sess}</title>
+  <style>
+    body{font-family:Arial,sans-serif;font-size:13px;padding:20px;color:#000}
+    h1{font-size:18px;margin-bottom:4px}
+    h2{font-size:14px;margin:16px 0 6px;border-bottom:1px solid #ccc;padding-bottom:4px}
+    h3{font-size:13px;color:#555;margin:10px 0 4px}
+    .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
+    .team{background:#f5f5f5;border:1px solid #ddd;border-radius:4px;padding:7px 10px}
+    .team-name{font-weight:bold;font-size:12px;color:#666;margin-bottom:4px}
+    .player{font-size:12px;padding:2px 0;border-bottom:1px solid #eee}
+    .alloy{background:#fff8e7;border-color:#d4a441}
+    .subs{margin-top:12px}
+    .sub-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+    .sub{background:#f0f8ff;border:1px solid #b0d0e8;border-radius:3px;padding:5px 8px;font-size:12px}
+    @media print{button{display:none}}
+  </style></head><body>
+  <h1>BGB Formation — ${sess}</h1>
+  <button onclick="window.print()" style="margin-bottom:16px;padding:6px 14px;cursor:pointer">Print</button>`;
+
+  ['A','B'].forEach(side=>{
+    const res=teamsGenerated[side];
+    if(!res) return;
+    const {teams,alloy,subs}=res;
+    html+=`<h2>Team ${side}</h2>`;
+    html+=`<div class="grid"><div class="team alloy"><div class="team-name">ALLOY</div>`;
+    alloy.forEach(p=>html+=`<div class="player">${p.n}</div>`);
+    html+=`</div>`;
+    for(let t=10;t>=7;t--){
+      if(!teams[t]?.length) continue;
+      html+=`<div class="team"><div class="team-name">Team ${t}</div>`;
+      teams[t].forEach(p=>html+=`<div class="player">${p.n}</div>`);
+      html+=`</div>`;
+    }
+    html+=`</div><div class="grid">`;
+    for(let t=6;t>=1;t--){
+      if(!teams[t]?.length) continue;
+      html+=`<div class="team"><div class="team-name">Team ${t}</div>`;
+      teams[t].forEach(p=>html+=`<div class="player">${p.n}</div>`);
+      html+=`</div>`;
+    }
+    html+=`</div>`;
+    if(subs?.length){
+      html+=`<div class="subs"><h3>Substitutes</h3><div class="sub-grid">`;
+      subs.forEach(p=>html+=`<div class="sub">${p.n}</div>`);
+      html+=`</div></div>`;
+    }
+  });
+  html+=`</body></html>`;
+  const w=window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+}
+
 // ══════════════════════════════════════════════
 //  COLOR CODING — fetch BGB Record + BGB Absent from Sheets
 // ══════════════════════════════════════════════
 let rosterStatus={}; // name -> 'absent-red' | 'no-turn-green' | 'normal' | ''
-let rosterSort={by:'cp',dir:'desc'}; // by: 'cp'|'name'|'status', dir: 'asc'|'desc'
+let rosterSort={by:'cp',dir:'desc'};
 let rosterSearch='';
+let bgbHistory=[]; // array of past BGB sessions
 
 function todayCode(){
   const d=new Date();
@@ -2523,6 +2899,364 @@ function showAttRegisteredList(){
   el.style.display='block';
   el.innerHTML='<strong style="color:var(--gold2)">Registered players ('+all.length+'):</strong> '+
     all.map(p=>p.n).join(' · ');
+}
+
+// ══════════════════════════════════════════════
+//  SESSION PERSIST (#3)
+// ══════════════════════════════════════════════
+function saveScanProgress(){
+  try{
+    const progress={
+      teamA:{starters:teamA.starters,subs:teamA.subs,
+        images:teamA.images.map(g=>({imgName:g.imgName,imgIdx:g.imgIdx,players:g.players}))},
+      teamB:{starters:teamB.starters,subs:teamB.subs,
+        images:teamB.images.map(g=>({imgName:g.imgName,imgIdx:g.imgIdx,players:g.players}))},
+      session:document.getElementById('bgb-sess')?.value||''
+    };
+    localStorage.setItem('bgb4_scan',JSON.stringify(progress));
+  }catch(e){console.warn('Could not save scan progress',e);}
+}
+
+function saveSession(){
+  try{
+    const sess={
+      date:document.getElementById('bgb-sess')?.value||todayCode(),
+      teamA:{starters:teamA.starters,subs:teamA.subs},
+      teamB:{starters:teamB.starters,subs:teamB.subs},
+      teamsGenerated,
+      savedAt:new Date().toISOString()
+    };
+    // Save current session
+    localStorage.setItem('bgb4_currentsess',JSON.stringify(sess));
+    // Add to history (keep last 8)
+    bgbHistory=bgbHistory.filter(h=>h.date!==sess.date); // replace if same date
+    bgbHistory.unshift(sess);
+    if(bgbHistory.length>8) bgbHistory=bgbHistory.slice(0,8);
+    localStorage.setItem('bgb4_history',JSON.stringify(bgbHistory));
+  }catch(e){console.warn('Could not save session',e);}
+}
+
+function loadScanProgress(){
+  try{
+    const saved=localStorage.getItem('bgb4_scan');
+    if(!saved) return false;
+    const p=JSON.parse(saved);
+    if(p.teamA){
+      teamA.starters=p.teamA.starters||[];
+      teamA.subs=p.teamA.subs||[];
+      teamA.images=p.teamA.images||[];
+    }
+    if(p.teamB){
+      teamB.starters=p.teamB.starters||[];
+      teamB.subs=p.teamB.subs||[];
+      teamB.images=p.teamB.images||[];
+    }
+    if(p.session&&document.getElementById('bgb-sess'))
+      document.getElementById('bgb-sess').value=p.session;
+    const hasData=teamA.starters.length+teamA.subs.length+teamB.starters.length+teamB.subs.length>0;
+    if(hasData){
+      renderPlayerList('A');renderPlayerList('B');
+      document.getElementById('a-count').textContent=`${teamA.starters.length+teamA.subs.length} players`;
+      document.getElementById('b-count').textContent=`${teamB.starters.length+teamB.subs.length} players`;
+      document.getElementById('gen-btn').disabled=false;
+    }
+    return hasData;
+  }catch(e){return false;}
+}
+
+// ══════════════════════════════════════════════
+//  BGB HISTORY (#4)
+// ══════════════════════════════════════════════
+function renderHistory(){
+  const el=document.getElementById('bgb-history-list');
+  if(!el) return;
+  if(!bgbHistory.length){
+    el.innerHTML='<div style="color:var(--text3);font-size:13px">No previous BGB sessions recorded.</div>';
+    return;
+  }
+  el.innerHTML=bgbHistory.map((h,i)=>`
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text)">BGB ${h.date}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">
+          Team A: ${(h.teamA?.starters?.length||0)} starters · ${(h.teamA?.subs?.length||0)} subs &nbsp;|&nbsp;
+          Team B: ${(h.teamB?.starters?.length||0)} starters · ${(h.teamB?.subs?.length||0)} subs
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${h.savedAt?'Saved: '+new Date(h.savedAt).toLocaleString():''}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-c" onclick="loadHistory(${i})" style="font-size:12px;padding:5px 12px">Load</button>
+        <button class="btn" onclick="copyHistoryFormation(${i})" style="font-size:12px;padding:5px 12px">📋 Copy</button>
+        <button class="btn btn-r" onclick="deleteHistory(${i})" style="font-size:12px;padding:5px 10px">×</button>
+      </div>
+    </div>`).join('');
+}
+
+function loadHistory(idx){
+  const h=bgbHistory[idx];
+  if(!h||!confirm('Load BGB '+h.date+'? Current unsaved data will be lost.')) return;
+  teamA={images:[],starters:h.teamA?.starters||[],subs:h.teamA?.subs||[]};
+  teamB={images:[],starters:h.teamB?.starters||[],subs:h.teamB?.subs||[]};
+  teamsGenerated=h.teamsGenerated||null;
+  if(document.getElementById('bgb-sess')) document.getElementById('bgb-sess').value=h.date;
+  renderPlayerList('A');renderPlayerList('B');
+  if(teamsGenerated){showCopyBar();renderTeamSide(teamsGenerated.A?'A':'B');}
+  toast('Session BGB '+h.date+' loaded!');
+}
+
+function copyHistoryFormation(idx){
+  const h=bgbHistory[idx];
+  if(!h||!h.teamsGenerated){toast('No formation data for this session');return;}
+  const parts=[];
+  ['A','B'].forEach(side=>{
+    const res=h.teamsGenerated[side];
+    if(!res) return;
+    const {teams,alloy,subs}=res;
+    const lines=[`=== TEAM ${side} ===`,'',[`[ALLOY] ${alloy.map(p=>p.n).join(' + ')}`,'']];
+    for(let t=10;t>=7;t--) if(teams[t]?.length) lines.push(`Team ${t}: ${teams[t].map(p=>p.n).join(' + ')}`);
+    lines.push('');
+    for(let t=6;t>=1;t--) if(teams[t]?.length) lines.push(`Team ${t}: ${teams[t].map(p=>p.n).join(' + ')}`);
+    if(subs?.length) lines.push('',`[SUB] ${subs.map(p=>p.n).join(' | ')}`);
+    parts.push(lines.flat().join('\n'));
+  });
+  navigator.clipboard.writeText(parts.join('\n\n')).then(()=>toast('Formation copied!'));
+}
+
+function deleteHistory(idx){
+  bgbHistory.splice(idx,1);
+  localStorage.setItem('bgb4_history',JSON.stringify(bgbHistory));
+  renderHistory();
+}
+
+// ══════════════════════════════════════════════
+//  MANUAL REVIEW MODAL
+// ══════════════════════════════════════════════
+let revSide='A';
+let revImgIdx=0;
+let revRole='starter';
+let revAcResults=[];
+let revAcSel=-1;
+
+function openReview(side){
+  revSide=side;
+  revImgIdx=0;
+  revRole='starter';
+  document.getElementById('review-overlay').style.display='flex';
+  document.getElementById('rev-list-title').textContent='Players — Team '+side;
+  renderRevImgStrip();
+  renderRevImg(0);
+  renderRevList();
+}
+
+function closeReview(){
+  document.getElementById('review-overlay').style.display='none';
+  renderPlayerList(revSide);
+}
+
+function renderRevImgStrip(){
+  const strip=document.getElementById('rev-img-strip');
+  const files=imgFiles[revSide]||[];
+  if(!files.length){strip.innerHTML='<span style="font-size:12px;color:var(--text3)">No screenshots uploaded</span>';return;}
+  strip.innerHTML=files.map((f,i)=>{
+    const url=URL.createObjectURL(f);
+    return `<img class="review-thumb${i===revImgIdx?' on':''}" src="${url}" onclick="renderRevImg(${i})" title="${f.name||'Image '+(i+1)}">`;
+  }).join('');
+}
+
+function renderRevImg(idx){
+  revImgIdx=idx;
+  const files=imgFiles[revSide]||[];
+  const viewer=document.getElementById('rev-img-viewer');
+  const ph=document.getElementById('rev-img-placeholder');
+
+  // Update strip active state
+  document.querySelectorAll('.review-thumb').forEach((t,i)=>t.classList.toggle('on',i===idx));
+
+  if(!files.length||!files[idx]){
+    if(ph) ph.style.display='block';
+    return;
+  }
+  if(ph) ph.style.display='none';
+  const url=URL.createObjectURL(files[idx]);
+  let img=viewer.querySelector('img');
+  if(!img){img=document.createElement('img');viewer.appendChild(img);}
+  img.src=url;
+
+  // Update header
+  const data=revSide==='A'?teamA:teamB;
+  const imgGroup=data.images[idx];
+  const found=imgGroup?imgGroup.players.length:0;
+  document.getElementById('rev-img-title').textContent=`Screenshot ${idx+1} of ${files.length}`;
+  document.getElementById('rev-img-sub').textContent=(files[idx].name||'Image '+(idx+1))+(found?` · ${found} matched`:'');
+
+  // Nav buttons
+  document.getElementById('rev-prev').disabled=idx===0;
+  document.getElementById('rev-next').disabled=idx>=files.length-1;
+
+  renderRevList();
+}
+
+function renderRevList(){
+  const el=document.getElementById('rev-list-body');
+  const data=revSide==='A'?teamA:teamB;
+  const allPlayers=[...data.starters.map(p=>({...p,role:'starter'})),...data.subs.map(p=>({...p,role:'sub'}))];
+
+  // Split: confirmed vs needs check
+  const confirmed=allPlayers.filter(p=>p.confirmed!==false);
+  const needsCheck=allPlayers.filter(p=>p.confirmed===false);
+
+  let html='';
+
+  if(confirmed.length){
+    html+=`<div class="review-section-lbl">Matched (${confirmed.length})</div>`;
+    confirmed.forEach((p,i)=>{
+      const rawName=p.rawName?`<span class="rpr-src">~${p.rawName}</span>`:'';
+      html+=`<div class="review-player-row">
+        <div class="rpr-status ok" title="Confirmed">✓</div>
+        <span class="rpr-name">${p.n}${rawName}</span>
+        <span class="rpr-role ${p.role==='starter'?'s':'b'}" onclick="revToggleRole('${p.n.replace(/'/g,"\'")}',this)">${p.role==='starter'?'STR':'SUB'}</span>
+        <button class="rpr-del" onclick="revDelete('${p.n.replace(/'/g,"\'")}')">×</button>
+      </div>`;
+    });
+  }
+
+  if(needsCheck.length){
+    html+=`<div class="review-section-lbl" style="background:rgba(212,164,65,0.1);color:var(--gold2)">Needs check (${needsCheck.length})</div>`;
+    needsCheck.forEach(p=>{
+      html+=`<div class="review-player-row" style="background:rgba(212,164,65,0.05)">
+        <div class="rpr-status unk" title="Needs verification" onclick="revMarkConfirmed('${p.n.replace(/'/g,"\'")}')">?</div>
+        <span class="rpr-name">${p.n}</span>
+        <span class="rpr-role ${p.role==='starter'?'s':'b'}" onclick="revToggleRole('${p.n.replace(/'/g,"\'")}',this)">${p.role==='starter'?'STR':'SUB'}</span>
+        <button class="rpr-del" onclick="revDelete('${p.n.replace(/'/g,"\'")}')">×</button>
+      </div>`;
+    });
+  }
+
+  if(!allPlayers.length){
+    html='<div style="color:var(--text3);font-size:13px;padding:1.5rem;text-align:center">No players scanned yet.<br>Use the search below to add manually.</div>';
+  }
+
+  el.innerHTML=html;
+
+  // Update confirm count
+  const cc=document.getElementById('rev-confirm-count');
+  if(cc) cc.textContent=`${confirmed.length} / ${allPlayers.length} confirmed`;
+}
+
+function revToggleRole(name,el){
+  const data=revSide==='A'?teamA:teamB;
+  const p=[...data.starters,...data.subs].find(x=>x.n===name);
+  if(!p) return;
+  if(p.role==='starter'){
+    data.starters=data.starters.filter(x=>x.n!==name);
+    p.role='sub';data.subs.push(p);
+  } else {
+    data.subs=data.subs.filter(x=>x.n!==name);
+    p.role='starter';data.starters.push(p);
+  }
+  el.className='rpr-role '+(p.role==='starter'?'s':'b');
+  el.textContent=p.role==='starter'?'STR':'SUB';
+  renderRevList();
+}
+
+function revMarkConfirmed(name){
+  const data=revSide==='A'?teamA:teamB;
+  const p=[...data.starters,...data.subs].find(x=>x.n===name);
+  if(p) p.confirmed=true;
+  renderRevList();
+}
+
+function revDelete(name){
+  const data=revSide==='A'?teamA:teamB;
+  data.starters=data.starters.filter(p=>p.n!==name);
+  data.subs=data.subs.filter(p=>p.n!==name);
+  // Also remove from images
+  data.images.forEach(img=>{img.players=img.players.filter(p=>p.n!==name);});
+  renderRevList();
+}
+
+function revConfirmAll(){
+  const data=revSide==='A'?teamA:teamB;
+  [...data.starters,...data.subs].forEach(p=>p.confirmed=true);
+  renderRevList();
+}
+
+function revNextImg(){
+  const files=imgFiles[revSide]||[];
+  if(revImgIdx<files.length-1) renderRevImg(revImgIdx+1);
+  else closeReview();
+}
+
+function revNavImg(dir){
+  const files=imgFiles[revSide]||[];
+  const next=revImgIdx+dir;
+  if(next>=0&&next<files.length) renderRevImg(next);
+}
+
+// ── Add missing player autocomplete in review ──
+function revSetRole(role){
+  revRole=role;
+  document.getElementById('rev-role-s').className='rrm s'+(role==='starter'?' sel':'');
+  document.getElementById('rev-role-b').className='rrm b'+(role==='sub'?' sel':'');
+}
+
+function revAcSearch(val){
+  const drop=document.getElementById('rev-ac-drop');
+  if(!val||val.length<1){drop.style.display='none';return;}
+  const data=revSide==='A'?teamA:teamB;
+  const existing=new Set([...data.starters,...data.subs].map(p=>norm(p.n)));
+  const q=val.toLowerCase();
+  const qn=norm(val);
+  revAcResults=ROSTER.filter(p=>{
+    if(existing.has(norm(p.n))) return false;
+    return p.n.toLowerCase().includes(q)||norm(p.n).includes(qn)||levenshtein(qn,norm(p.n).substring(0,Math.min(norm(p.n).length,qn.length+3)))<=Math.max(1,Math.floor(qn.length*0.4));
+  }).slice(0,8);
+  revAcSel=-1;
+  if(!revAcResults.length){drop.innerHTML=`<div class="ac-item" style="color:var(--text3);cursor:default">No match in roster</div>`;drop.style.display='block';return;}
+  drop.innerHTML=revAcResults.map((p,i)=>`<div class="ac-item" id="rev-ac-${i}" onclick="revAcPick(${i})"><span class="ac-name">${p.n}</span><span class="ac-cp">${p.cp?fcp(p.cp):'N/A'}</span></div>`).join('');
+  drop.style.display='block';
+}
+
+function revAcKey(e){
+  if(!revAcResults.length) return;
+  if(e.key==='ArrowDown'){e.preventDefault();revAcSel=Math.min(revAcSel+1,revAcResults.length-1);revAcHl();}
+  else if(e.key==='ArrowUp'){e.preventDefault();revAcSel=Math.max(revAcSel-1,-1);revAcHl();}
+  else if(e.key==='Enter'){e.preventDefault();if(revAcSel>=0)revAcPick(revAcSel);else if(revAcResults.length===1)revAcPick(0);}
+  else if(e.key==='Escape'){document.getElementById('rev-ac-drop').style.display='none';}
+}
+
+function revAcHl(){
+  revAcResults.forEach((_,i)=>{const el=document.getElementById('rev-ac-'+i);if(el)el.className='ac-item'+(i===revAcSel?' active':'');});
+}
+
+function revAcPick(idx){
+  const p=revAcResults[idx];
+  if(!p) return;
+  const data=revSide==='A'?teamA:teamB;
+  const player={n:p.n,cp:p.cp,role:revRole,confirmed:true};
+  if(revRole==='starter') data.starters.push(player);
+  else data.subs.push(player);
+  data.starters.sort((a,b)=>b.cp-a.cp);
+  data.subs.sort((a,b)=>b.cp-a.cp);
+  document.getElementById('rev-ac-inp').value='';
+  document.getElementById('rev-ac-drop').style.display='none';
+  revAcResults=[];revAcSel=-1;
+  renderRevList();
+  saveScanProgress();
+  document.getElementById('gen-btn').disabled=false;
+}
+
+// Close ac on outside click
+document.addEventListener('click',e=>{
+  const drop=document.getElementById('rev-ac-drop');
+  const inp=document.getElementById('rev-ac-inp');
+  if(drop&&inp&&!drop.contains(e.target)&&e.target!==inp) drop.style.display='none';
+});
+
+function zoomImg(src){
+  if(!src) return;
+  document.getElementById('zoom-img').src=src;
+  document.getElementById('zoom-overlay').style.display='flex';
 }
 
 // ══════════════════════════════════════════════
