@@ -598,7 +598,7 @@ textarea.inp{resize:vertical;line-height:1.6}
     <button class="btn" onclick="msw('settings')">⚙ Import / Settings</button>
   </div>
   <div id="rf-st" class="ist"></div>
-  <div class="ibox" style="font-size:12px;margin-top:.5rem">Sheet structure: <strong>Col A</strong> = No. · <strong>Col B</strong> = Name · <strong>Col C</strong> = First Car CP · <strong>Col D</strong> = Watchtower. Change columns in Import tab if different.</div>
+  <div class="ibox" style="font-size:12px;margin-top:.5rem">Sheet structure: <strong>Col A</strong> = No. · <strong>Col B</strong> = Name · <strong>Col C</strong> = First Car CP. Change columns in Settings → Import if different.</div>
 
   <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:.75rem 0">
     <!-- Search -->
@@ -739,44 +739,62 @@ textarea.inp{resize:vertical;line-height:1.6}
 
 <!-- ═══════════════ ATTENDANCE ═══════════════ -->
 <div id="mt-attend" class="mtc">
-  <div class="sec">Post-Battle Attendance</div>
-  <div class="ibox">Upload post-battle screenshots (~9 photos). Claude AI will cross-reference against your <strong>registered participant list</strong> from the Select tab — names unrecognized from that list will be flagged for manual review. Set the BGB event code before scanning.</div>
-  <div id="att-reg-list" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:10px 12px;margin-bottom:.75rem;font-size:11px;font-family:'Share Tech Mono',monospace;color:var(--text2);max-height:100px;overflow-y:auto"></div>
+  <div class="ibox">Upload 5-6 post-battle Mail screenshots. AI will identify which registered VHA players are present by matching against your Team A &amp; B list. Players not in the registered list are ignored.</div>
 
-  <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem">
+  <!-- Session + controls -->
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem">
     <div><div class="fl">BGB Session</div><input class="inp" id="att-sess" style="width:160px;margin-bottom:0" placeholder="e.g. 20260426W4"/></div>
-    <div><div class="fl">Alliance Filter</div><input class="inp" id="att-alli" style="width:100px;margin-bottom:0" value="VHA"/></div>
-    <button class="btn btn-c" style="margin-bottom:1px" onclick="syncSession()">Sync from Select</button>
+    <div><div class="fl">Alliance Tag</div><input class="inp" id="att-alli" style="width:90px;margin-bottom:0" value="VHA"/></div>
+    <button class="btn btn-c" style="margin-bottom:1px" onclick="syncSession()">Sync date</button>
   </div>
 
-  <div class="two-col" style="margin-bottom:1rem">
-    <div>
-      <div class="sec">Upload Screenshots</div>
-      <div class="multi-drop" id="att-dz" onclick="document.getElementById('att-imgs').click()" ondragover="dzo(event,'att-dz')" ondragleave="dzl('att-dz')" ondrop="attDrop(event)" style="min-height:120px">
-        <input type="file" id="att-imgs" accept="image/*" multiple style="display:none" onchange="attSel(event)">
-        <div style="font-size:26px;margin-bottom:5px">📸</div>
-        Drop post-battle screenshots<br><span style="font-size:10px;opacity:.5">Multiple files, ~9 screenshots</span>
+  <!-- Registered players summary -->
+  <div id="att-reg-summary" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:.75rem;font-size:12px;color:var(--text2)"></div>
+
+  <!-- Upload + scan -->
+  <div class="multi-drop" id="att-dz" onclick="document.getElementById('att-imgs').click()" ondragover="dzo(event,'att-dz')" ondragleave="dzl('att-dz')" ondrop="attDrop(event)">
+    <input type="file" id="att-imgs" accept="image/*" multiple style="display:none" onchange="attSel(event)">
+    <div style="font-size:26px;margin-bottom:5px">📸</div>
+    Drop post-battle Mail screenshots or tap to browse
+    <div style="font-size:11px;opacity:.5;margin-top:3px">~5-6 screenshots covering all rankings</div>
+  </div>
+  <div id="att-thumbs" class="img-thumbs" style="margin-top:8px"></div>
+
+  <div class="acts" style="margin-top:.5rem">
+    <button class="btn-primary-lg" id="att-scan-btn" onclick="runAttOCR()" style="margin-bottom:0;flex:1;max-width:280px">Scan Attendance</button>
+    <button class="btn btn-c" id="att-review-btn" onclick="openAttReview()" style="display:none">🔍 Review Results</button>
+    <button class="btn btn-r" onclick="clearAtt()">Clear</button>
+  </div>
+  <div id="att-st" class="ist" style="margin-top:6px"></div>
+
+  <!-- Results summary -->
+  <div id="att-summary" style="display:none;margin-top:1rem">
+    <!-- Toggle Team A / B / All -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:.75rem;flex-wrap:wrap">
+      <div class="sub-tab-bar" style="margin-bottom:0">
+        <button class="stb on-a" id="att-tab-all" onclick="attSetTab('all')">All</button>
+        <button class="stb" id="att-tab-a" onclick="attSetTab('A')">Team A</button>
+        <button class="stb" id="att-tab-b" onclick="attSetTab('B')">Team B</button>
       </div>
-      <div id="att-thumbs" class="img-thumbs" style="margin-top:6px"></div>
-      <div class="acts">
-        <button class="btn btn-g" onclick="runAttOCR()">🔍 Scan with Claude AI</button>
-        <button class="btn btn-r" onclick="clearAtt()">Clear</button>
-      </div>
-      <div id="att-st" class="ist"></div>
+      <span id="att-summary-pill" style="font-size:13px;color:var(--text2)"></span>
     </div>
-    <div>
-      <div class="sec">Results</div>
-      <div id="att-results" class="att-grid" style="min-height:200px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px">
-        <div style="color:var(--text3);font-size:11px;font-family:'Share Tech Mono',monospace">Upload screenshots to begin.</div>
-      </div>
+    <div id="att-results" class="att-grid"></div>
+
+    <!-- Focused rescan for unverified -->
+    <div id="att-rescan-box" style="display:none;margin-top:.75rem;background:var(--red-dim);border:1px solid rgba(224,85,85,0.25);border-radius:var(--radius);padding:12px">
+      <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:6px" id="att-rescan-label"></div>
+      <button class="btn btn-c" onclick="runAttRescan()" id="att-rescan-btn">🔍 Re-scan for missing players</button>
+      <div id="att-rescan-st" class="ist" style="margin-top:4px"></div>
     </div>
   </div>
 
   <div class="hr"></div>
-  <div class="sec">Absent Log</div>
-  <div class="acts">
-    <button class="btn btn-g" onclick="copyAbsent()">📋 Copy for Sheets</button>
-    <button class="btn btn-r" onclick="clearLog()">Clear Log</button>
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:.5rem">
+    <div style="font-size:14px;font-weight:600;color:var(--text)">Absent Log</div>
+    <div class="acts" style="margin:0">
+      <button class="btn btn-g" onclick="copyAbsent()">📋 Copy for Sheets</button>
+      <button class="btn btn-r" onclick="clearLog()">Clear Log</button>
+    </div>
   </div>
   <div id="sh-save-st" class="ist"></div>
   <div id="absent-log"></div>
@@ -796,7 +814,7 @@ textarea.inp{resize:vertical;line-height:1.6}
           <div class="fl">Spreadsheet URL</div>
           <input class="inp" id="gs-url" value="https://docs.google.com/spreadsheets/d/1fGhmeRAgKmd6a4z1Q-LBSfPL2qRqYhpK6PticIlooeo/edit"/>
           <div class="fl">Tab Name</div>
-          <input class="inp" id="gs-tab" value="First Car3"/>
+          <input class="inp" id="gs-tab" value="First Car"/>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
             <div><div class="fl">Name Col</div><input class="inp" id="gs-cn" value="B" maxlength="2" style="text-transform:uppercase" oninput="cfg.nameCol=this.value"/></div>
             <div><div class="fl">CP Col</div><input class="inp" id="gs-cc" value="C" maxlength="2" style="text-transform:uppercase" oninput="cfg.cpCol=this.value"/></div>
@@ -846,9 +864,9 @@ textarea.inp{resize:vertical;line-height:1.6}
       <div class="fl">Sheet ID</div>
       <input class="inp" id="cfg-sid" value="1fGhmeRAgKmd6a4z1Q-LBSfPL2qRqYhpK6PticIlooeo"/>
       <div class="fl">Roster Tab</div>
-      <input class="inp" id="cfg-rt" value="First Car3"/>
+      <input class="inp" id="cfg-rt" value="First Car"/>
       <div class="fl">BGB Record Tab</div>
-      <input class="inp" id="cfg-bgbt" value="BGB Record"/>
+      <input class="inp" id="cfg-bgbt" value="BGB Log"/>
       <div class="fl">Absent Tab</div>
       <input class="inp" id="cfg-at" value="BGB Absent"/>
       <button class="btn btn-g" onclick="saveCfg()">Save Config</button>
@@ -1043,6 +1061,50 @@ textarea.inp{resize:vertical;line-height:1.6}
   <img id="zoom-img" src="">
 </div>
 
+<!-- ═══ ATTENDANCE REVIEW MODAL ═══ -->
+<div id="att-review-overlay" class="review-overlay" style="display:none" onclick="if(event.target===this)closeAttReview()">
+  <div class="review-panel">
+    <!-- LEFT: Screenshot -->
+    <div class="review-img-side">
+      <div class="review-img-hd">
+        <div>
+          <div class="review-img-hd-title" id="att-rev-img-title">Screenshot 1</div>
+          <div class="review-img-hd-sub" id="att-rev-img-sub"></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn" id="att-rev-prev" onclick="attRevNavImg(-1)">← Prev</button>
+          <button class="btn" id="att-rev-next" onclick="attRevNavImg(1)">Next →</button>
+        </div>
+      </div>
+      <div class="review-img-viewer" id="att-rev-img-viewer" onclick="zoomImg(this.querySelector('img')?.src)">
+        <div id="att-rev-img-ph" style="color:var(--text3);font-size:13px;text-align:center;padding:2rem">No screenshot</div>
+      </div>
+      <div class="review-img-strip" id="att-rev-img-strip"></div>
+    </div>
+
+    <!-- RIGHT: ALL registered players, highlighted per image -->
+    <div class="review-list-side">
+      <div class="review-list-hd">
+        <div>
+          <span class="review-list-hd-title">All Registered Players</span>
+          <div style="display:flex;gap:4px;margin-top:5px">
+            <button class="stb on-a" id="att-rev-tab-all" onclick="attRevSetTab('all')" style="padding:3px 10px;font-size:11px">All</button>
+            <button class="stb" id="att-rev-tab-a" onclick="attRevSetTab('A')" style="padding:3px 10px;font-size:11px">Team A</button>
+            <button class="stb" id="att-rev-tab-b" onclick="attRevSetTab('B')" style="padding:3px 10px;font-size:11px">Team B</button>
+          </div>
+        </div>
+        <span class="confirm-pill" id="att-rev-count">0 present</span>
+      </div>
+      <div class="review-list-body" id="att-rev-list-body"></div>
+      <div class="review-footer">
+        <button class="btn btn-g" onclick="attRevMarkAllVisible()">✓ Mark visible as present</button>
+        <button class="btn btn-c" onclick="attRevNextImg()">Next image →</button>
+        <button class="btn" onclick="closeAttReview()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ══════════════════════════════════════════════
 //  ROSTER DATA — 24 Apr 2026
@@ -1154,7 +1216,7 @@ const BUILTIN=[
 //  STATE
 // ══════════════════════════════════════════════
 let ROSTER=[...BUILTIN].sort((a,b)=>b.cp-a.cp);
-let cfg={sid:'1fGhmeRAgKmd6a4z1Q-LBSfPL2qRqYhpK6PticIlooeo',rTab:'First Car3',bgbTab:'BGB Record',abTab:'BGB Absent',alli:'VHA',alliFullName:'Valhalla',alliLogo:null,apiKey:'',redWeeks:4,greenWeeks:4,nameCol:'B',cpCol:'C'};
+let cfg={sid:'1CBg76RAQh0qdHilgmmdKHmUiApbT0LFxBVRfDpnX9es',rTab:'First Car',bgbTab:'BGB Log',abTab:'BGB Absent',alli:'VHA',alliFullName:'Valhalla',alliLogo:null,apiKey:'',redWeeks:4,greenWeeks:4,nameCol:'B',cpCol:'C'};
 let showCP=false;
 let teamA={images:[],starters:[],subs:[]};
 let teamB={images:[],starters:[],subs:[]};
@@ -1383,6 +1445,142 @@ function toggleTheme(){
 }
 function openHelp(){document.getElementById('help-overlay').style.display='flex';}
 function closeHelp(){document.getElementById('help-overlay').style.display='none';}
+
+// ══════════════════════════════════════════════
+//  ATTENDANCE REVIEW MODAL
+// ══════════════════════════════════════════════
+let attRevImgIdx=0;
+let attRevTab='all';
+
+function openAttReview(){
+  if(!attScanResults.length){alert('Scan attendance first.');return;}
+  attRevImgIdx=0;attRevTab='all';
+  document.getElementById('att-review-overlay').style.display='flex';
+  renderAttRevImgStrip();
+  renderAttRevImg(0);
+  renderAttRevList();
+}
+
+function closeAttReview(){
+  document.getElementById('att-review-overlay').style.display='none';
+  renderAttResults();
+  checkAttUnverified();
+}
+
+function renderAttRevImgStrip(){
+  const strip=document.getElementById('att-rev-img-strip');
+  if(!attImgs.length){strip.innerHTML='<span style="font-size:12px;color:var(--text3)">No screenshots uploaded</span>';return;}
+  strip.innerHTML=attImgs.map((f,i)=>{
+    const url=URL.createObjectURL(f);
+    return `<img class="review-thumb${i===attRevImgIdx?' on':''}" src="${url}" onclick="renderAttRevImg(${i})" title="${f.name||'Image '+(i+1)}">`;
+  }).join('');
+}
+
+function renderAttRevImg(idx){
+  attRevImgIdx=idx;
+  const viewer=document.getElementById('att-rev-img-viewer');
+  const ph=document.getElementById('att-rev-img-ph');
+
+  document.querySelectorAll('#att-rev-img-strip .review-thumb').forEach((t,i)=>t.classList.toggle('on',i===idx));
+
+  if(!attImgs[idx]){if(ph)ph.style.display='block';return;}
+  if(ph) ph.style.display='none';
+  const url=URL.createObjectURL(attImgs[idx]);
+  let img=viewer.querySelector('img');
+  if(!img){img=document.createElement('img');viewer.appendChild(img);}
+  img.src=url;
+
+  const imgResult=attImgsPerResult[idx];
+  const found=imgResult?imgResult.names.length:0;
+  document.getElementById('att-rev-img-title').textContent=`Screenshot ${idx+1} of ${attImgs.length}`;
+  document.getElementById('att-rev-img-sub').textContent=(attImgs[idx].name||'Image '+(idx+1))+(found?` · ${found} VHA found`:' · scan pending');
+  document.getElementById('att-rev-prev').disabled=idx===0;
+  document.getElementById('att-rev-next').disabled=idx>=attImgs.length-1;
+  renderAttRevList();
+}
+
+function attRevSetTab(tab){
+  attRevTab=tab;
+  ['all','A','B'].forEach(t=>{
+    const btn=document.getElementById('att-rev-tab-'+t);
+    if(!btn) return;
+    btn.className='stb'+(tab===t?(t==='A'?' on-a':t==='B'?' on-b':' on-a'):'');
+  });
+  renderAttRevList();
+}
+
+function renderAttRevList(){
+  const el=document.getElementById('att-rev-list-body');
+  const imgResult=attImgsPerResult[attRevImgIdx];
+  const inThisImg=new Set((imgResult?imgResult.names:[]).map(n=>normFull(n)));
+
+  const filtered=attRevTab==='all'?attScanResults:attScanResults.filter(r=>r.side===attRevTab);
+
+  // Sort: in this image first (highlighted), then others
+  const inImg=filtered.filter(r=>inThisImg.has(normFull(r.n)));
+  const notInImg=filtered.filter(r=>!inThisImg.has(normFull(r.n)));
+
+  let html='';
+
+  if(inImg.length){
+    html+=`<div class="review-section-lbl" style="background:rgba(61,184,120,0.08);color:var(--green)">Detected in this screenshot (${inImg.length})</div>`;
+    inImg.forEach(r=>{
+      const gi=attScanResults.indexOf(r);
+      html+=`<div class="review-player-row" style="border-left:3px solid var(--green)">
+        <div class="rpr-status ${r.present?'ok':'miss'}" onclick="attRevToggle(${gi})" title="Click to toggle">${r.present?'✓':'✗'}</div>
+        <span class="rpr-name">${r.n}</span>
+        <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);flex-shrink:0">T${r.side}</span>
+        <span class="att-b ${r.present?'ab-p':'ab-a'}" style="font-size:10px">${r.present?'PRESENT':'ABSENT'}</span>
+      </div>`;
+    });
+  }
+
+  if(notInImg.length){
+    html+=`<div class="review-section-lbl" style="color:var(--text3)">Not in this screenshot (${notInImg.length})</div>`;
+    notInImg.forEach(r=>{
+      const gi=attScanResults.indexOf(r);
+      html+=`<div class="review-player-row" style="opacity:.5">
+        <div class="rpr-status ${r.present?'ok':''}" onclick="attRevToggle(${gi})" title="Click to toggle">${r.present?'✓':''}</div>
+        <span class="rpr-name" style="color:var(--text3)">${r.n}</span>
+        <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);flex-shrink:0">T${r.side}</span>
+        <span class="att-b ${r.present?'ab-p':'ab-a'}" style="font-size:10px">${r.present?'PRESENT':'ABSENT'}</span>
+      </div>`;
+    });
+  }
+
+  el.innerHTML=html||'<div style="color:var(--text3);font-size:13px;padding:1rem">No players for this view.</div>';
+
+  const present=attScanResults.filter(r=>r.present).length;
+  const cc=document.getElementById('att-rev-count');
+  if(cc) cc.textContent=`${present} / ${attScanResults.length} present`;
+}
+
+function attRevToggle(globalIdx){
+  if(!attScanResults[globalIdx]) return;
+  attScanResults[globalIdx].present=!attScanResults[globalIdx].present;
+  attScanResults[globalIdx].confirmed=true;
+  renderAttRevList();
+}
+
+function attRevMarkAllVisible(){
+  const imgResult=attImgsPerResult[attRevImgIdx];
+  if(!imgResult) return;
+  const inThisImg=new Set(imgResult.names.map(n=>normFull(n)));
+  attScanResults.forEach(r=>{
+    if(inThisImg.has(normFull(r.n))){r.present=true;r.confirmed=true;}
+  });
+  renderAttRevList();
+}
+
+function attRevNextImg(){
+  if(attRevImgIdx<attImgs.length-1) renderAttRevImg(attRevImgIdx+1);
+  else closeAttReview();
+}
+
+function attRevNavImg(dir){
+  const next=attRevImgIdx+dir;
+  if(next>=0&&next<attImgs.length) renderAttRevImg(next);
+}
 function dzo(e,id){e.preventDefault();document.getElementById(id).classList.add('over')}
 function dzl(id){document.getElementById(id).classList.remove('over')}
 
@@ -2564,6 +2762,7 @@ function copyRecord(){
 function syncSession(){document.getElementById('att-sess').value=document.getElementById('bgb-sess').value;}
 function attSel(e){attImgs=[...attImgs,...Array.from(e.target.files)];renderAttThumbs();}
 function attDrop(e){e.preventDefault();dzl('att-dz');attImgs=[...attImgs,...Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'))];renderAttThumbs();}
+
 function renderAttThumbs(){
   const el=document.getElementById('att-thumbs');el.innerHTML='';
   attImgs.forEach((f,i)=>{
@@ -2573,13 +2772,34 @@ function renderAttThumbs(){
     img.onclick=()=>{attImgs.splice(i,1);renderAttThumbs();};
     el.appendChild(img);
   });
+  // Update registered summary
+  showAttRegSummary();
 }
+
+function showAttRegSummary(){
+  const el=document.getElementById('att-reg-summary');
+  const allReg=getRegistered();
+  if(!allReg.length){el.style.display='none';return;}
+  el.style.display='block';
+  el.innerHTML=`<strong>${allReg.length} registered players</strong> — Team A: ${allReg.filter(p=>p.side==='A').length} · Team B: ${allReg.filter(p=>p.side==='B').length}`;
+}
+
+function getRegistered(){
+  const reg=[];
+  teamA.starters.forEach(p=>reg.push({...p,side:'A',role:'starter'}));
+  teamA.subs.forEach(p=>reg.push({...p,side:'A',role:'sub'}));
+  teamB.starters.forEach(p=>reg.push({...p,side:'B',role:'starter'}));
+  teamB.subs.forEach(p=>reg.push({...p,side:'B',role:'sub'}));
+  return reg;
+}
+
 function clearAtt(){
-  attImgs=[];
+  attImgs=[];attImgsPerResult=[];attScanResults=[];
   document.getElementById('att-thumbs').innerHTML='';
   document.getElementById('att-st').textContent='';
-  document.getElementById('att-results').innerHTML='<div style="color:var(--text3);font-size:11px;font-family:\'Share Tech Mono\',monospace">Upload screenshots to begin.</div>';
-  // Reset file input so same files can be re-selected
+  document.getElementById('att-summary').style.display='none';
+  document.getElementById('att-rescan-box').style.display='none';
+  document.getElementById('att-review-btn').style.display='none';
   const inp=document.getElementById('att-imgs');
   if(inp) inp.value='';
 }
@@ -2590,166 +2810,251 @@ async function runAttOCR(){
   if(!attImgs.length){alert('Upload post-battle screenshots first.');return;}
   const alli=document.getElementById('att-alli').value.trim()||cfg.alli;
   const st=document.getElementById('att-st');
+  const btn=document.getElementById('att-scan-btn');
+  btn.disabled=true;
+  btn.innerHTML='<div class="spinner"></div> Scanning...';
 
-  // Build registered list for AI context
-  const registered=[...teamA.starters,...teamA.subs,...teamB.starters,...teamB.subs];
+  const registered=getRegistered();
+  if(!registered.length){
+    st.className='ist er';
+    st.textContent='No registered players found. Complete step 2 (Register) first.';
+    btn.disabled=false;btn.innerHTML='Scan Attendance';return;
+  }
+
   const regList=registered.map(p=>p.n).join('\n');
-  const hasRegistered=registered.length>0;
-  showAttRegisteredList();
 
-  const detectedPerImg=[];
-  const detectedAll=new Set();
+  // Track which registered players are detected
+  const detectedKeys=new Set(); // normFull keys
+  attImgsPerResult=[];
+
+  // Progress rendering
+  const imgResults=new Array(attImgs.length).fill(null);
+  function renderAttProgress(cur,results){
+    const rows=attImgs.map((f,i)=>{
+      const r=results[i];
+      const isFail=r==='fail',isRetry=r==='retry';
+      const isDone=i<cur&&!isFail&&!isRetry;
+      const isActive=i===cur&&!isFail;
+      const cls=isFail?'sdot-miss':isDone?'sdot-done':isActive?'sdot-active':'sdot-wait';
+      const label=isFail?`${f.name||'Image '+(i+1)} — failed, use Review to fix`
+        :isRetry?`${f.name||'Image '+(i+1)} — retrying...`
+        :isDone?`${f.name||'Image '+(i+1)} · ${typeof r==='number'?r:0} VHA found`
+        :isActive?`${f.name||'Image '+(i+1)} · scanning...`
+        :`${f.name||'Image '+(i+1)}`;
+      const spinner=(isActive||isRetry)?'<div class="spinner" style="margin-left:auto"></div>':'';
+      return `<div class="scan-img-row"><div class="sdot ${cls}"></div><span style="${isFail?'color:var(--red)':''}">${label}</span>${spinner}</div>`;
+    }).join('');
+    const pct=cur>=attImgs.length?100:Math.round((cur/attImgs.length)*100);
+    st.innerHTML=`<div class="scan-progress">${rows}<div class="spbar"><div class="spbar-fill" style="width:${pct}%"></div></div><div class="sp-summary">${detectedKeys.size} VHA members found · image ${Math.min(cur+1,attImgs.length)} of ${attImgs.length}</div></div>`;
+  }
 
   for(let i=0;i<attImgs.length;i++){
-    st.className='ist ld';
-    st.textContent=`Scanning ${i+1}/${attImgs.length}...`;
+    renderAttProgress(i,imgResults);
     const b64=await fileToB64(attImgs[i]);
     const mtype=attImgs[i].type||'image/jpeg';
     const imgUrl=URL.createObjectURL(attImgs[i]);
+    const imgResult={imgUrl,imgFile:attImgs[i],names:[]};
 
-    const prompt=hasRegistered
-      ?`Dark War Survival post-battle screenshot. Alliance: [${alli}].
+    let success=false;
+    for(let attempt=0;attempt<2;attempt++){
+      try{
+        const prompt=`Dark War Survival — post-battle Mail/results screenshot.
 
-Registered players for this BGB:
+I have a list of registered VHA alliance players. Your job is to check which of these players appear in this screenshot.
+
+REGISTERED PLAYERS:
 ${regList}
 
-From this screenshot, which registered players are visible? Also flag any [${alli}] members NOT in the list above.
-Return ONLY JSON: {"found":["name from registered list"],"unverified":["name not in list"]}`
-      :`Dark War Survival post-battle screenshot. Find all [${alli}] players. Return ONLY JSON array: ["name1","name2"]`;
+INSTRUCTIONS:
+- Look for players with [${alli}] alliance tag
+- Match what you see to the registered list above using fuzzy matching (names may differ slightly)
+- Only report players from the registered list that you can see
+- If a name looks similar to one in the list, include it
 
-    try{
-      const res=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,
-          messages:[{role:'user',content:[
-            {type:'image',source:{type:'base64',media_type:mtype,data:b64}},
-            {type:'text',text:prompt}
-          ]}]
-        })
-      });
-      const data=await res.json();
-      if(data.error) continue;
-      const txt=data.content[0].text.trim();
-      const imgResult={imgUrl,names:[],unverified:[]};
+Return ONLY valid JSON:
+{"found":["exact name from registered list"]}`;
 
-      if(hasRegistered){
+        const txt=await callAPI(apiKey,'claude-sonnet-4-6',2000,b64,mtype,prompt);
         const jm=txt.match(/\{[\s\S]*\}/);
-        if(jm){
-          try{
-            const parsed=JSON.parse(jm[0]);
-            if(parsed.found) parsed.found.forEach(n=>{if(n){imgResult.names.push(n.trim());detectedAll.add(n.trim());}});
-            if(parsed.unverified) parsed.unverified.forEach(n=>{if(n) imgResult.unverified.push(n.trim());});
-          }catch(e){}
-        }
-      } else {
-        const jm=txt.match(/\[[\s\S]*?\]/);
-        if(jm){try{JSON.parse(jm[0]).forEach(n=>{if(n){imgResult.names.push(n.trim());detectedAll.add(n.trim());}});}catch(e){}}
+        if(!jm) throw new Error('No JSON');
+        const parsed=JSON.parse(jm[0]);
+        const found=parsed.found||[];
+        let imgCount=0;
+        found.forEach(name=>{
+          if(!name) return;
+          // Match to registered list
+          const reg=registered.find(r=>r.n===name)
+            ||registered.find(r=>normAscii(r.n)===normAscii(name))
+            ||registered.find(r=>fuzzyMatchRoster(name)&&fuzzyMatchRoster(name).n===r.n);
+          if(!reg) return;
+          const key=normFull(reg.n);
+          if(!detectedKeys.has(key)){
+            detectedKeys.add(key);
+            imgResult.names.push(reg.n);
+            imgCount++;
+          }
+        });
+        imgResults[i]=imgCount;
+        success=true;
+        break;
+      }catch(e){
+        if(attempt===0){imgResults[i]='retry';renderAttProgress(i,imgResults);await new Promise(r=>setTimeout(r,1500));}
+        else{imgResults[i]='fail';}
       }
-      detectedPerImg.push(imgResult);
-    }catch(e){console.warn('Att OCR error',e);}
+    }
+    attImgsPerResult.push(imgResult);
+    renderAttProgress(i+1,imgResults);
   }
 
-  st.className='ist ok';
-  st.textContent=`✓ ${detectedAll.size} players identified across ${attImgs.length} screenshots`;
-  processAttendance([...detectedAll],detectedPerImg);
+  // Build attendance results — all registered players
+  attScanResults=getRegistered().map(p=>({
+    ...p,
+    present:detectedKeys.has(normFull(p.n)),
+    confirmed:detectedKeys.has(normFull(p.n)) // auto-confirm detected ones
+  }));
+
+  btn.disabled=false;btn.innerHTML='Scan Attendance';
+  renderAttResults();
+  // Show review button
+  document.getElementById('att-review-btn').style.display='inline-flex';
+  document.getElementById('att-summary').style.display='block';
+  // Check unverified
+  checkAttUnverified();
 }
 
-function processAttendance(detectedNames, detectedPerImg=[]){
-  // Get all registered players (from both teams)
-  const registered=[];
-  const addReg=(data,side)=>[...data.starters,...data.subs].forEach(p=>registered.push({...p,side,inRoster:true}));
-  addReg(teamA,'A');addReg(teamB,'B');
-
-  const detNorm=detectedNames.map(n=>norm(n));
-
-  attResults=registered.map(p=>{
-    const pn=norm(p.n);
-    const present=detNorm.some(d=>d===pn||d.includes(pn)||pn.includes(d));
-    return{...p,present};
+function attSetTab(tab){
+  attTab=tab;
+  ['all','A','B'].forEach(t=>{
+    const btn=document.getElementById('att-tab-'+t);
+    if(!btn) return;
+    btn.className='stb'+(tab===t?(t==='A'?' on-a':t==='B'?' on-b':' on-a'):'');
   });
-
-  // Add detected not in registered
-  detectedNames.forEach(dn=>{
-    const pn=norm(dn);
-    const inReg=registered.some(p=>norm(p.n)===pn||norm(p.n).includes(pn)||pn.includes(norm(p.n)));
-    if(!inReg) attResults.push({n:dn,cp:getCPfromRoster(dn),side:'?',present:true,inRoster:false});
-  });
-
   renderAttResults();
 }
 
-// Store per-image data for unverified display
-let _attPerImg=[];
-
 function renderAttResults(){
   const el=document.getElementById('att-results');
-  if(!attResults.length){el.innerHTML='<div style="color:var(--text3);font-size:11px">No results.</div>';return;}
-
-  // Registered players — present/absent
-  let html=attResults.map((r,i)=>`
-    <div class="att-row" id="ar-${i}" onclick="togAtt(${i})">
-      <span class="att-n">${r.n}${!r.inRoster?'<span style="font-size:9px;color:var(--text3);margin-left:4px">[ext]</span>':''}</span>
-      <span style="font-size:9px;color:var(--text3);font-family:var(--font-mono)">T${r.side}</span>
-      <span class="att-b ${r.present?'ab-p':'ab-a'}">${r.present?'PRESENT':'ABSENT'}</span>
-    </div>`).join('');
-
-  // Unverified section — names AI found not in registered list
-  const allUnverified=[];
-  _attPerImg.forEach(img=>{
-    (img.unverified||[]).forEach(name=>{
-      const already=allUnverified.find(u=>norm(u.name)===norm(name));
-      if(!already) allUnverified.push({name,imgUrl:img.imgUrl});
-    });
-  });
-
-  if(allUnverified.length){
-    html+=`<div style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--red);margin-bottom:5px">UNVERIFIED — not in registered list (${allUnverified.length})</div>`;
-    allUnverified.forEach(u=>{
-      html+=`<div class="unverified-row">
-        <img class="unverified-thumb" src="${u.imgUrl}" onclick="window.open(this.src)" title="Click to enlarge screenshot">
-        <span class="unverified-name">${u.name}</span>
-        <span style="font-size:9px;color:var(--text3)">Not registered</span>
-      </div>`;
-    });
+  if(!attScanResults.length){
+    el.innerHTML='<div style="color:var(--text3);font-size:13px">No results yet.</div>';
+    return;
   }
+  const filtered=attTab==='all'?attScanResults:attScanResults.filter(r=>r.side===attTab);
+  const present=filtered.filter(r=>r.present).length;
+  const total=filtered.length;
+  document.getElementById('att-summary-pill').textContent=`${present} present · ${total-present} absent · ${total} total`;
 
-  el.innerHTML=html;
+  el.innerHTML=filtered.map((r,i)=>{
+    const globalIdx=attScanResults.indexOf(r);
+    return `<div class="att-row" id="ar-${globalIdx}" onclick="togAttResult(${globalIdx})">
+      <span class="att-n">${r.n}</span>
+      <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">T${r.side}</span>
+      <span class="att-b ${r.present?'ab-p':'ab-a'}">${r.present?'PRESENT':'ABSENT'}</span>
+    </div>`;
+  }).join('');
+
   syncAbsentLog();
 }
 
-function togAtt(i){
-  attResults[i].present=!attResults[i].present;
-  const row=document.getElementById('ar-'+i);
-  const b=row.querySelector('.att-b');
-  b.className='att-b '+(attResults[i].present?'ab-p':'ab-a');
-  b.textContent=attResults[i].present?'PRESENT':'ABSENT';
-  syncAbsentLog();
+function togAttResult(globalIdx){
+  if(!attScanResults[globalIdx]) return;
+  attScanResults[globalIdx].present=!attScanResults[globalIdx].present;
+  attScanResults[globalIdx].confirmed=true;
+  renderAttResults();
+  checkAttUnverified();
+}
+
+function checkAttUnverified(){
+  const absent=attScanResults.filter(r=>!r.present);
+  const box=document.getElementById('att-rescan-box');
+  const lbl=document.getElementById('att-rescan-label');
+  if(absent.length>0&&attImgs.length>0){
+    box.style.display='block';
+    lbl.textContent=`${absent.length} player${absent.length>1?'s':''} marked absent — re-scan to confirm`;
+  } else {
+    box.style.display='none';
+  }
+}
+
+async function runAttRescan(){
+  const apiKey=cfg.apiKey||document.getElementById('api-k').value.trim();
+  if(!apiKey) return;
+  const absentPlayers=attScanResults.filter(r=>!r.present);
+  if(!absentPlayers.length) return;
+  const st=document.getElementById('att-rescan-st');
+  const btn=document.getElementById('att-rescan-btn');
+  btn.disabled=true;
+  const absentList=absentPlayers.map(p=>p.n).join('\n');
+  st.className='ist ld';
+  st.textContent=`Scanning ${attImgs.length} images for ${absentPlayers.length} absent players...`;
+
+  const newFound=new Set();
+  for(let i=0;i<attImgs.length;i++){
+    const b64=await fileToB64(attImgs[i]);
+    const mtype=attImgs[i].type||'image/jpeg';
+    try{
+      const prompt=`Dark War Survival post-battle screenshot.
+
+I need to find these SPECIFIC players that may have been missed:
+${absentList}
+
+Look carefully for any of these names. They may have [${cfg.alli||'VHA'}] alliance tag.
+Return ONLY JSON: {"found":["name from list above"]}`;
+      const txt=await callAPI(apiKey,'claude-sonnet-4-6',2000,b64,mtype,prompt);
+      const jm=txt.match(/\{[\s\S]*\}/);
+      if(!jm) continue;
+      const parsed=JSON.parse(jm[0]);
+      (parsed.found||[]).forEach(name=>{
+        const reg=absentPlayers.find(r=>r.n===name||normAscii(r.n)===normAscii(name));
+        if(reg) newFound.add(normFull(reg.n));
+      });
+    }catch(e){console.warn('Rescan err img '+i,e);}
+  }
+
+  // Update results
+  let count=0;
+  attScanResults.forEach(r=>{
+    if(newFound.has(normFull(r.n))){r.present=true;r.confirmed=true;count++;}
+  });
+
+  btn.disabled=false;
+  st.className='ist ok';
+  st.textContent=count>0?`✓ Found ${count} more player${count>1?'s':''}!`:'No additional players found — mark manually if needed';
+  renderAttResults();
+  checkAttUnverified();
 }
 
 function syncAbsentLog(){
-  const sess=document.getElementById('att-sess').value.trim()||today();
-  const absents=attResults.filter(r=>!r.present&&r.inRoster);
-  absents.forEach(a=>{
-    const exists=absentLog.find(l=>l.n===a.n&&l.date===sess);
-    if(!exists)absentLog.push({n:a.n,cp:a.cp,side:a.side,date:sess});
+  const sess=document.getElementById('att-sess').value.trim()||todayCode();
+  attScanResults.filter(r=>!r.present).forEach(a=>{
+    const exists=absentLog.find(l=>normFull(l.n)===normFull(a.n)&&l.date===sess);
+    if(!exists) absentLog.push({n:a.n,cp:a.cp||0,side:a.side,role:a.role,date:sess});
   });
   localStorage.setItem('bgb4_log',JSON.stringify(absentLog));
   renderLog();
 }
 
+function copyAbsent(){
+  const tsv=['No\tName\tTeam\tRole\tMain Car CP\tAbsent Date',
+    ...absentLog.map((l,i)=>`${i+1}\t${l.n}\t${l.side||'?'}\t${l.role||''}\t${fcp(l.cp)}\tBGB ${l.date}`)
+  ].join('\n');
+  navigator.clipboard.writeText(tsv).then(()=>toast('Absent log copied!'));
+  document.getElementById('sh-save-st').className='ist ok';
+  document.getElementById('sh-save-st').textContent='✓ Copied! Paste into Sheets tab "BGB Log"';
+}
+
 function renderLog(){
   const el=document.getElementById('absent-log');
-  if(!absentLog.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:.5rem 0">No absent records.</div>';return;}
+  if(!el) return;
+  if(!absentLog.length){
+    el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:.5rem 0">No absent records.</div>';
+    return;
+  }
   el.innerHTML=`<table class="log-tbl">
-    <thead><tr><th>#</th><th>Name</th><th>Team</th><th>Main Car CP</th><th>Absent Date</th><th style="width:36px"></th></tr></thead>
+    <thead><tr><th>#</th><th>Name</th><th>Team</th><th>Role</th><th>Main Car CP</th><th>Absent Date</th><th style="width:36px"></th></tr></thead>
     <tbody>`+
     absentLog.map((l,i)=>`<tr>
-      <td>${i+1}</td>
-      <td>${l.n}</td>
-      <td>${l.side||'?'}</td>
-      <td>${fcp(l.cp)}</td>
-      <td>BGB ${l.date}</td>
+      <td>${i+1}</td><td>${l.n}</td><td>${l.side||'?'}</td><td>${l.role||''}</td>
+      <td>${fcp(l.cp)}</td><td>BGB ${l.date}</td>
       <td><button onclick="deleteAbsent(${i})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;font-weight:bold;padding:0 4px;line-height:1" title="Remove">×</button></td>
     </tr>`).join('')+
     `</tbody></table>`;
@@ -2761,30 +3066,7 @@ function deleteAbsent(idx){
   renderLog();
 }
 
-function copyAbsent(){
-  const tsv=['No\tName\tTeam\tMain Car CP\tAbsent Date',...absentLog.map((l,i)=>`${i+1}\t${l.n}\t${l.side||'?'}\t${fcp(l.cp)}\tBGB ${l.date}`)].join('\n');
-  navigator.clipboard.writeText(tsv).then(()=>toast('Absent log copied!'));
-  document.getElementById('sh-save-st').className='ist ok';
-  document.getElementById('sh-save-st').textContent='✓ Copied! Paste into Sheets tab "'+cfg.abTab+'"';
-}
 function clearLog(){if(confirm('Clear all absent records?')){absentLog=[];localStorage.removeItem('bgb4_log');renderLog();}}
-
-// ══════════════════════════════════════════════
-//  SETTINGS
-// ══════════════════════════════════════════════
-function saveKey(){cfg.apiKey=document.getElementById('api-k').value.trim();localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));document.getElementById('api-st').className='ist ok';document.getElementById('api-st').textContent='✓ Saved locally';}
-async function testKey(){
-  const key=document.getElementById('api-k').value.trim();
-  const st=document.getElementById('api-st');
-  if(!key){st.className='ist er';st.textContent='✗ Enter key first';return;}
-  st.className='ist ld';st.textContent='Testing...';
-  try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:5,messages:[{role:'user',content:'Hi'}]})});
-    const d=await r.json();
-    if(d.error){st.className='ist er';st.textContent='✗ '+d.error.message;}
-    else{st.className='ist ok';st.textContent='✓ API key working!';}
-  }catch(e){st.className='ist er';st.textContent='✗ Connection error';}
-}
 function saveCfg(){cfg.sid=document.getElementById('cfg-sid').value.trim();cfg.rTab=document.getElementById('cfg-rt').value.trim();cfg.bgbTab=document.getElementById('cfg-bgbt').value.trim();cfg.abTab=document.getElementById('cfg-at').value.trim();localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));document.getElementById('cfg-st').className='ist ok';document.getElementById('cfg-st').textContent='✓ Saved';}
 function saveApp(){
   cfg.alli=document.getElementById('cfg-alli').value.trim();
@@ -3073,6 +3355,9 @@ let rosterStatus={}; // name -> 'absent-red' | 'no-turn-green' | 'normal' | ''
 let rosterSort={by:'cp',dir:'desc'};
 let rosterSearch='';
 let bgbHistory=[]; // array of past BGB sessions
+let attImgsPerResult=[]; // [{imgUrl, names:[]}] per image
+let attTab='all'; // 'all'|'A'|'B'
+let attScanResults=[]; // [{n, side, role, present, confirmed}]
 
 function todayCode(){
   const d=new Date();
@@ -3467,33 +3752,44 @@ function renderRevList(){
   const data=revSide==='A'?teamA:teamB;
   const allPlayers=[...data.starters.map(p=>({...p,role:'starter'})),...data.subs.map(p=>({...p,role:'sub'}))];
 
-  // Split: confirmed vs needs check
-  const confirmed=allPlayers.filter(p=>p.confirmed!==false);
-  const needsCheck=allPlayers.filter(p=>p.confirmed===false);
+  // Get players detected in CURRENT image
+  const imgGroup=data.images&&data.images[revImgIdx];
+  const inThisImg=new Set((imgGroup?imgGroup.players:[]).map(p=>normFull(p.n)));
+
+  // Split into: in this image | not in this image
+  const inImg=allPlayers.filter(p=>inThisImg.has(normFull(p.n)));
+  const notInImg=allPlayers.filter(p=>!inThisImg.has(normFull(p.n)));
+  const totalAll=allPlayers.length;
+  const totalImg=inImg.length;
 
   let html='';
 
-  if(confirmed.length){
-    html+=`<div class="review-section-lbl">Matched (${confirmed.length})</div>`;
-    confirmed.forEach((p,i)=>{
-      const rawName=p.rawName?`<span class="rpr-src">~${p.rawName}</span>`:'';
-      html+=`<div class="review-player-row">
-        <div class="rpr-status ok" title="Confirmed">✓</div>
-        <span class="rpr-name">${p.n}${rawName}</span>
-        <span class="rpr-role ${p.role==='starter'?'s':'b'}" onclick="revToggleRole('${p.n.replace(/'/g,"\'")}',this)">${p.role==='starter'?'STR':'SUB'}</span>
-        <button class="rpr-del" onclick="revDelete('${p.n.replace(/'/g,"\'")}')">×</button>
+  // ── Section 1: Players found in THIS screenshot ──
+  if(inImg.length){
+    html+=`<div class="review-section-lbl" style="background:rgba(61,184,120,0.08);color:var(--green)">In this screenshot (${totalImg})</div>`;
+    inImg.forEach(p=>{
+      const esc=p.n.replace(/'/g,"\'");
+      html+=`<div class="review-player-row" style="border-left:3px solid var(--green)">
+        <div class="rpr-status ok">✓</div>
+        <span class="rpr-name">${p.n}</span>
+        <span class="rpr-role ${p.role==='starter'?'s':'b'}" onclick="revToggleRole('${esc}',this)">${p.role==='starter'?'STR':'SUB'}</span>
+        <button class="rpr-del" onclick="revDelete('${esc}')">×</button>
       </div>`;
     });
+  } else {
+    html+=`<div style="color:var(--text3);font-size:12px;padding:10px 14px">No players detected in this screenshot yet.</div>`;
   }
 
-  if(needsCheck.length){
-    html+=`<div class="review-section-lbl" style="background:rgba(212,164,65,0.1);color:var(--gold2)">Needs check (${needsCheck.length})</div>`;
-    needsCheck.forEach(p=>{
-      html+=`<div class="review-player-row" style="background:rgba(212,164,65,0.05)">
-        <div class="rpr-status unk" title="Needs verification" onclick="revMarkConfirmed('${p.n.replace(/'/g,"\'")}')">?</div>
-        <span class="rpr-name">${p.n}</span>
-        <span class="rpr-role ${p.role==='starter'?'s':'b'}" onclick="revToggleRole('${p.n.replace(/'/g,"\'")}',this)">${p.role==='starter'?'STR':'SUB'}</span>
-        <button class="rpr-del" onclick="revDelete('${p.n.replace(/'/g,"\'")}')">×</button>
+  // ── Section 2: All other confirmed players (other images) ──
+  if(notInImg.length){
+    html+=`<div class="review-section-lbl" style="color:var(--text3)">Other images (${notInImg.length} total)</div>`;
+    notInImg.forEach(p=>{
+      const esc=p.n.replace(/'/g,"\'");
+      html+=`<div class="review-player-row" style="opacity:.5">
+        <div class="rpr-status ok" style="border-color:var(--border2);background:none;color:var(--text3)">✓</div>
+        <span class="rpr-name" style="color:var(--text3)">${p.n}</span>
+        <span class="rpr-role ${p.role==='starter'?'s':'b'}" onclick="revToggleRole('${esc}',this)">${p.role==='starter'?'STR':'SUB'}</span>
+        <button class="rpr-del" onclick="revDelete('${esc}')">×</button>
       </div>`;
     });
   }
@@ -3504,9 +3800,9 @@ function renderRevList(){
 
   el.innerHTML=html;
 
-  // Update confirm count
+  // Update confirm count — show per-image / total
   const cc=document.getElementById('rev-confirm-count');
-  if(cc) cc.textContent=`${confirmed.length} / ${allPlayers.length} confirmed`;
+  if(cc) cc.textContent=`${totalImg} in view · ${totalAll} total`;
 }
 
 function revToggleRole(name,el){
