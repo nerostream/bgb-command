@@ -127,12 +127,8 @@ body.light .theme-tog{background:var(--gold-dim);border-color:var(--gold)}
 .settings-btn.on{color:var(--text);border-bottom-color:var(--border2)}
 
 /* ═══ COPY BAR ═══ */
-#copy-bar{
-  display:none;position:sticky;top:121px;z-index:180;
-  background:var(--bg2);border-bottom:1px solid var(--border);
-  padding:8px 1.5rem;box-shadow:var(--shadow);
-}
-.copy-bar-inner{max-width:1500px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#copy-bar{display:none}
+.copy-bar-inner{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .copy-bar-label{font-size:12px;color:var(--text3);font-weight:600;white-space:nowrap}
 
 /* ═══ LAYOUT ═══ */
@@ -286,7 +282,7 @@ textarea.inp{resize:vertical;line-height:1.6}
 .ac-inp{width:100%;background:var(--bg3);border:1px solid rgba(224,85,85,0.4);border-radius:var(--radius-sm);color:var(--text);padding:8px 12px;font-size:14px;outline:none;font-family:var(--font-body)}
 .ac-inp:focus{border-color:var(--red)}
 .ac-inp::placeholder{color:var(--text4)}
-.ac-drop{position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);z-index:500;max-height:200px;overflow-y:auto;display:none;box-shadow:var(--shadow-lg)}
+.ac-drop{position:fixed;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);z-index:2000;max-height:220px;overflow-y:auto;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.4);min-width:240px}
 .ac-item{padding:9px 12px;font-size:13px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
 .ac-item:last-child{border-bottom:none}
 .ac-item:hover,.ac-item.active{background:var(--bg3)}
@@ -365,6 +361,29 @@ textarea.inp{resize:vertical;line-height:1.6}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+/* ═══ LOGO UPLOAD ═══ */
+.logo-upload-zone{width:56px;height:56px;border-radius:var(--radius);border:2px dashed var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;flex-shrink:0;transition:border-color .2s}
+.logo-upload-zone:hover{border-color:var(--gold)}
+.logo-upload-zone img{width:100%;height:100%;object-fit:cover}
+.logo-em img{width:100%;height:100%;object-fit:cover;border-radius:3px}
+/* ═══ HELP MODAL ═══ */
+.help-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:600;display:flex;align-items:center;justify-content:center;padding:1rem}
+.help-panel{background:var(--bg2);border-radius:var(--radius-lg);width:100%;max-width:560px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column}
+.help-hd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.help-ttl{font-size:16px;font-weight:600;color:var(--text)}
+.help-close{background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;line-height:1;padding:0 4px}
+.help-close:hover{color:var(--text)}
+.help-body{overflow-y:auto;padding:16px 18px;flex:1}
+.help-step{display:flex;gap:14px;margin-bottom:1.5rem}
+.help-step:last-child{margin-bottom:0}
+.help-num{width:32px;height:32px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold);color:var(--gold2);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.help-content{}
+.help-step-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.help-step-desc{font-size:13px;color:var(--text2);line-height:1.6}
+.help-step-tip{font-size:12px;color:var(--text3);margin-top:5px;padding:6px 10px;background:var(--bg3);border-radius:var(--radius-sm);border-left:2px solid var(--border2)}
+.help-divider{border:none;border-top:1px solid var(--border);margin:1.25rem 0}
+.help-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:var(--radius-sm);transition:all .15s;font-family:var(--font-body)}
+.help-btn:hover{background:var(--bg3);color:var(--text)}
 
 /* ═══ REVIEW MODAL ═══ */
 .review-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;display:flex;align-items:stretch}
@@ -433,6 +452,7 @@ textarea.inp{resize:vertical;line-height:1.6}
 .sdot-done{background:var(--green)}
 .sdot-active{background:var(--gold2)}
 .sdot-wait{background:var(--border2)}
+.sdot-miss{background:var(--red)}
 .spbar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:8px 0 4px}
 .spbar-fill{height:100%;background:var(--gold2);border-radius:2px;transition:width .4s ease}
 .sp-summary{font-size:11px;color:var(--text3);font-family:var(--font-mono)}
@@ -475,10 +495,7 @@ textarea.inp{resize:vertical;line-height:1.6}
   .settings-btn span{display:none}
 
   /* Copy bar — stack on mobile */
-  #copy-bar{top:90px}
-  .copy-bar-inner{gap:6px}
-  .copy-bar-label{display:none}
-  .copy-bar-inner .btn{font-size:12px;padding:6px 10px}
+
 
   /* Content */
   .two-col{grid-template-columns:1fr}
@@ -537,6 +554,10 @@ textarea.inp{resize:vertical;line-height:1.6}
   </div>
   <div class="hdr-right">
     <div class="data-badge" id="stamp">Updated: 24 Apr 2026</div>
+    <button class="help-btn" onclick="openHelp()" title="Help & Guide">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Help
+    </button>
     <div class="theme-tog" onclick="toggleTheme()" title="Toggle day/night"></div>
   </div>
 </header>
@@ -566,18 +587,7 @@ textarea.inp{resize:vertical;line-height:1.6}
   </button>
 </nav>
 
-<div id="copy-bar">
-  <div class="copy-bar-inner">
-    <span class="copy-bar-label">Copy Formation:</span>
-    <button class="btn btn-a" onclick="doCopyForSide('A')" id="copy-bar-a">📋 Team A</button>
-    <button class="btn btn-b" onclick="doCopyForSide('B')" id="copy-bar-b">📋 Team B</button>
-    <button class="btn" onclick="doCopyBoth()">📋 Both Teams</button>
-    <button class="btn" onclick="copyWhatsApp()" style="border-color:#25D366;color:#25D366;background:rgba(37,211,102,0.08)">💬 WhatsApp</button>
-    <button class="btn" onclick="printFormation()">🖨 Print</button>
-    <button class="btn btn-gr" onclick="copyBGBRecord()">📊 Save to Sheets</button>
-    <span id="copy-bar-msg" style="font-size:13px;color:var(--green);opacity:0;transition:opacity .3s"></span>
-  </div>
-</div>
+<div id="copy-bar" style="display:none"></div>
 <div class="main">
 
 <!-- ═══════════════ ROSTER ═══════════════ -->
@@ -698,6 +708,15 @@ textarea.inp{resize:vertical;line-height:1.6}
 
 <!-- ═══════════════ TEAMS ═══════════════ -->
 <div id="mt-teams" class="mtc">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:1rem;padding:10px 0;border-bottom:1px solid var(--border)">
+    <span style="font-size:12px;font-weight:600;color:var(--text3)">Copy:</span>
+    <button class="btn btn-a" onclick="doCopyForSide('A')" id="copy-bar-a">📋 Team A</button>
+    <button class="btn btn-b" onclick="doCopyForSide('B')" id="copy-bar-b">📋 Team B</button>
+    <button class="btn" onclick="doCopyBoth()">📋 Both</button>
+    <button class="btn" onclick="printFormation()">🖨 Print</button>
+    <button class="btn btn-gr" onclick="copyBGBRecord()">📊 Save to Sheets</button>
+    <span id="copy-bar-msg" style="font-size:13px;color:var(--green);opacity:0;transition:opacity .3s;margin-left:4px"></span>
+  </div>
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:1rem">
     <div class="sub-tab-bar">
       <button class="stb on-a" id="stb-a" onclick="showTeamSide('A')">⚔ Team A</button>
@@ -853,9 +872,23 @@ textarea.inp{resize:vertical;line-height:1.6}
     </div>
 
     <div class="set-card">
-      <div class="set-ttl">⚙ App Settings</div>
-      <div class="fl">Alliance Name</div>
-      <input class="inp" id="cfg-alli" value="VHA"/>
+      <div class="set-ttl">⚙ Alliance & App Settings</div>
+
+      <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:12px">
+        <div>
+          <div class="fl" style="margin-bottom:6px">Alliance Logo</div>
+          <div class="logo-upload-zone" id="logo-upload-zone" onclick="document.getElementById('logo-file').click()" title="Click to upload logo">
+            <input type="file" id="logo-file" accept="image/*" style="display:none" onchange="uploadLogo(event)">
+            <span id="logo-placeholder" style="font-size:22px">⚔</span>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div class="fl">Abbreviation</div>
+          <input class="inp" id="cfg-alli" value="VHA" style="margin-bottom:6px" placeholder="e.g. VHA"/>
+          <div class="fl">Full Alliance Name</div>
+          <input class="inp" id="cfg-alli-full" value="Valhalla" placeholder="e.g. Valhalla"/>
+        </div>
+      </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px">
         <div>
@@ -892,6 +925,65 @@ textarea.inp{resize:vertical;line-height:1.6}
 
 </div><!-- /main -->
 <div class="toast" id="toast">Copied!</div>
+
+<!-- ═══ HELP MODAL ═══ -->
+<div id="help-overlay" class="help-overlay" style="display:none" onclick="if(event.target===this)closeHelp()">
+  <div class="help-panel">
+    <div class="help-hd">
+      <span class="help-ttl">How to use BGB Command</span>
+      <button class="help-close" onclick="closeHelp()">×</button>
+    </div>
+    <div class="help-body">
+      <div class="help-step">
+        <div class="help-num">1</div>
+        <div class="help-content">
+          <div class="help-step-title">Set up once — Settings</div>
+          <div class="help-step-desc">Go to <strong>⚙ Settings</strong> and enter your Anthropic API key, Google Sheets ID, and alliance name. Upload your alliance logo to personalize the app for your team.</div>
+          <div class="help-step-tip">API key from console.anthropic.com — needed for AI scanning. Stored only in your browser.</div>
+        </div>
+      </div>
+      <div class="help-step">
+        <div class="help-num">1</div>
+        <div class="help-content">
+          <div class="help-step-title">Keep your roster updated — Roster tab</div>
+          <div class="help-step-desc">Click <strong>↻ Refresh Roster</strong> before each BGB event to pull the latest Main Car CP from your Google Sheets. Use <strong>Update Color Coding</strong> to see who has been absent (red) or hasn't played recently (green).</div>
+        </div>
+      </div>
+      <hr class="help-divider">
+      <div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">Before each BGB event</div>
+      <div class="help-step">
+        <div class="help-num">2</div>
+        <div class="help-content">
+          <div class="help-step-title">Scan participant screenshots — Register</div>
+          <div class="help-step-desc">Take screenshots of the BGB Participants page for both <strong>Team A</strong> and <strong>Team B</strong>. Upload all screenshots, then tap <strong>Scan</strong>. The AI will match players to your roster automatically.</div>
+          <div class="help-step-tip">After scanning, use <strong>Review Results</strong> to verify each screenshot — you can delete wrong matches or add missing players manually.</div>
+        </div>
+      </div>
+      <div class="help-step">
+        <div class="help-num">3</div>
+        <div class="help-content">
+          <div class="help-step-title">Generate team formation — Teams</div>
+          <div class="help-step-desc">Tap <strong>Generate Teams →</strong> to automatically sort all players by Main Car CP and form the 10 teams + Alloy squad. Use the <strong>📋 Copy</strong> buttons to paste the formation into your game chat.</div>
+          <div class="help-step-tip">Team 7–10 = top 8 players (snake draft). Alloy = top 4, dispatched after 10 minutes. Team 1–6 = remaining players.</div>
+        </div>
+      </div>
+      <hr class="help-divider">
+      <div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">After the battle</div>
+      <div class="help-step">
+        <div class="help-num">4</div>
+        <div class="help-content">
+          <div class="help-step-title">Record attendance — Attendance</div>
+          <div class="help-step-desc">Take ~9 screenshots of the post-battle results. Upload them and tap <strong>Scan</strong>. The AI checks who attended against your registered list and marks everyone as Present or Absent.</div>
+          <div class="help-step-tip">Tap any player row to manually toggle their attendance if the AI made a mistake.</div>
+        </div>
+      </div>
+      <hr class="help-divider">
+      <div style="font-size:12px;color:var(--text2);line-height:1.6">
+        <strong>Tip:</strong> Export a JSON backup regularly via Settings → Save / Load Data. Share the JSON with teammates so everyone sees the same color coding on the roster.
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ REVIEW MODAL ═══ -->
 <div id="review-overlay" class="review-overlay" style="display:none" onclick="if(event.target===this)closeReview()">
@@ -1062,7 +1154,7 @@ const BUILTIN=[
 //  STATE
 // ══════════════════════════════════════════════
 let ROSTER=[...BUILTIN].sort((a,b)=>b.cp-a.cp);
-let cfg={sid:'1fGhmeRAgKmd6a4z1Q-LBSfPL2qRqYhpK6PticIlooeo',rTab:'First Car3',bgbTab:'BGB Record',abTab:'BGB Absent',alli:'VHA',apiKey:'',redWeeks:4,greenWeeks:4,nameCol:'B',cpCol:'C'};
+let cfg={sid:'1fGhmeRAgKmd6a4z1Q-LBSfPL2qRqYhpK6PticIlooeo',rTab:'First Car3',bgbTab:'BGB Record',abTab:'BGB Absent',alli:'VHA',alliFullName:'Valhalla',alliLogo:null,apiKey:'',redWeeks:4,greenWeeks:4,nameCol:'B',cpCol:'C'};
 let showCP=false;
 let teamA={images:[],starters:[],subs:[]};
 let teamB={images:[],starters:[],subs:[]};
@@ -1129,6 +1221,9 @@ function init(){
     banner.innerHTML='✓ Scan progress restored from your last session. <button class="btn btn-r" style="margin-left:8px;font-size:11px;padding:3px 10px" onclick="this.parentElement.remove();clearScanProgress()">Clear</button>';
     document.querySelector('.main').prepend(banner);
   }
+  // Restore full alliance name
+  if(cfg.alliFullName){const el=document.getElementById('cfg-alli-full');if(el)el.value=cfg.alliFullName;}
+  applyAllianceBranding();
   renderRoster();renderLog();autoSetDate();
   // Update hints for mobile
   if(isMobile){
@@ -1147,7 +1242,57 @@ function fcp(n){
   // Format with dot as thousands separator: 3000 → 3.000, 1230 → 1.230
   return Math.round(n).toLocaleString('de-DE');
 }
-function norm(s){return s.toLowerCase().replace(/\s+/g,'').replace(/[^\w\u3000-\u9fff\u4e00-\u9fff]/g,'')}
+// Position dropdown relative to input using fixed coords (bypasses overflow:hidden)
+function positionDrop(drop, inp){
+  if(!drop||!inp) return;
+  const rect=inp.getBoundingClientRect();
+  const spaceBelow=window.innerHeight-rect.bottom;
+  const spaceAbove=rect.top;
+  const dropH=Math.min(220, drop.scrollHeight||220);
+
+  drop.style.width=rect.width+'px';
+  drop.style.left=rect.left+'px';
+
+  // Show below if enough space, otherwise above
+  if(spaceBelow>=dropH||spaceBelow>=spaceAbove){
+    drop.style.top=(rect.bottom+2)+'px';
+    drop.style.bottom='auto';
+  } else {
+    drop.style.top='auto';
+    drop.style.bottom=(window.innerHeight-rect.top+2)+'px';
+  }
+}
+
+function norm(s){
+  // Keep: alphanumeric, CJK, katakana (full+half width), extended Latin, Greek, special game chars
+  // This ensures names like "ﾒ Ġħøśτツ" don't get stripped to nothing
+  return s.toLowerCase()
+    .replace(/\s+/g,'')
+    .replace(/[^\w\u00C0-\u024F\u0370-\u03FF\u3000-\u30FF\uFF00-\uFFEF\u4e00-\u9fff]/g,'');
+}
+
+// Alternate norm that keeps ALL non-space chars for display matching
+function normFull(s){
+  return s.toLowerCase().replace(/\s+/g,'');
+}
+
+// ASCII-friendly norm — converts accented/special chars to base ASCII
+// Enables searching "mm" to find "ṃḿ", "gh" to find "Ġħ", etc.
+const _extraMap={
+  'ø':'o','ð':'d','þ':'th','ß':'ss','æ':'ae','œ':'oe',
+  'ħ':'h','ŧ':'t','ł':'l','đ':'d','ĸ':'k','ŋ':'n',
+  'ı':'i','ĳ':'ij','ŀ':'l',
+  '°':'','·':'','•':'','†':'','‡':'',
+  // halfwidth katakana to romaji hints (partial)
+  'ﾒ':'me','ﾆ':'ni','ﾏ':'ma',
+};
+function normAscii(s){
+  return s.toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g,'') // strip diacritics
+    .replace(/[^\x00-\x7F\u3000-\u30FF\uFF00-\uFFEF\u4e00-\u9fff]/g, ch=>_extraMap[ch]||ch)
+    .replace(/\s+/g,'');
+}
 function getCPfromRoster(name){
   const matched=ROSTER.find(p=>{const nm=norm(name);const pn=norm(p.n);return pn===nm||pn.includes(nm)||nm.includes(pn);});
   return matched?matched.cp:0;
@@ -1168,25 +1313,48 @@ function fuzzyMatchRoster(ocrName){
   const trimmed=ocrName.trim();
   if(!trimmed) return null;
   const oNorm=norm(trimmed);
+  const oFull=normFull(trimmed);
 
   // 1. Exact norm match
   let match=ROSTER.find(p=>norm(p.n)===oNorm);
   if(match) return match;
 
-  // 2. Contains match (OCR got partial name)
-  match=ROSTER.find(p=>norm(p.n).includes(oNorm)||oNorm.includes(norm(p.n)));
-  if(match&&Math.abs(norm(match.n).length-oNorm.length)<=4) return match;
+  // 1b. Exact full match (catches special char names)
+  match=ROSTER.find(p=>normFull(p.n)===oFull);
+  if(match) return match;
 
-  // 3. Levenshtein fuzzy — only if norm length similar (within 40%)
+  // 2. Contains match
+  match=ROSTER.find(p=>norm(p.n).includes(oNorm)||oNorm.includes(norm(p.n)));
+  if(match&&oNorm.length>=2&&Math.abs(norm(match.n).length-oNorm.length)<=4) return match;
+
+  // 2b. Full contains (for names where norm strips too much)
+  if(oFull.length>=2){
+    match=ROSTER.find(p=>normFull(p.n).includes(oFull)||oFull.includes(normFull(p.n)));
+    if(match&&Math.abs(normFull(match.n).length-oFull.length)<=4) return match;
+  }
+
+  // 3. Levenshtein on norm
   let best=null,bestDist=Infinity;
   for(const p of ROSTER){
     const pNorm=norm(p.n);
+    if(oNorm.length<2) continue;
     if(Math.abs(pNorm.length-oNorm.length)>Math.max(3,oNorm.length*0.4)) continue;
     const d=levenshtein(oNorm,pNorm);
     const threshold=Math.max(2,Math.floor(oNorm.length*0.35));
     if(d<bestDist&&d<=threshold){bestDist=d;best=p;}
   }
-  return best; // null if no close match
+  if(best) return best;
+
+  // 4. Levenshtein on full (last resort for exotic names)
+  for(const p of ROSTER){
+    const pFull=normFull(p.n);
+    if(oFull.length<2) continue;
+    if(Math.abs(pFull.length-oFull.length)>Math.max(4,oFull.length*0.5)) continue;
+    const d=levenshtein(oFull,pFull);
+    const threshold=Math.max(3,Math.floor(oFull.length*0.4));
+    if(d<bestDist&&d<=threshold){bestDist=d;best=p;}
+  }
+  return best;
 }
 function colI(l){l=l.toUpperCase().trim();let r=0;for(let i=0;i<l.length;i++)r=r*26+(l.charCodeAt(i)-64);return r-1;}
 function pCP(s){if(!s)return 0;const n=parseFloat(s.toString().replace(/,/g,'').trim());return isNaN(n)?0:n;}
@@ -1213,6 +1381,8 @@ function toggleTheme(){
   document.body.classList.toggle('light');
   localStorage.setItem('bgb_theme',document.body.classList.contains('light')?'light':'dark');
 }
+function openHelp(){document.getElementById('help-overlay').style.display='flex';}
+function closeHelp(){document.getElementById('help-overlay').style.display='none';}
 function dzo(e,id){e.preventDefault();document.getElementById(id).classList.add('over')}
 function dzl(id){document.getElementById(id).classList.remove('over')}
 
@@ -1223,10 +1393,11 @@ function renderRoster(){
   const el=document.getElementById('roster-grid');
   if(!el) return;
 
-  // Filter by search
+  // Filter by search — ASCII-normalized so 'mm' finds 'ṃḿ', 'gh' finds 'Ġħ'
   const q=rosterSearch.toLowerCase().trim();
+  const qA=normAscii(rosterSearch);
   let players=q
-    ?ROSTER.filter(p=>p.n.toLowerCase().includes(q)||norm(p.n).includes(norm(rosterSearch)))
+    ?ROSTER.filter(p=>p.n.toLowerCase().includes(q)||normAscii(p.n).includes(qA)||norm(p.n).includes(norm(rosterSearch)))
     :[...ROSTER];
 
   // Status rank for sorting
@@ -1578,11 +1749,18 @@ async function scanTeam(side){
   function renderScanProgress(current,results){
     const rows=files.map((f,i)=>{
       const r=results[i];
-      const cls=i<current?'sdot-done':i===current?'sdot-active':'sdot-wait';
-      const label=i<current?`${f.name||'Image '+(i+1)} · ${r||0} matched`
-        :i===current?`${f.name||'Image '+(i+1)} · scanning...`
+      const isFail=r==='fail';
+      const isRetry=r==='retry';
+      const isDone=i<current&&!isFail&&!isRetry;
+      const isActive=i===current&&!isFail;
+      const cls=isFail?'sdot-miss':isDone?'sdot-done':isActive?'sdot-active':'sdot-wait';
+      const label=isFail?`${f.name||'Image '+(i+1)} · failed — use Review to add manually`
+        :isRetry?`${f.name||'Image '+(i+1)} · retrying...`
+        :isDone?`${f.name||'Image '+(i+1)} · ${typeof r==='number'?r:0} matched`
+        :isActive?`${f.name||'Image '+(i+1)} · scanning...`
         :`${f.name||'Image '+(i+1)}`;
-      return `<div class="scan-img-row"><div class="sdot ${cls}"></div><span>${label}</span>${i===current?'<div class="spinner" style="margin-left:auto"></div>':''}</div>`;
+      const spinner=(isActive||isRetry)?'<div class="spinner" style="margin-left:auto"></div>':'';
+      return `<div class="scan-img-row"><div class="sdot ${cls}"></div><span style="${isFail?'color:var(--red)':''}">${label}</span>${spinner}</div>`;
     }).join('');
     const pct=current>=files.length?100:Math.round((current/files.length)*100);
     const total=results.reduce((a,b)=>(a||0)+(b||0),0)||Object.keys(playerMap).length;
@@ -1614,36 +1792,77 @@ ROLE DETECTION:
 Return ONLY valid JSON:
 {"found":[{"name":"exact name FROM ROSTER LIST above","role":"starter"},{"name":"exact name FROM ROSTER LIST above","role":"sub"}]}`;
 
-    try{
-      const txt=await callAPI(apiKey,'claude-sonnet-4-6',1000,b64,mtype,prompt);
-      const jm=txt.match(/\{[\s\S]*\}/);
-      if(!jm) continue;
-      const parsed=JSON.parse(jm[0]);
-      const found=parsed.found||parsed.players||[];
+    // Try up to 2 times per image (retry on failure)
+    let imgSuccess=false;
+    for(let attempt=0;attempt<2;attempt++){
+      try{
+        // 1500 tokens — enough for 8 players with full names + JSON structure
+        const txt=await callAPI(apiKey,'claude-sonnet-4-6',2000,b64,mtype,prompt);
 
-      found.forEach(p=>{
-        if(!p.name||p.name.length<1) return;
-        // Find in roster — exact first, then fuzzy
-        const rosterMatch=ROSTER.find(r=>r.n===p.name)||fuzzyMatchRoster(p.name);
-        const finalName=rosterMatch?rosterMatch.n:p.name.trim();
-        const finalCP=rosterMatch?rosterMatch.cp:0;
-        const finalKey=norm(finalName);
-        if(!finalKey||finalKey.length<2) return;
-        const role=p.role==='sub'?'sub':'starter';
-        if(!playerMap[finalKey]){
-          playerMap[finalKey]={name:finalName,role,confirmed:true,cp:finalCP};
+        // Extract JSON — be flexible with response format
+        const jm=txt.match(/\{[\s\S]*\}/);
+        if(!jm){
+          // Try to extract array directly if model forgot wrapper
+          const am=txt.match(/\[[\s\S]*\]/);
+          if(!am) throw new Error('No JSON in response');
+          // Wrap it
+          const parsed={found:JSON.parse(am[0])};
+          var found2=Array.isArray(parsed.found)?parsed.found:[];
+        } else {
+          const parsed=JSON.parse(jm[0]);
+          var found2=parsed.found||parsed.players||[];
         }
-      });
-      imgResults[i]=Object.keys(playerMap).length-(i>0?imgResults.slice(0,i).reduce((a,b)=>(a||0)+(b||0),0):0);
-      renderScanProgress(i+1,imgResults);
-    }catch(e){
-      console.warn('Scan error img '+i,e);
-      st.textContent=`Image ${i+1}/${files.length} — error, skipping...`;
+
+        found2.forEach(p=>{
+          if(!p.name||p.name.length<1) return;
+          // Match to roster — use normAscii for exotic names
+          const rosterMatch=ROSTER.find(r=>r.n===p.name)
+            ||ROSTER.find(r=>normAscii(r.n)===normAscii(p.name))
+            ||fuzzyMatchRoster(p.name);
+          const finalName=rosterMatch?rosterMatch.n:p.name.trim();
+          const finalCP=rosterMatch?rosterMatch.cp:0;
+          // Use normFull as key — more stable for exotic names than norm()
+          const finalKey=normFull(finalName);
+          if(!finalKey||finalKey.length<1) return;
+          const role=p.role==='sub'?'sub':'starter';
+          if(!playerMap[finalKey]){
+            playerMap[finalKey]={name:finalName,role,confirmed:true,cp:finalCP};
+          }
+        });
+
+        imgResults[i]=Object.keys(playerMap).length-(i>0?imgResults.slice(0,i).reduce((a,b)=>(a||0)+(b||0),0):0);
+        renderScanProgress(i+1,imgResults);
+        imgSuccess=true;
+        break; // success — no retry needed
+
+      }catch(e){
+        console.warn(`Scan error img ${i} attempt ${attempt+1}:`,e.message);
+        if(attempt===0){
+          // First fail — update UI and retry
+          imgResults[i]='retry';
+          renderScanProgress(i,imgResults);
+          await new Promise(r=>setTimeout(r,1500)); // wait 1.5s before retry
+        } else {
+          // Second fail — mark as failed in progress UI
+          imgResults[i]='fail';
+          renderScanProgress(i+1,imgResults);
+        }
+      }
+    }
+    if(!imgSuccess){
+      // Update progress dot to show failure
+      console.warn('Image '+i+' failed after 2 attempts');
     }
   }
 
   // Build final lists
-  const allPlayers=Object.values(playerMap).map(p=>({
+  // Deduplicate by normAscii (catches exotic name variants)
+  const seen=new Set();
+  const allPlayers=Object.values(playerMap).filter(p=>{
+    const k=normAscii(p.name);
+    if(seen.has(k)) return false;
+    seen.add(k); return true;
+  }).map(p=>({
     n:p.name, cp:p.cp||getCPfromRoster(p.name), role:p.role, confirmed:p.confirmed
   }));
   allPlayers.sort((a,b)=>b.cp-a.cp);
@@ -1669,6 +1888,7 @@ Return ONLY valid JSON:
   // Show Review button
   const revSlot=document.getElementById('review-btn-'+side.toLowerCase());
   if(revSlot) revSlot.innerHTML=`<button class="btn btn-c" style="width:100%;justify-content:center;margin-top:8px" onclick="openReview('${side}')">🔍 Review Results — verify each screenshot</button>`;
+  checkCrossTeamDupes();
   document.getElementById(side==='A'?'a-count':'b-count').textContent=`${total} players`;
   document.getElementById('gen-btn').disabled=false;
   saveScanProgress(); // persist scan progress
@@ -1915,7 +2135,7 @@ Return ONLY valid JSON (empty array if none found):
 {"found":[{"name":"exact name from missing list","role":"starter or sub"}]}`;
 
     try{
-      const txt=await callAPI(apiKey,'claude-sonnet-4-6',600,b64,mtype,prompt);
+      const txt=await callAPI(apiKey,'claude-sonnet-4-6',2000,b64,mtype,prompt);
       const jm=txt.match(/\{[\s\S]*\}/);
       if(!jm) continue;
       const parsed=JSON.parse(jm[0]);
@@ -1978,44 +2198,62 @@ function acSearch(side,val){
   if(!val||val.trim().length<1){drop.style.display='none';return;}
   const q=val.trim().toLowerCase();
   const qNorm=norm(val);
+  const qFull=normFull(val);
+  const qAscii=normAscii(val);
   const data=side==='A'?teamA:teamB;
 
-  // Build set of already-added players (from images + manuals)
+  // Build set of already-added — use normFull to avoid collision on exotic names
   const allAdded=new Set();
-  if(data.images) data.images.forEach(img=>img.players.forEach(p=>allAdded.add(norm(p.n))));
-  data.starters.forEach(p=>allAdded.add(norm(p.n)));
-  data.subs.forEach(p=>allAdded.add(norm(p.n)));
+  const allAddedFull=new Set();
+  if(data.images) data.images.forEach(img=>img.players.forEach(p=>{
+    allAdded.add(norm(p.n)); allAddedFull.add(normFull(p.n));
+  }));
+  data.starters.forEach(p=>{allAdded.add(norm(p.n));allAddedFull.add(normFull(p.n));});
+  data.subs.forEach(p=>{allAdded.add(norm(p.n));allAddedFull.add(normFull(p.n));});
 
   // Score each roster player
   const scored=[];
   for(const p of ROSTER){
-    if(allAdded.has(norm(p.n))) continue; // already in list
+    // Skip if already added — check both norm and normFull
+    if(allAdded.has(norm(p.n))||allAddedFull.has(normFull(p.n))) continue;
+
     const pLow=p.n.toLowerCase();
     const pNorm=norm(p.n);
+    const pFull=normFull(p.n);
+    const pAscii=normAscii(p.n);
     let score=0;
 
-    // Exact substring match — highest priority
-    if(pLow.includes(q)||pNorm.includes(qNorm)) score=100;
-    // Start-of-word match
-    else if(pLow.startsWith(q)||pNorm.startsWith(qNorm)) score=90;
-    // Fuzzy levenshtein — only if query is 3+ chars
-    else if(q.length>=3){
-      const dist=levenshtein(qNorm,pNorm.substring(0,Math.min(pNorm.length,qNorm.length+3)));
-      const threshold=Math.max(1,Math.floor(q.length*0.4));
-      if(dist<=threshold) score=Math.max(10,60-dist*10);
+    // 1. Direct substring on original
+    if(pLow.includes(q)) score=100;
+    // 2. ASCII-normalized match (mm→ṃḿ, gh→Ġħ, etc.)
+    else if(pAscii.includes(qAscii)||qAscii.includes(pAscii)) score=98;
+    // 3. Substring on normFull
+    else if(pFull.includes(qFull)||qFull.includes(pFull)) score=95;
+    // 4. Substring on norm
+    else if(pNorm.includes(qNorm)||qNorm.includes(pNorm)) score=90;
+    // 5. Start match
+    else if(pLow.startsWith(q)||pAscii.startsWith(qAscii)||pNorm.startsWith(qNorm)) score=85;
+    // 6. Fuzzy
+    else if(q.length>=2){
+      const da=levenshtein(qAscii,pAscii.substring(0,Math.min(pAscii.length,qAscii.length+3)));
+      const dn=levenshtein(qNorm,pNorm.substring(0,Math.min(pNorm.length,qNorm.length+3)));
+      const threshold=Math.max(1,Math.floor(Math.max(qAscii.length,qNorm.length)*0.45));
+      const best=Math.min(da,dn);
+      if(best<=threshold) score=Math.max(10,60-best*10);
     }
     if(score>0) scored.push({p,score});
   }
 
-  // Sort by score desc, take top 8
+  // Sort by score, take top 10 (increased from 8)
   scored.sort((a,b)=>b.score-a.score);
-  const results=scored.slice(0,8).map(s=>s.p);
+  const results=scored.slice(0,10).map(s=>s.p);
 
   _acResults[side]=results;
   _acSelected[side]=-1;
 
   if(!results.length){
-    drop.innerHTML=`<div class="ac-item" style="color:var(--text3);cursor:default;font-size:11px">No match found in roster</div>`;
+    drop.innerHTML=`<div class="ac-item" style="color:var(--text3);cursor:default;font-size:12px;padding:10px 12px">No match found — try fewer characters</div>`;
+    positionDrop(drop, document.getElementById('ac-inp-'+side));
     drop.style.display='block';
     return;
   }
@@ -2025,6 +2263,7 @@ function acSearch(side,val){
       <span class="ac-name">${p.n}</span>
       <span class="ac-cp">${p.cp?fcp(p.cp):'N/A'}</span>
     </div>`).join('');
+  positionDrop(drop, document.getElementById('ac-inp-'+side));
   drop.style.display='block';
 }
 
@@ -2088,7 +2327,24 @@ document.addEventListener('click',e=>{
       drop.style.display='none';
     }
   });
+  const revDrop=document.getElementById('rev-ac-drop');
+  const revInp=document.getElementById('rev-ac-inp');
+  if(revDrop&&revInp&&!revDrop.contains(e.target)&&e.target!==revInp){
+    revDrop.style.display='none';
+  }
 });
+
+// Reposition on scroll (dropdown follows input)
+document.addEventListener('scroll',()=>{
+  ['A','B'].forEach(side=>{
+    const drop=document.getElementById('ac-drop-'+side);
+    const inp=document.getElementById('ac-inp-'+side);
+    if(drop&&drop.style.display==='block'&&inp) positionDrop(drop,inp);
+  });
+  const revDrop=document.getElementById('rev-ac-drop');
+  const revInp=document.getElementById('rev-ac-inp');
+  if(revDrop&&revDrop.style.display==='block'&&revInp) positionDrop(revDrop,revInp);
+},true);
 
 // Legacy stubs — replaced by toggleRoleFlat/removePlFlat
 function toggleRole(side,idx){ toggleRoleFlat(side,idx); }
@@ -2121,12 +2377,41 @@ function clearSelect(){
 //  GENERATE TEAMS
 // ══════════════════════════════════════════════
 function genTeams(){
-  document.getElementById('sel-err').textContent='';
-  function buildSide(data,side){
-    // Sort by CP only at generation time (display is per-image order)
+  const errEl=document.getElementById('sel-err');
+  errEl.textContent='';
+  errEl.style.display='none';
+
+  // ── Cross-team duplicate check ──
+  const allA=new Map([...teamA.starters,...teamA.subs].map(p=>[norm(p.n),p.n]));
+  const allB=new Map([...teamB.starters,...teamB.subs].map(p=>[norm(p.n),p.n]));
+  const dupes=[];
+  allA.forEach((name,key)=>{ if(allB.has(key)) dupes.push(name); });
+
+  if(dupes.length>0){
+    // Show warning but allow continue
+    errEl.innerHTML=`
+      <div style="background:rgba(212,164,65,0.1);border:1px solid rgba(212,164,65,0.4);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:8px">
+        <div style="font-weight:600;color:var(--gold2);margin-bottom:4px">⚠ ${dupes.length} player${dupes.length>1?'s':''} in both Team A & B</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${dupes.join(' · ')}</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-g" onclick="proceedGenerate()" style="font-size:12px;padding:5px 14px">Generate anyway</button>
+          <button class="btn" onclick="document.getElementById('sel-err').style.display='none'" style="font-size:12px;padding:5px 14px">Cancel — fix first</button>
+        </div>
+      </div>`;
+    errEl.style.display='block';
+    return;
+  }
+
+  proceedGenerate();
+}
+
+function proceedGenerate(){
+  document.getElementById('sel-err').style.display='none';
+
+  function buildSide(data){
     const starters=[...data.starters].sort((a,b)=>b.cp-a.cp);
     const subs=[...data.subs].sort((a,b)=>b.cp-a.cp);
-    if(starters.length<2)return null;
+    if(starters.length<2) return null;
     const p=starters;
     const alloy=[p[0],p[1],p[2],p[3]].filter(Boolean);
     const t={};
@@ -2143,9 +2428,15 @@ function genTeams(){
     }
     return{teams:t,alloy,subs};
   }
-  const resA=buildSide(teamA,'A');
-  const resB=buildSide(teamB,'B');
-  if(!resA&&!resB){document.getElementById('sel-err').textContent='Need at least 2 starters in Team A or B.';return;}
+
+  const resA=buildSide(teamA);
+  const resB=buildSide(teamB);
+  if(!resA&&!resB){
+    const el=document.getElementById('sel-err');
+    el.textContent='Need at least 2 starters in Team A or B.';
+    el.style.display='block';
+    return;
+  }
   teamsGenerated={A:resA,B:resB};
   saveSession();
   updateStepStatus();
@@ -2330,7 +2621,7 @@ Return ONLY JSON: {"found":["name from registered list"],"unverified":["name not
       const res=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',
         headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:600,
+        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,
           messages:[{role:'user',content:[
             {type:'image',source:{type:'base64',media_type:mtype,data:b64}},
             {type:'text',text:prompt}
@@ -2497,12 +2788,72 @@ async function testKey(){
 function saveCfg(){cfg.sid=document.getElementById('cfg-sid').value.trim();cfg.rTab=document.getElementById('cfg-rt').value.trim();cfg.bgbTab=document.getElementById('cfg-bgbt').value.trim();cfg.abTab=document.getElementById('cfg-at').value.trim();localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));document.getElementById('cfg-st').className='ist ok';document.getElementById('cfg-st').textContent='✓ Saved';}
 function saveApp(){
   cfg.alli=document.getElementById('cfg-alli').value.trim();
+  cfg.alliFullName=document.getElementById('cfg-alli-full').value.trim();
   cfg.redWeeks=parseInt(document.getElementById('cfg-red-w').value)||4;
   cfg.greenWeeks=parseInt(document.getElementById('cfg-green-w').value)||4;
   localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));
   document.getElementById('att-alli').value=cfg.alli;
+  applyAllianceBranding();
   document.getElementById('app-st').className='ist ok';
-  document.getElementById('app-st').textContent=`✓ Saved — Red: ${cfg.redWeeks}w, Green: ${cfg.greenWeeks}w`;
+  document.getElementById('app-st').textContent=`✓ Saved — ${cfg.alli} · ${cfg.alliFullName}`;
+}
+
+function uploadLogo(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    cfg.alliLogo=ev.target.result;
+    localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));
+    applyAllianceBranding();
+    document.getElementById('app-st').className='ist ok';
+    document.getElementById('app-st').textContent='✓ Logo updated';
+  };
+  reader.readAsDataURL(file);
+}
+
+function applyAllianceBranding(){
+  const alli=cfg.alli||'VHA';
+  const fullName=cfg.alliFullName||'Alliance';
+  const logo=cfg.alliLogo||null;
+
+  // Update header
+  const logoEm=document.querySelector('.logo-em');
+  if(logoEm){
+    if(logo){
+      logoEm.innerHTML=`<img src="${logo}" style="width:100%;height:100%;object-fit:cover;border-radius:3px">`;
+    } else {
+      logoEm.innerHTML='⚔';
+    }
+  }
+  const logoT=document.querySelector('.logo-t');
+  if(logoT) logoT.textContent='BGB Command';
+  const logoS=document.querySelector('.logo-s');
+  if(logoS) logoS.textContent=`Black Gold Battlefield · ${alli} — ${fullName}`;
+
+  // Update upload zone preview
+  const zone=document.getElementById('logo-upload-zone');
+  const ph=document.getElementById('logo-placeholder');
+  if(zone&&logo){
+    if(!zone.querySelector('img')){
+      const img=document.createElement('img');
+      img.style.cssText='width:100%;height:100%;object-fit:cover';
+      zone.appendChild(img);
+    }
+    zone.querySelector('img').src=logo;
+    if(ph) ph.style.display='none';
+  } else if(ph){
+    ph.style.display='block';
+  }
+
+  // Update alliance field
+  const alliInp=document.getElementById('cfg-alli');
+  if(alliInp) alliInp.value=alli;
+  const alliFullInp=document.getElementById('cfg-alli-full');
+  if(alliFullInp) alliFullInp.value=fullName;
+
+  // Update page title
+  document.title=`BGB Command — ${alli}`;
 }
 
 // ══════════════════════════════════════════════
@@ -2551,6 +2902,38 @@ function fileToB64(file){
 // ══════════════════════════════════════════════
 function showCopyBar(){
   document.getElementById('copy-bar').style.display='block';
+}
+
+function checkCrossTeamDupes(){
+  const allA=new Set([...teamA.starters,...teamA.subs].map(p=>norm(p.n)));
+  const allB=new Set([...teamB.starters,...teamB.subs].map(p=>norm(p.n)));
+  const dupes=[];
+  [...teamA.starters,...teamA.subs].forEach(p=>{
+    if(allB.has(norm(p.n))) dupes.push(p.n);
+  });
+
+  // Show/hide dupe warning banner between the two panels
+  let banner=document.getElementById('cross-dupe-banner');
+  if(!banner){
+    banner=document.createElement('div');
+    banner.id='cross-dupe-banner';
+    // Insert between the two-col panels
+    const twoCol=document.querySelector('.two-col');
+    if(twoCol) twoCol.insertAdjacentElement('afterend',banner);
+  }
+
+  if(dupes.length>0){
+    banner.innerHTML=`<div style="background:rgba(212,164,65,0.1);border:1px solid rgba(212,164,65,0.4);border-radius:var(--radius-sm);padding:10px 14px;margin:.75rem 0;display:flex;align-items:flex-start;gap:10px">
+      <span style="font-size:18px;flex-shrink:0">⚠</span>
+      <div>
+        <div style="font-weight:600;color:var(--gold2);font-size:13px;margin-bottom:3px">${dupes.length} player${dupes.length>1?'s':''} appear in both Team A and Team B</div>
+        <div style="font-size:12px;color:var(--text2)">${dupes.join(' · ')}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">Remove from one team before generating. Or generate anyway — you will be asked to confirm.</div>
+      </div>
+    </div>`;
+  } else {
+    banner.innerHTML='';
+  }
 }
 
 function updateStepStatus(){
@@ -2625,24 +3008,7 @@ function showBarMsg(msg){
   setTimeout(()=>el.style.opacity='0',2500);
 }
 
-function copyWhatsApp(){
-  if(!teamsGenerated){showBarMsg('Generate teams first');return;}
-  const parts=[];
-  ['A','B'].forEach(side=>{
-    const res=teamsGenerated[side];
-    if(!res) return;
-    const {teams,alloy,subs}=res;
-    const sess=document.getElementById('bgb-sess')?.value||'';
-    const lines=[`*BGB ${sess} — Team ${side}*`,''];
-    lines.push(`*[ALLOY]* ${alloy.map(p=>p.n).join(' + ')}`,'');
-    for(let t=10;t>=7;t--) if(teams[t]?.length) lines.push(`*Team ${t}:* ${teams[t].map(p=>p.n).join(' + ')}`);
-    lines.push('');
-    for(let t=6;t>=1;t--) if(teams[t]?.length) lines.push(`*Team ${t}:* ${teams[t].map(p=>p.n).join(' + ')}`);
-    if(subs?.length) lines.push('',`*[SUB]* ${subs.map(p=>p.n).join(' | ')}`);
-    parts.push(lines.join('\n'));
-  });
-  navigator.clipboard.writeText(parts.join('\n\n')).then(()=>showBarMsg('WhatsApp format copied!'));
-}
+
 
 function printFormation(){
   if(!teamsGenerated){showBarMsg('Generate teams first');return;}
@@ -3207,13 +3573,23 @@ function revAcSearch(val){
   const existing=new Set([...data.starters,...data.subs].map(p=>norm(p.n)));
   const q=val.toLowerCase();
   const qn=norm(val);
+  const qf=normFull(val);
+  const qa=normAscii(val);
   revAcResults=ROSTER.filter(p=>{
     if(existing.has(norm(p.n))) return false;
-    return p.n.toLowerCase().includes(q)||norm(p.n).includes(qn)||levenshtein(qn,norm(p.n).substring(0,Math.min(norm(p.n).length,qn.length+3)))<=Math.max(1,Math.floor(qn.length*0.4));
+    const pn=norm(p.n);
+    const pf=normFull(p.n);
+    const pa=normAscii(p.n);
+    const plow=p.n.toLowerCase();
+    return plow.includes(q)||pa.includes(qa)||qa.includes(pa)||
+      pf.includes(qf)||qf.includes(pf)||
+      pn.includes(qn)||qn.includes(pn)||
+      (qa.length>=2&&levenshtein(qa,pa.substring(0,Math.min(pa.length,qa.length+3)))<=Math.max(1,Math.floor(qa.length*0.4)));
   }).slice(0,8);
   revAcSel=-1;
-  if(!revAcResults.length){drop.innerHTML=`<div class="ac-item" style="color:var(--text3);cursor:default">No match in roster</div>`;drop.style.display='block';return;}
+  if(!revAcResults.length){drop.innerHTML=`<div class="ac-item" style="color:var(--text3);cursor:default">No match in roster</div>`;positionDrop(drop,document.getElementById('rev-ac-inp'));drop.style.display='block';return;}
   drop.innerHTML=revAcResults.map((p,i)=>`<div class="ac-item" id="rev-ac-${i}" onclick="revAcPick(${i})"><span class="ac-name">${p.n}</span><span class="ac-cp">${p.cp?fcp(p.cp):'N/A'}</span></div>`).join('');
+  positionDrop(drop,document.getElementById('rev-ac-inp'));
   drop.style.display='block';
 }
 
