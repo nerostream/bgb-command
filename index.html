@@ -628,6 +628,16 @@ textarea.inp{resize:vertical;line-height:1.6}
     <span id="roster-count" style="font-size:12px;color:var(--text3)"></span>
   </div>
   <div class="roster3" id="roster-grid"></div>
+
+  <!-- Penalty / Red players copy section -->
+  <div id="penalty-section" style="display:none;margin-top:1.25rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:.6rem">
+      <div style="font-size:14px;font-weight:600;color:var(--red)">⚠ Players on penalty / absent</div>
+      <button class="btn btn-r" onclick="copyPenaltyList()" style="font-size:12px">📋 Copy list</button>
+    </div>
+    <div id="penalty-copy-box" style="background:var(--bg3);border:1px solid rgba(224,85,85,0.3);border-radius:var(--radius);padding:12px 14px;font-size:13px;color:#e07070;line-height:2;white-space:pre-wrap;font-family:var(--font-mono)"></div>
+    <div id="penalty-copy-st" class="ist" style="margin-top:4px"></div>
+  </div>
 </div>
 
 <!-- ═══════════════ IMPORT ═══════════════ -->
@@ -745,11 +755,18 @@ textarea.inp{resize:vertical;line-height:1.6}
   <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem">
     <div><div class="fl">BGB Session</div><input class="inp" id="att-sess" style="width:160px;margin-bottom:0" placeholder="e.g. 20260426W4"/></div>
     <div><div class="fl">Alliance Tag</div><input class="inp" id="att-alli" style="width:90px;margin-bottom:0" value="VHA"/></div>
-    <button class="btn btn-c" style="margin-bottom:1px" onclick="syncSession()">Sync date</button>
+    <button class="btn btn-c" style="margin-bottom:1px" onclick="syncSession()" title="Must match the BGB session from Register tab">↕ Sync date from Register</button>
   </div>
 
-  <!-- Registered players summary -->
-  <div id="att-reg-summary" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:.75rem;font-size:12px;color:var(--text2)"></div>
+  <!-- Registered players summary + team filter -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:.75rem;flex-wrap:wrap">
+    <div id="att-reg-summary" style="font-size:12px;color:var(--text2);flex:1"></div>
+    <div class="sub-tab-bar" style="margin-bottom:0">
+      <button class="stb on-a" id="att-scan-tab-all" onclick="attSetScanTab('all')">All</button>
+      <button class="stb" id="att-scan-tab-a" onclick="attSetScanTab('A')">Team A</button>
+      <button class="stb" id="att-scan-tab-b" onclick="attSetScanTab('B')">Team B</button>
+    </div>
+  </div>
 
   <!-- Upload + scan -->
   <div class="multi-drop" id="att-dz" onclick="document.getElementById('att-imgs').click()" ondragover="dzo(event,'att-dz')" ondragleave="dzl('att-dz')" ondrop="attDrop(event)">
@@ -782,9 +799,12 @@ textarea.inp{resize:vertical;line-height:1.6}
 
     <!-- Focused rescan for unverified -->
     <div id="att-rescan-box" style="display:none;margin-top:.75rem;background:var(--red-dim);border:1px solid rgba(224,85,85,0.25);border-radius:var(--radius);padding:12px">
-      <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:6px" id="att-rescan-label"></div>
-      <button class="btn btn-c" onclick="runAttRescan()" id="att-rescan-btn">🔍 Re-scan for missing players</button>
-      <div id="att-rescan-st" class="ist" style="margin-top:4px"></div>
+      <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:8px" id="att-rescan-label"></div>
+      <div class="acts" style="margin:0">
+        <button class="btn btn-c" onclick="runAttRescan()" id="att-rescan-btn">🔍 Re-scan for absent players</button>
+        <button class="btn" onclick="openAttReview()" style="border-color:var(--gold);color:var(--gold2)">📋 Manual Review</button>
+      </div>
+      <div id="att-rescan-st" class="ist" style="margin-top:6px"></div>
     </div>
   </div>
 
@@ -862,14 +882,17 @@ textarea.inp{resize:vertical;line-height:1.6}
     <div class="set-card">
       <div class="set-ttl">📊 Google Sheets</div>
       <div class="fl">Sheet ID</div>
-      <input class="inp" id="cfg-sid" value="1fGhmeRAgKmd6a4z1Q-LBSfPL2qRqYhpK6PticIlooeo"/>
+      <input class="inp" id="cfg-sid" value="1CBg76RAQh0qdHilgmmdKHmUiApbT0LFxBVRfDpnX9es"/>
       <div class="fl">Roster Tab</div>
       <input class="inp" id="cfg-rt" value="First Car"/>
-      <div class="fl">BGB Record Tab</div>
+      <div class="fl">BGB Log Tab (records + absent)</div>
       <input class="inp" id="cfg-bgbt" value="BGB Log"/>
-      <div class="fl">Absent Tab</div>
-      <input class="inp" id="cfg-at" value="BGB Absent"/>
-      <button class="btn btn-g" onclick="saveCfg()">Save Config</button>
+      <div class="fl">Apps Script URL</div>
+      <input class="inp" id="cfg-as" value="https://script.google.com/macros/s/AKfycbzgJCRS8Aq94K3bMRTICIhOCdIZU-uCFRT7-ERRGGf1SXXi1Z7d7aMmXMyVB5aHxhQQ/exec" style="font-size:10px"/>
+      <div class="acts">
+        <button class="btn btn-g" onclick="saveCfg()">Save Config</button>
+        <button class="btn btn-c" onclick="testAppsScript()">Test Connection</button>
+      </div>
       <div id="cfg-st" class="ist"></div>
     </div>
     <div class="set-card">
@@ -1216,7 +1239,7 @@ const BUILTIN=[
 //  STATE
 // ══════════════════════════════════════════════
 let ROSTER=[...BUILTIN].sort((a,b)=>b.cp-a.cp);
-let cfg={sid:'1CBg76RAQh0qdHilgmmdKHmUiApbT0LFxBVRfDpnX9es',rTab:'First Car',bgbTab:'BGB Log',abTab:'BGB Absent',alli:'VHA',alliFullName:'Valhalla',alliLogo:null,apiKey:'',redWeeks:4,greenWeeks:4,nameCol:'B',cpCol:'C'};
+let cfg={sid:'1CBg76RAQh0qdHilgmmdKHmUiApbT0LFxBVRfDpnX9es',rTab:'First Car',bgbTab:'BGB Log',abTab:'BGB Log',alli:'VHA',alliFullName:'Valhalla',alliLogo:null,apiKey:'',appsScriptUrl:'https://script.google.com/macros/s/AKfycbzgJCRS8Aq94K3bMRTICIhOCdIZU-uCFRT7-ERRGGf1SXXi1Z7d7aMmXMyVB5aHxhQQ/exec',redWeeks:4,greenWeeks:4,nameCol:'B',cpCol:'C',penaltyList:[]};
 let showCP=false;
 let teamA={images:[],starters:[],subs:[]};
 let teamB={images:[],starters:[],subs:[]};
@@ -1252,7 +1275,8 @@ function init(){
   document.getElementById('cfg-sid').value=cfg.sid;
   document.getElementById('cfg-rt').value=cfg.rTab;
   document.getElementById('cfg-bgbt').value=cfg.bgbTab;
-  document.getElementById('cfg-at').value=cfg.abTab;
+  const asInp=document.getElementById('cfg-as');
+  if(asInp&&cfg.appsScriptUrl) asInp.value=cfg.appsScriptUrl;
   document.getElementById('cfg-alli').value=cfg.alli;
   document.getElementById('att-alli').value=cfg.alli;
   // Restore threshold sliders
@@ -1285,6 +1309,7 @@ function init(){
   }
   // Restore full alliance name
   if(cfg.alliFullName){const el=document.getElementById('cfg-alli-full');if(el)el.value=cfg.alliFullName;}
+  if(cfg.penaltyList&&cfg.penaltyList.length){const el=document.getElementById('cfg-penalty');if(el)el.value=cfg.penaltyList.join('\n');}
   applyAllianceBranding();
   renderRoster();renderLog();autoSetDate();
   // Update hints for mobile
@@ -1421,8 +1446,7 @@ function fuzzyMatchRoster(ocrName){
 function colI(l){l=l.toUpperCase().trim();let r=0;for(let i=0;i<l.length;i++)r=r*26+(l.charCodeAt(i)-64);return r-1;}
 function pCP(s){if(!s)return 0;const n=parseFloat(s.toString().replace(/,/g,'').trim());return isNaN(n)?0:n;}
 function esc(s){return s.replace(/'/g,"\\'").replace(/</g,'&lt;')}
-function today(){const d=new Date();return`${d.getFullYear()}-${d.getMonth()+1}-${Math.ceil(d.getDate()/7)}`}
-function autoSetDate(){const v=today();document.getElementById('bgb-sess').value=v;document.getElementById('att-sess').value=v;}
+
 function toast(msg='Copied!'){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
 const stepLabels={roster:'Roster',select:'Register Players',teams:'Team Formation',attend:'Attendance',settings:'Settings'};
 
@@ -1516,9 +1540,11 @@ function renderAttRevList(){
 
   const filtered=attRevTab==='all'?attScanResults:attScanResults.filter(r=>r.side===attRevTab);
 
-  // Sort: in this image first (highlighted), then others
+  // Sort: detected in this image first, then absent (need review), then present elsewhere
   const inImg=filtered.filter(r=>inThisImg.has(normFull(r.n)));
-  const notInImg=filtered.filter(r=>!inThisImg.has(normFull(r.n)));
+  const absentNotHere=filtered.filter(r=>!inThisImg.has(normFull(r.n))&&!r.present);
+  const presentElsewhere=filtered.filter(r=>!inThisImg.has(normFull(r.n))&&r.present);
+  const notInImg=[...absentNotHere,...presentElsewhere];
 
   let html='';
 
@@ -1535,15 +1561,31 @@ function renderAttRevList(){
     });
   }
 
-  if(notInImg.length){
-    html+=`<div class="review-section-lbl" style="color:var(--text3)">Not in this screenshot (${notInImg.length})</div>`;
-    notInImg.forEach(r=>{
+  if(absentNotHere.length){
+    html+=`<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:8px 14px 4px;background:var(--red-dim);color:var(--red);border-bottom:1px solid rgba(224,85,85,0.2);position:sticky;top:30px">
+      Marked absent — tap to correct (${absentNotHere.length})
+    </div>`;
+    absentNotHere.forEach(r=>{
       const gi=attScanResults.indexOf(r);
-      html+=`<div class="review-player-row" style="opacity:.5">
-        <div class="rpr-status ${r.present?'ok':''}" onclick="attRevToggle(${gi})" title="Click to toggle">${r.present?'✓':''}</div>
+      html+=`<div class="review-player-row" style="background:rgba(224,85,85,0.04)">
+        <div class="rpr-status miss" onclick="attRevToggle(${gi})" title="Tap to mark present">✗</div>
+        <span class="rpr-name">${r.n}</span>
+        <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);flex-shrink:0">T${r.side}</span>
+        <span class="att-b ab-a" style="font-size:10px">ABSENT — tap ✗ to fix</span>
+      </div>`;
+    });
+  }
+  if(presentElsewhere.length){
+    html+=`<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:8px 14px 4px;background:var(--bg3);color:var(--text3);border-bottom:1px solid var(--border);position:sticky;top:30px">
+      Present (other screenshots) — ${presentElsewhere.length}
+    </div>`;
+    presentElsewhere.forEach(r=>{
+      const gi=attScanResults.indexOf(r);
+      html+=`<div class="review-player-row" style="opacity:.4">
+        <div class="rpr-status ok">✓</div>
         <span class="rpr-name" style="color:var(--text3)">${r.n}</span>
         <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);flex-shrink:0">T${r.side}</span>
-        <span class="att-b ${r.present?'ab-p':'ab-a'}" style="font-size:10px">${r.present?'PRESENT':'ABSENT'}</span>
+        <span class="att-b ab-p" style="font-size:10px">PRESENT</span>
       </div>`;
     });
   }
@@ -1621,7 +1663,9 @@ function renderRoster(){
 
   let h='';
   players.forEach((p,i)=>{
-    const status=rosterStatus[norm(p.n)]||'';
+    // Manual penalty overrides everything
+    const isPenalty=cfg.penaltyList&&cfg.penaltyList.some(name=>normAscii(name)===normAscii(p.n)||normFull(name)===normFull(p.n));
+    const status=isPenalty?'absent-red':(rosterStatus[norm(p.n)]||'');
     const cls=`ri${p.cp===0?' no-cp':''} ${status}`.trim();
     // Highlight search match
     let name=p.n;
@@ -1642,6 +1686,44 @@ function renderRoster(){
   // Update count
   const countEl=document.getElementById('roster-count');
   if(countEl) countEl.textContent=q?`${players.length} of ${ROSTER.length} players`:`${players.length} players`;
+
+  // Render penalty copy section
+  renderPenaltySection();
+}
+
+function renderPenaltySection(){
+  const sec=document.getElementById('penalty-section');
+  const box=document.getElementById('penalty-copy-box');
+  if(!sec||!box) return;
+
+  // Collect all red players (penalty + absent-red from color coding)
+  const redPlayers=ROSTER.filter(p=>{
+    const isPenalty=cfg.penaltyList&&cfg.penaltyList.some(name=>normAscii(name)===normAscii(p.n)||normFull(name)===normFull(p.n));
+    const status=isPenalty?'absent-red':(rosterStatus[norm(p.n)]||'');
+    return status==='absent-red';
+  });
+
+  if(!redPlayers.length){sec.style.display='none';return;}
+
+  sec.style.display='block';
+  const sess=document.getElementById('bgb-sess')?.value||todayCode();
+  const lines=[
+    `Absent / Penalty — BGB ${sess}`,
+    `Total: ${redPlayers.length} player${redPlayers.length>1?'s':''}`,
+    '',
+    ...redPlayers.map((p,i)=>`${i+1}. ${p.n}${p.cp?' ('+fcp(p.cp)+')':''}`)
+  ];
+  box.textContent=lines.join('\n');
+}
+
+function copyPenaltyList(){
+  const box=document.getElementById('penalty-copy-box');
+  const st=document.getElementById('penalty-copy-st');
+  if(!box||!box.textContent){st.className='ist er';st.textContent='No penalty players to copy';return;}
+  navigator.clipboard.writeText(box.textContent).then(()=>{
+    st.className='ist ok';st.textContent='✓ Copied!';
+    setTimeout(()=>st.textContent='',2000);
+  });
 }
 
 function setSort(by){
@@ -1936,6 +2018,9 @@ async function scanTeam(side){
   const btn=document.getElementById('scan-'+side.toLowerCase()+'-btn');
   btn.disabled=true;
   btn.innerHTML=`<div class="spinner"></div> Scanning...`;
+  // Disable other team's scan button to prevent parallel API calls
+  const otherBtn=document.getElementById('scan-'+(side==='A'?'b':'a')+'-btn');
+  if(otherBtn){otherBtn.disabled=true;otherBtn.title='Wait for Team '+side+' scan to finish';}
 
   const teamLetter=side;
   const playerMap={};
@@ -2082,6 +2167,9 @@ Return ONLY valid JSON:
   st.innerHTML=`<span style="color:var(--green)">✓ ${total} players matched — ${starters.length} starters, ${subs.length} subs</span>`;
   btn.disabled=false;
   btn.innerHTML='Scan Team '+side;
+  // Re-enable other team's button
+  const otherBtn2=document.getElementById('scan-'+(side==='A'?'b':'a')+'-btn');
+  if(otherBtn2){otherBtn2.disabled=false;otherBtn2.title='';}
   renderPlayerList(side);
   // Show Review button
   const revSlot=document.getElementById('review-btn-'+side.toLowerCase());
@@ -2728,26 +2816,69 @@ function doCopy(){navigator.clipboard.writeText(document.getElementById('copy-bo
 //  AUTO SAVE TO SHEETS (BGB Record)
 // ══════════════════════════════════════════════
 async function saveToSheetsAuto(){
-  const sess=document.getElementById('bgb-sess').value.trim()||today();
-  // Build TSV rows for Google Sheets — since OAuth is needed for write,
-  // we prepare a copy-ready TSV and notify user
+  const sess=document.getElementById('bgb-sess').value.trim()||todayCode();
   const rows=[];
   ['A','B'].forEach(side=>{
+    const res=teamsGenerated&&teamsGenerated[side];
     const data=side==='A'?teamA:teamB;
+    // Build team number lookup from generated formation
+    const teamNoMap={};
+    if(res){
+      const {teams,alloy}=res;
+      alloy.forEach(p=>teamNoMap[normFull(p.n)]='Alloy');
+      for(let t=1;t<=10;t++){
+        if(teams[t]) teams[t].forEach(p=>teamNoMap[normFull(p.n)]=`Team ${t}`);
+      }
+      res.subs&&res.subs.forEach(p=>teamNoMap[normFull(p.n)]='Sub');
+    }
     [...data.starters.map(p=>({...p,role:'Starter'})),...data.subs.map(p=>({...p,role:'Substitute'}))].forEach(p=>{
-      rows.push([`BGB ${sess}`,p.n,`Team ${side}`,p.role,fcp(p.cp)].join('\t'));
+      const teamNo=teamNoMap[normFull(p.n)]||'';
+      rows.push([`BGB ${sess}`,p.n,`Team ${side}`,teamNo,p.role,'',fcp(p.cp)]);
     });
   });
-  if(!rows.length)return;
-  const tsv=['Date\tName\tTeam\tRole\tMain Car CP',...rows].join('\n');
+  if(!rows.length) return;
+
+  // Store locally for fallback copy
+  const tsv=[['Date','Name','Team Side','Team No.','Role','Status','Main Car CP'],...rows].map(r=>r.join('\t')).join('\n');
   localStorage.setItem('bgb4_lastrecord',tsv);
-  // Show notification in teams tab
+
+  // Try auto-sync via Apps Script
+  const url=cfg.appsScriptUrl;
+  const notice=document.createElement('div');
+  notice.className='sbox';
+
+  if(url){
+    try{
+      const res=await fetch(url,{
+        method:'POST',
+        body:JSON.stringify({
+          tab:'BGB Log',
+          headers:['Date','Name','Team Side','Team No.','Role','Status','Main Car CP'],
+          rows
+        })
+      });
+      const data=await res.json();
+      if(data.ok){
+        notice.innerHTML=`✓ BGB formation saved to Sheets automatically (${data.added} rows) <button class="btn" onclick="copyBGBRecord()" style="margin-left:8px;font-size:11px">📋 Copy backup</button>`;
+      } else {
+        throw new Error(data.error||'Script error');
+      }
+    }catch(e){
+      console.warn('Auto-sync failed:',e.message);
+      notice.innerHTML=`⚠ Auto-sync failed — <button class="btn btn-gr" onclick="copyBGBRecord()" style="margin-left:6px">📋 Copy manually to Sheets</button> <span style="font-size:11px;color:var(--text3);margin-left:6px">${e.message}</span>`;
+      notice.className='ebox';
+    }
+  } else {
+    notice.innerHTML=`✓ Formation ready — <button class="btn btn-gr" onclick="copyBGBRecord()" style="margin-left:8px">📋 Copy to Sheets</button> <span style="font-size:11px;color:var(--text3);margin-left:6px">Set Apps Script URL in Settings to auto-sync</span>`;
+  }
+
   setTimeout(()=>{
-    const notice=document.createElement('div');
-    notice.className='sbox';
-    notice.innerHTML=`✓ BGB Record ready — <button class="btn btn-gr" onclick="copyRecord()" style="margin-left:8px">📋 Copy to paste in Sheets tab "${document.getElementById('cfg-bgbt').value}"</button>`;
     const area=document.getElementById('teams-area');
-    if(area&&!area.querySelector('.sbox'))area.insertBefore(notice,area.firstChild);
+    if(area){
+      const existing=area.querySelector('.sbox,.ebox');
+      if(existing) existing.remove();
+      area.insertBefore(notice,area.firstChild);
+    }
   },300);
 }
 
@@ -2778,19 +2909,34 @@ function renderAttThumbs(){
 
 function showAttRegSummary(){
   const el=document.getElementById('att-reg-summary');
-  const allReg=getRegistered();
+  const allReg=getRegistered(attScanTab);
   if(!allReg.length){el.style.display='none';return;}
   el.style.display='block';
-  el.innerHTML=`<strong>${allReg.length} registered players</strong> — Team A: ${allReg.filter(p=>p.side==='A').length} · Team B: ${allReg.filter(p=>p.side==='B').length}`;
+  const label=attScanTab==='all'?`All ${allReg.length} registered (A+B)`:attScanTab==='A'?`Team A: ${allReg.length} players`:`Team B: ${allReg.length} players`;
+  el.innerHTML=`<strong>${label}</strong> will be compared against screenshots`;
 }
 
-function getRegistered(){
+function getRegistered(sideFilter='all'){
   const reg=[];
-  teamA.starters.forEach(p=>reg.push({...p,side:'A',role:'starter'}));
-  teamA.subs.forEach(p=>reg.push({...p,side:'A',role:'sub'}));
-  teamB.starters.forEach(p=>reg.push({...p,side:'B',role:'starter'}));
-  teamB.subs.forEach(p=>reg.push({...p,side:'B',role:'sub'}));
+  if(sideFilter==='all'||sideFilter==='A'){
+    teamA.starters.forEach(p=>reg.push({...p,side:'A',role:'starter'}));
+    teamA.subs.forEach(p=>reg.push({...p,side:'A',role:'sub'}));
+  }
+  if(sideFilter==='all'||sideFilter==='B'){
+    teamB.starters.forEach(p=>reg.push({...p,side:'B',role:'starter'}));
+    teamB.subs.forEach(p=>reg.push({...p,side:'B',role:'sub'}));
+  }
   return reg;
+}
+
+function attSetScanTab(tab){
+  attScanTab=tab;
+  ['all','A','B'].forEach(t=>{
+    const btn=document.getElementById('att-scan-tab-'+t);
+    if(!btn) return;
+    btn.className='stb'+(tab===t?(t==='A'?' on-a':t==='B'?' on-b':' on-a'):'');
+  });
+  showAttRegSummary();
 }
 
 function clearAtt(){
@@ -2814,10 +2960,18 @@ async function runAttOCR(){
   btn.disabled=true;
   btn.innerHTML='<div class="spinner"></div> Scanning...';
 
-  const registered=getRegistered();
+  // Warn if session dates don't match
+  const bgbSess=document.getElementById('bgb-sess')?.value.trim();
+  const attSess=document.getElementById('att-sess')?.value.trim();
+  if(bgbSess&&attSess&&bgbSess!==attSess){
+    const warn=confirm(`Session mismatch!\nRegister: "${bgbSess}"\nAttendance: "${attSess}"\n\nThese must match for Sheets sync to work correctly.\nContinue anyway?`);
+    if(!warn){btn.disabled=false;btn.innerHTML='Scan Attendance';return;}
+  }
+
+  const registered=getRegistered(attScanTab);
   if(!registered.length){
     st.className='ist er';
-    st.textContent='No registered players found. Complete step 2 (Register) first.';
+    st.textContent=attScanTab==='all'?'No registered players. Complete step 2 first.':`No Team ${attScanTab} players registered. Complete step 2 first.`;
     btn.disabled=false;btn.innerHTML='Scan Attendance';return;
   }
 
@@ -3024,22 +3178,68 @@ Return ONLY JSON: {"found":["name from list above"]}`;
 }
 
 function syncAbsentLog(){
-  const sess=document.getElementById('att-sess').value.trim()||todayCode();
+  // Use att-sess value — must match bgb-sess used in Generate Teams
+  const sess=document.getElementById('att-sess')?.value.trim()||todayCode();
   attScanResults.filter(r=>!r.present).forEach(a=>{
     const exists=absentLog.find(l=>normFull(l.n)===normFull(a.n)&&l.date===sess);
-    if(!exists) absentLog.push({n:a.n,cp:a.cp||0,side:a.side,role:a.role,date:sess});
+    if(!exists) absentLog.push({n:a.n,cp:a.cp||0,side:a.side,role:a.role||'',date:sess});
   });
   localStorage.setItem('bgb4_log',JSON.stringify(absentLog));
   renderLog();
 }
 
-function copyAbsent(){
-  const tsv=['No\tName\tTeam\tRole\tMain Car CP\tAbsent Date',
+async function copyAbsent(){
+  // Copy-ready text for manual paste
+  const copyLines=['No\tName\tTeam\tRole\tMain Car CP\tAbsent Date',
     ...absentLog.map((l,i)=>`${i+1}\t${l.n}\t${l.side||'?'}\t${l.role||''}\t${fcp(l.cp)}\tBGB ${l.date}`)
   ].join('\n');
-  navigator.clipboard.writeText(tsv).then(()=>toast('Absent log copied!'));
-  document.getElementById('sh-save-st').className='ist ok';
-  document.getElementById('sh-save-st').textContent='✓ Copied! Paste into Sheets tab "BGB Log"';
+  navigator.clipboard.writeText(copyLines).then(()=>toast('Absent log copied!'));
+
+  const st=document.getElementById('sh-save-st');
+  const url=cfg.appsScriptUrl;
+
+  // Use att-sess — must match bgb-sess from Generate Teams
+  const sess=document.getElementById('att-sess')?.value.trim()||
+             document.getElementById('bgb-sess')?.value.trim()||todayCode();
+
+  if(url&&attScanResults.length){
+    st.className='ist ld';st.textContent='Syncing attendance status to Sheets...';
+    try{
+      // UPDATE action — match by "BGB {sess}" + Name, set Status column
+      const updates=attScanResults.map(r=>({
+        date:`BGB ${sess}`,
+        name:r.n,
+        status:r.present?'Present':'Absent'
+      }));
+      const res=await fetch(url,{
+        method:'POST',
+        body:JSON.stringify({action:'updateStatus',tab:'BGB Log',updates})
+      });
+      const data=await res.json();
+      if(data.ok){
+        const present=attScanResults.filter(r=>r.present).length;
+        const absent=attScanResults.filter(r=>!r.present).length;
+        st.className='ist ok';
+        st.textContent=`✓ Sheets updated — ${present} present, ${absent} absent (BGB ${sess})`;
+      } else throw new Error(data.error||'Script error');
+    }catch(e){
+      st.className='ist er';
+      st.textContent='✗ Sync failed: '+e.message+'. Use clipboard paste instead.';
+    }
+  } else if(url&&absentLog.length){
+    // Fallback: no scan results but have absent log — append rows
+    st.className='ist ld';st.textContent='Syncing absent log...';
+    try{
+      const rows=absentLog.map(l=>[`BGB ${l.date}`,l.n,l.side||'?','',l.role||'','Absent',fcp(l.cp)]);
+      const res=await fetch(url,{method:'POST',body:JSON.stringify({tab:'BGB Log',rows})});
+      const data=await res.json();
+      st.className=data.ok?'ist ok':'ist er';
+      st.textContent=data.ok?`✓ ${data.added} rows appended`:'✗ '+data.error;
+    }catch(e){st.className='ist er';st.textContent='✗ '+e.message;}
+  } else {
+    st.className='ist ok';
+    st.textContent=url?'✓ Copied to clipboard':'✓ Copied! Set Apps Script URL in Settings to enable sync.';
+  }
 }
 
 function renderLog(){
@@ -3067,10 +3267,40 @@ function deleteAbsent(idx){
 }
 
 function clearLog(){if(confirm('Clear all absent records?')){absentLog=[];localStorage.removeItem('bgb4_log');renderLog();}}
-function saveCfg(){cfg.sid=document.getElementById('cfg-sid').value.trim();cfg.rTab=document.getElementById('cfg-rt').value.trim();cfg.bgbTab=document.getElementById('cfg-bgbt').value.trim();cfg.abTab=document.getElementById('cfg-at').value.trim();localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));document.getElementById('cfg-st').className='ist ok';document.getElementById('cfg-st').textContent='✓ Saved';}
+function saveCfg(){
+  cfg.sid=document.getElementById('cfg-sid').value.trim();
+  cfg.rTab=document.getElementById('cfg-rt').value.trim();
+  cfg.bgbTab=document.getElementById('cfg-bgbt').value.trim();
+  cfg.abTab=cfg.bgbTab; // same tab now
+  const asUrl=document.getElementById('cfg-as');
+  if(asUrl) cfg.appsScriptUrl=asUrl.value.trim();
+  localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));
+  document.getElementById('cfg-st').className='ist ok';
+  document.getElementById('cfg-st').textContent='✓ Saved';
+}
+
+async function testAppsScript(){
+  const url=document.getElementById('cfg-as')?.value.trim()||cfg.appsScriptUrl;
+  const st=document.getElementById('cfg-st');
+  if(!url){st.className='ist er';st.textContent='✗ No Apps Script URL';return;}
+  st.className='ist ld';st.textContent='Testing connection...';
+  try{
+    const res=await fetch(url+'?tab=BGB Log&test=1',{method:'GET'});
+    const data=await res.json();
+    if(data.ok||data.rows){
+      st.className='ist ok';st.textContent='✓ Connected! Apps Script is working.';
+    } else {
+      st.className='ist er';st.textContent='✗ Script returned error: '+(data.error||'unknown');
+    }
+  }catch(e){
+    st.className='ist er';st.textContent='✗ Connection failed: '+e.message;
+  }
+}
 function saveApp(){
   cfg.alli=document.getElementById('cfg-alli').value.trim();
   cfg.alliFullName=document.getElementById('cfg-alli-full').value.trim();
+  const penaltyEl=document.getElementById('cfg-penalty');
+  if(penaltyEl) cfg.penaltyList=(penaltyEl.value||'').split('\n').map(n=>n.trim()).filter(Boolean);
   cfg.redWeeks=parseInt(document.getElementById('cfg-red-w').value)||4;
   cfg.greenWeeks=parseInt(document.getElementById('cfg-green-w').value)||4;
   localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));
@@ -3358,6 +3588,7 @@ let bgbHistory=[]; // array of past BGB sessions
 let attImgsPerResult=[]; // [{imgUrl, names:[]}] per image
 let attTab='all'; // 'all'|'A'|'B'
 let attScanResults=[]; // [{n, side, role, present, confirmed}]
+let attScanTab='all'; // filter for scan: 'all'|'A'|'B'
 
 function todayCode(){
   const d=new Date();
@@ -3393,12 +3624,34 @@ function olderThan4Weeks(date){ return olderThanWeeks(date,cfg.redWeeks||4); }
 
 async function fetchColorCoding(){
   const st=document.getElementById('rf-st');
-  st.className='ist ld';st.textContent='Fetching BGB history for color coding...';
+  st.className='ist ld';st.textContent='Fetching BGB history...';
   try{
-    // Fetch BGB Record tab — columns: Date | Name | Team | Role | CP
-    const recordRows=await fetchSheetRaw(cfg.sid, cfg.bgbTab||'BGB Record');
-    // Fetch BGB Absent tab — columns: No | Name | Team | CP | Absent Date
-    const absentRows=await fetchSheetRaw(cfg.sid, cfg.abTab||'BGB Absent');
+    let recordRows=[], absentRows=[];
+
+    // Try Apps Script first (more reliable, no CORS issues)
+    const asUrl=cfg.appsScriptUrl;
+    if(asUrl){
+      try{
+        st.textContent='Fetching via Apps Script...';
+        const res=await fetchWithTimeout(asUrl+'?tab='+encodeURIComponent(cfg.bgbTab||'BGB Log'),8000);
+        const data=await res.json();
+        if(data.ok&&data.rows){
+          // All data in one tab: filter by Status column
+          const allRows=data.rows.slice(1); // skip header
+          // Col: Date|Name|Team Side|Team No.|Role|Status|CP
+          recordRows=allRows; // everyone who was registered
+          absentRows=allRows.filter(r=>r[5]&&String(r[5]).toLowerCase().includes('absent'));
+        }
+      }catch(e){
+        st.textContent='Apps Script failed, trying direct fetch...';
+      }
+    }
+
+    // Fallback: direct Sheets fetch
+    if(!recordRows.length){
+      recordRows=await fetchSheetRaw(cfg.sid, cfg.bgbTab||'BGB Log');
+      absentRows=recordRows.filter(r=>r.c&&r.c[5]&&String(r.c[5].v||'').toLowerCase().includes('absent'));
+    }
 
     // Build: last participated date per player
     const lastParticipated={}; // normName -> Date
@@ -3453,6 +3706,7 @@ async function fetchColorCoding(){
 
     st.className='ist ok';st.textContent='✓ Color coding updated';
     renderRoster();
+    renderPenaltySection();
   }catch(e){
     st.className='ist er';st.textContent='✗ '+e.message;
   }
@@ -3765,30 +4019,35 @@ function renderRevList(){
   let html='';
 
   // ── Section 1: Players found in THIS screenshot ──
+  // ── Section 1: IN THIS SCREENSHOT — prominent ──
+  html+=`<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:8px 14px 4px;background:rgba(61,184,120,0.12);color:var(--green);border-bottom:1px solid rgba(61,184,120,0.2);position:sticky;top:0">
+    📸 In this screenshot — ${totalImg} detected
+  </div>`;
   if(inImg.length){
-    html+=`<div class="review-section-lbl" style="background:rgba(61,184,120,0.08);color:var(--green)">In this screenshot (${totalImg})</div>`;
     inImg.forEach(p=>{
       const esc=p.n.replace(/'/g,"\'");
-      html+=`<div class="review-player-row" style="border-left:3px solid var(--green)">
-        <div class="rpr-status ok">✓</div>
-        <span class="rpr-name">${p.n}</span>
+      html+=`<div class="review-player-row" style="background:rgba(61,184,120,0.06);border-left:3px solid var(--green)">
+        <div class="rpr-status ok" style="background:var(--green-dim);border-color:var(--green);color:var(--green)">✓</div>
+        <span class="rpr-name" style="font-weight:500">${p.n}</span>
         <span class="rpr-role ${p.role==='starter'?'s':'b'}" onclick="revToggleRole('${esc}',this)">${p.role==='starter'?'STR':'SUB'}</span>
         <button class="rpr-del" onclick="revDelete('${esc}')">×</button>
       </div>`;
     });
   } else {
-    html+=`<div style="color:var(--text3);font-size:12px;padding:10px 14px">No players detected in this screenshot yet.</div>`;
+    html+=`<div style="color:var(--text3);font-size:13px;padding:12px 14px;font-style:italic">No roster players detected in this screenshot.</div>`;
   }
 
-  // ── Section 2: All other confirmed players (other images) ──
+  // ── Section 2: NOT IN THIS IMAGE — dimmed ──
   if(notInImg.length){
-    html+=`<div class="review-section-lbl" style="color:var(--text3)">Other images (${notInImg.length} total)</div>`;
+    html+=`<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:8px 14px 4px;background:var(--bg3);color:var(--text3);border-bottom:1px solid var(--border);position:sticky;top:30px">
+      Other images — ${notInImg.length} players
+    </div>`;
     notInImg.forEach(p=>{
       const esc=p.n.replace(/'/g,"\'");
-      html+=`<div class="review-player-row" style="opacity:.5">
-        <div class="rpr-status ok" style="border-color:var(--border2);background:none;color:var(--text3)">✓</div>
+      html+=`<div class="review-player-row" style="opacity:.4">
+        <div class="rpr-status" style="border-color:var(--border2);color:var(--text3)">${p.confirmed?'✓':''}</div>
         <span class="rpr-name" style="color:var(--text3)">${p.n}</span>
-        <span class="rpr-role ${p.role==='starter'?'s':'b'}" onclick="revToggleRole('${esc}',this)">${p.role==='starter'?'STR':'SUB'}</span>
+        <span class="rpr-role ${p.role==='starter'?'s':'b'}">${p.role==='starter'?'STR':'SUB'}</span>
         <button class="rpr-del" onclick="revDelete('${esc}')">×</button>
       </div>`;
     });
