@@ -217,7 +217,8 @@ textarea.inp{resize:vertical;line-height:1.6}
 .ri.no-turn-green{border-left-color:var(--green);background:rgba(61,184,120,0.04)}
 .ri.no-turn-green .ri-n{color:#5dd4a0}
 .ri.normal-attend{border-left-color:var(--green)}
-.legend-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:.75rem;font-size:13px;align-items:center}
+.legend-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:.75rem;font-size:13px;align-items:center;
+  position:sticky;top:54px;z-index:50;background:var(--bg2);padding:6px 0;border-bottom:1px solid var(--border)}
 .legend-item{display:flex;align-items:center;gap:6px}
 .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .sort-btn{font-size:12px;padding:5px 12px}
@@ -371,8 +372,8 @@ textarea.inp{resize:vertical;line-height:1.6}
 .help-panel{background:var(--bg2);border-radius:var(--radius-lg);width:100%;max-width:560px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column}
 .help-hd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .help-ttl{font-size:16px;font-weight:600;color:var(--text)}
-.help-close{background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;line-height:1;padding:0 4px}
-.help-close:hover{color:var(--text)}
+.help-close{background:none;border:none;cursor:pointer;line-height:1;padding:2px;border-radius:50%;transition:opacity .15s;opacity:.7}
+.help-close:hover{opacity:1}
 .help-body{overflow-y:auto;padding:16px 18px;flex:1}
 .help-step{display:flex;gap:14px;margin-bottom:1.5rem}
 .help-step:last-child{margin-bottom:0}
@@ -397,7 +398,7 @@ textarea.inp{resize:vertical;line-height:1.6}
 .review-img-viewer{flex:1;overflow:hidden;position:relative;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:zoom-in;min-height:150px}
 .review-img-viewer img{max-width:100%;max-height:100%;object-fit:contain}
 .review-img-strip{display:flex;gap:5px;padding:8px 12px;overflow-x:auto;border-top:1px solid var(--border);flex-shrink:0}
-.review-thumb{width:36px;height:36px;object-fit:cover;border-radius:var(--radius-sm);border:2px solid transparent;cursor:pointer;flex-shrink:0;opacity:.6;transition:all .15s}
+.review-thumb{width:44px;height:44px;object-fit:cover;border-radius:var(--radius-sm);border:2px solid transparent;cursor:pointer;flex-shrink:0;opacity:.65;transition:all .15s}
 .review-thumb.on{border-color:var(--gold2);opacity:1}
 .review-thumb.done{border-color:var(--green);opacity:.8}
 .review-thumb.ph{background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text3)}
@@ -485,13 +486,16 @@ textarea.inp{resize:vertical;line-height:1.6}
   .logo-t{font-size:16px}
   .data-badge{display:none}
 
-  /* Step nav — icons only on mobile */
-  .step-nav{padding:0}
-  .step-btn{padding:10px 12px;gap:0}
-  .step-lbl{display:none}
-  .step-num{width:28px;height:28px;font-size:13px}
+  /* Step nav — active tab shows num+label, others num only */
+  .step-nav{padding:0;overflow-x:auto}
+  .step-btn{padding:8px 8px;gap:4px;flex-shrink:0}
+  .step-btn .step-lbl{display:none}
+  .step-btn.on{flex:1 0 auto}
+  .step-btn.on .step-lbl{display:inline;font-size:13px}
+  .step-btn.on .step-sub{display:none}
+  .step-num{width:26px;height:26px;font-size:12px}
   .step-divider{display:none}
-  .settings-btn{padding:10px 12px;margin-left:0}
+  .settings-btn{padding:8px 10px;margin-left:0;flex-shrink:0}
   .settings-btn span{display:none}
 
   /* Copy bar — stack on mobile */
@@ -563,7 +567,11 @@ textarea.inp{resize:vertical;line-height:1.6}
 </header>
 
 <nav class="step-nav">
-  <button class="step-btn on" id="step-roster" onclick="msw('roster')">
+  <button class="step-btn on" id="step-home" onclick="msw('home')" style="padding:8px 14px">
+    <span class="step-lbl" style="display:inline">Home</span>
+  </button>
+  <div class="step-divider"></div>
+  <button class="step-btn" id="step-roster" onclick="msw('roster')">
     <div class="step-num" id="snum-roster">1</div>
     <div><span class="step-lbl">Roster</span><div class="step-sub" id="ssub-roster"></div></div>
   </button>
@@ -590,15 +598,77 @@ textarea.inp{resize:vertical;line-height:1.6}
 <div id="copy-bar" style="display:none"></div>
 <div class="main">
 
+<!-- ═══════════════ HOME ═══════════════ -->
+<div id="mt-home" class="mtc on">
+
+  <!-- Alliance header -->
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:1.5rem">
+    <div id="home-logo" style="width:52px;height:52px;border-radius:var(--radius);background:var(--gold-dim);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">⚔</div>
+    <div>
+      <div style="font-size:20px;font-weight:700;color:var(--text)" id="home-alli-name">Valhalla</div>
+      <div style="font-size:13px;color:var(--text3)" id="home-alli-abbr">VHA · Black Gold Battlefield</div>
+    </div>
+  </div>
+
+  <!-- Stats grid -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem">
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center">
+      <div style="font-size:22px;font-weight:700;color:var(--text);line-height:1" id="dash-roster-count">—</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">Members</div>
+    </div>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center">
+      <div style="font-size:22px;font-weight:700;line-height:1" id="dash-absent-count" style="color:var(--text)">—</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">On penalty</div>
+    </div>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center">
+      <div style="font-size:14px;font-weight:600;color:var(--text2);line-height:1.2" id="dash-last-bgb">—</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">Last BGB</div>
+    </div>
+  </div>
+
+  <!-- BGB Readiness -->
+  <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:1.25rem">
+    <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">BGB Readiness</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      <div style="font-size:13px" id="rdy-roster">○ Roster</div>
+      <div style="font-size:13px" id="rdy-session">○ Session date</div>
+      <div style="font-size:13px" id="rdy-scanned">○ Players scanned</div>
+      <div style="font-size:13px" id="rdy-teams">○ Teams generated</div>
+    </div>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:13px;font-weight:600" id="rdy-label">Not ready</span>
+      <button class="btn btn-g" onclick="msw('roster')" style="font-size:12px;padding:5px 14px">Start →</button>
+    </div>
+  </div>
+
+  <!-- Quick actions -->
+  <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Quick actions</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.25rem">
+    <button class="btn btn-c" onclick="quickFetch();msw('roster')" style="justify-content:center;padding:10px">↻ Refresh Roster</button>
+    <button class="btn btn-g" onclick="fetchColorCoding();msw('roster')" style="justify-content:center;padding:10px">Update Colors</button>
+    <button class="btn" onclick="msw('select')" style="justify-content:center;padding:10px">📸 Register</button>
+    <button class="btn" onclick="msw('attend')" style="justify-content:center;padding:10px">📋 Attendance</button>
+  </div>
+
+  <!-- Recent sessions -->
+  <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Recent sessions</div>
+  <div id="home-recent-sessions">
+    <div style="color:var(--text3);font-size:13px">No sessions recorded yet.</div>
+  </div>
+
+</div>
+
 <!-- ═══════════════ ROSTER ═══════════════ -->
-<div id="mt-roster" class="mtc on">
+<div id="mt-roster" class="mtc">
+
   <div class="acts">
     <button class="btn btn-c" onclick="quickFetch()">↻ Refresh Roster</button>
     <button class="btn btn-g" onclick="fetchColorCoding()">Update Color Coding</button>
-    <button class="btn" onclick="msw('settings')">⚙ Import / Settings</button>
+    <i class="info-tip tip-right" data-tip="<strong style=&quot;color:var(--text)&quot;>Refresh Roster</strong> — pulls latest Main Car CP from Google Sheets.<br><br><strong style=&quot;color:var(--text)&quot;>Update Color Coding</strong> — reads BGB Absent history to color-code players: 🔴 absent recently · 🟢 not played recently.">?</i>
+
   </div>
   <div id="rf-st" class="ist"></div>
-  <div class="ibox" style="font-size:12px;margin-top:.5rem">Sheet structure: <strong>Col A</strong> = No. · <strong>Col B</strong> = Name · <strong>Col C</strong> = First Car CP. Change columns in Settings → Import if different.</div>
+
 
   <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:.75rem 0">
     <!-- Search -->
@@ -646,12 +716,12 @@ textarea.inp{resize:vertical;line-height:1.6}
 <!-- ═══════════════ SELECT ═══════════════ -->
 <div id="mt-select" class="mtc">
   <div class="sec">Step 1 — Scan BGB Participant Screenshots</div>
-  <div class="ibox">Upload screenshots from the BGB Participants page (Team A & Team B). Multiple screenshots per team — Claude AI will extract names and roles automatically. Set the <strong>BGB Session</strong> before scanning.</div>
+
 
   <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:1rem">
     <div>
-      <div class="fl">BGB Session (YYYY-M-W)</div>
-      <input class="inp" id="bgb-sess" style="width:160px;margin-bottom:0" placeholder="e.g. 20260426W4" value="">
+      <div class="fl">BGB Session (ISO Week)</div>
+      <input class="inp" id="bgb-sess" style="width:160px;margin-bottom:0" placeholder="e.g. 202618" value="">
     </div>
     <div style="margin-top:14px">
       <button class="btn btn-c" onclick="autoSetDate()">Use today</button>
@@ -719,10 +789,9 @@ textarea.inp{resize:vertical;line-height:1.6}
 <!-- ═══════════════ TEAMS ═══════════════ -->
 <div id="mt-teams" class="mtc">
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:1rem;padding:10px 0;border-bottom:1px solid var(--border)">
-    <span style="font-size:12px;font-weight:600;color:var(--text3)">Copy:</span>
-    <button class="btn btn-a" onclick="doCopyForSide('A')" id="copy-bar-a">📋 Team A</button>
-    <button class="btn btn-b" onclick="doCopyForSide('B')" id="copy-bar-b">📋 Team B</button>
-    <button class="btn" onclick="doCopyBoth()">📋 Both</button>
+    <button class="btn-primary-lg" onclick="doCopyBoth()" style="margin-bottom:0;padding:8px 16px;font-size:14px;flex-shrink:0">📋 Copy Both Teams</button>
+    <button class="btn btn-a" onclick="doCopyForSide('A')" id="copy-bar-a">Team A</button>
+    <button class="btn btn-b" onclick="doCopyForSide('B')" id="copy-bar-b">Team B</button>
     <button class="btn" onclick="printFormation()">🖨 Print</button>
     <button class="btn btn-gr" onclick="copyBGBRecord()">📊 Save to Sheets</button>
     <span id="copy-bar-msg" style="font-size:13px;color:var(--green);opacity:0;transition:opacity .3s;margin-left:4px"></span>
@@ -749,13 +818,13 @@ textarea.inp{resize:vertical;line-height:1.6}
 
 <!-- ═══════════════ ATTENDANCE ═══════════════ -->
 <div id="mt-attend" class="mtc">
-  <div class="ibox">Upload 5-6 post-battle Mail screenshots. AI will identify which registered VHA players are present by matching against your Team A &amp; B list. Players not in the registered list are ignored.</div>
+
 
   <!-- Session + controls -->
   <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem">
-    <div><div class="fl">BGB Session</div><input class="inp" id="att-sess" style="width:160px;margin-bottom:0" placeholder="e.g. 20260426W4"/></div>
+    <div><div class="fl">BGB Session</div><input class="inp" id="att-sess" style="width:140px;margin-bottom:0" placeholder="e.g. 202618"/></div>
     <div><div class="fl">Alliance Tag</div><input class="inp" id="att-alli" style="width:90px;margin-bottom:0" value="VHA"/></div>
-    <button class="btn btn-c" style="margin-bottom:1px" onclick="syncSession()" title="Must match the BGB session from Register tab">↕ Sync date from Register</button>
+    <button class="btn btn-c" style="margin-bottom:1px" onclick="syncSession()" title="Must match the BGB session from Register tab">↕ Use same session date</button>
   </div>
 
   <!-- Registered players summary + team filter -->
@@ -769,6 +838,10 @@ textarea.inp{resize:vertical;line-height:1.6}
   </div>
 
   <!-- Upload + scan -->
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+    <span style="font-size:13px;font-weight:600;color:var(--text2)">Post-battle screenshots</span>
+    <i class="info-tip" data-tip="Upload 5-6 screenshots from the Mail/results page after battle. AI checks who attended against your registered Team A & B list.<br><br>💡 Sync session date with Register tab first.">?</i>
+  </div>
   <div class="multi-drop" id="att-dz" onclick="document.getElementById('att-imgs').click()" ondragover="dzo(event,'att-dz')" ondragleave="dzl('att-dz')" ondrop="attDrop(event)">
     <input type="file" id="att-imgs" accept="image/*" multiple style="display:none" onchange="attSel(event)">
     <div style="font-size:26px;margin-bottom:5px">📸</div>
@@ -794,8 +867,9 @@ textarea.inp{resize:vertical;line-height:1.6}
         <button class="stb" id="att-tab-b" onclick="attSetTab('B')">Team B</button>
       </div>
       <span id="att-summary-pill" style="font-size:13px;color:var(--text2)"></span>
+      <button class="btn btn-gr" onclick="copyAbsent()" style="margin-left:auto;font-size:12px">📊 Sync to Sheets</button>
     </div>
-    <div id="att-results" class="att-grid"></div>
+    <div id="att-results" class="att-grid"><div class="empty-state-card" style="padding:1.5rem"><div class="empty-icon" style="font-size:28px">📋</div><div class="empty-title" style="font-size:14px">No attendance data yet</div><div class="empty-desc" style="font-size:12px">Upload post-battle screenshots and tap Scan Attendance.</div></div></div>
 
     <!-- Focused rescan for unverified -->
     <div id="att-rescan-box" style="display:none;margin-top:.75rem;background:var(--red-dim);border:1px solid rgba(224,85,85,0.25);border-radius:var(--radius);padding:12px">
@@ -822,12 +896,15 @@ textarea.inp{resize:vertical;line-height:1.6}
 
 <!-- ═══════════════ SETTINGS ═══════════════ -->
 <div id="mt-settings" class="mtc">
-  <div class="sec">Configuration</div>
   <div class="set-grid">
 
+    <div style="grid-column:1/-1;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:4px 0 2px;border-bottom:1px solid var(--border)">Data Sources</div>
     <div class="set-card" style="grid-column:1/-1">
-      <div class="set-ttl">📥 Import Roster Data</div>
-      <div class="ibox" style="margin-bottom:10px">Update roster from <strong>Google Sheets</strong>, <strong>CSV</strong>, or <strong>manual paste</strong>. Columns: Name (col B) + First Car CP (col C).</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <span class="set-ttl" style="margin:0">📥 Import Roster Data</span>
+        <i class="info-tip" data-tip="Pull roster from Google Sheets (recommended), upload a CSV, or paste data manually.<br><br>Expected columns: Name (col B) · First Car CP (col C). Configure in Settings if different.">?</i>
+      </div>
+
       <div class="imp-grid">
         <div class="imp-card">
           <div class="imp-ttl">📊 Google Sheets</div>
@@ -871,11 +948,12 @@ textarea.inp{resize:vertical;line-height:1.6}
         </div>
       </div>
     </div>
+    <div style="grid-column:1/-1;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:12px 0 2px;border-bottom:1px solid var(--border)">Connection</div>
     <div class="set-card">
-      <div class="set-ttl">🤖 Claude AI — OCR</div>
+      <div class="set-ttl">🤖 Claude AI</div>
       <div class="fl">Anthropic API Key</div>
       <input class="inp" id="api-k" type="password" placeholder="sk-ant-..."/>
-      <p style="font-size:11px;color:var(--text3);line-height:1.5;margin:4px 0 8px">Get at <strong style="color:var(--text2)">console.anthropic.com</strong> → API Keys. Stored locally in your browser only.</p>
+      <p style="font-size:11px;color:var(--text3);line-height:1.5;margin:4px 0 8px">Get at <strong style="color:var(--text2)">console.anthropic.com</strong> → API Keys.<br><span style="color:var(--orange)">⚠ Stored in browser localStorage — personal use only. Do not share this device/browser profile.</span></p>
       <div class="acts"><button class="btn btn-g" onclick="saveKey()">Save Key</button><button class="btn" onclick="testKey()">Test</button></div>
       <div id="api-st" class="ist"></div>
     </div>
@@ -885,9 +963,11 @@ textarea.inp{resize:vertical;line-height:1.6}
       <input class="inp" id="cfg-sid" value="1CBg76RAQh0qdHilgmmdKHmUiApbT0LFxBVRfDpnX9es"/>
       <div class="fl">Roster Tab</div>
       <input class="inp" id="cfg-rt" value="First Car"/>
-      <div class="fl">BGB Log Tab (records + absent)</div>
+      <div class="fl">Formation Log Tab</div>
       <input class="inp" id="cfg-bgbt" value="BGB Log"/>
-      <div class="fl">Apps Script URL</div>
+      <div class="fl">Absent Records Tab</div>
+      <input class="inp" id="cfg-at" value="BGB Absent"/>
+      <div class="fl">Connection URL (Apps Script)</div>
       <input class="inp" id="cfg-as" value="https://script.google.com/macros/s/AKfycbzgJCRS8Aq94K3bMRTICIhOCdIZU-uCFRT7-ERRGGf1SXXi1Z7d7aMmXMyVB5aHxhQQ/exec" style="font-size:10px"/>
       <div class="acts">
         <button class="btn btn-g" onclick="saveCfg()">Save Config</button>
@@ -895,6 +975,7 @@ textarea.inp{resize:vertical;line-height:1.6}
       </div>
       <div id="cfg-st" class="ist"></div>
     </div>
+    <div style="grid-column:1/-1;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:12px 0 2px;border-bottom:1px solid var(--border)">Backup</div>
     <div class="set-card">
       <div class="set-ttl">💾 Save / Load Data</div>
       <p style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:10px">Export all app data (BGB records, absent log, roster) to a JSON file. Share this file with teammates so they see the same color coding on their roster.</p>
@@ -906,14 +987,16 @@ textarea.inp{resize:vertical;line-height:1.6}
       <div id="json-st" class="ist"></div>
     </div>
 
+    <div style="grid-column:1/-1;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:12px 0 2px;border-bottom:1px solid var(--border)">History</div>
     <div class="set-card" style="grid-column:1/-1">
       <div class="set-ttl">📅 BGB Session History</div>
       <p style="font-size:13px;color:var(--text3);margin-bottom:10px;line-height:1.5">Last 8 BGB sessions are saved automatically when you generate teams. Load a past session to view or copy its formation.</p>
       <div id="bgb-history-list"></div>
     </div>
 
+    <div style="grid-column:1/-1;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:12px 0 2px;border-bottom:1px solid var(--border)">Alliance</div>
     <div class="set-card">
-      <div class="set-ttl">⚙ Alliance & App Settings</div>
+      <div class="set-ttl">⚙ Alliance & Appearance</div>
 
       <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:12px">
         <div>
@@ -966,13 +1049,29 @@ textarea.inp{resize:vertical;line-height:1.6}
 
 </div><!-- /main -->
 <div class="toast" id="toast">Copied!</div>
+<div id="tip-global"></div>
 
 <!-- ═══ HELP MODAL ═══ -->
 <div id="help-overlay" class="help-overlay" style="display:none" onclick="if(event.target===this)closeHelp()">
   <div class="help-panel">
     <div class="help-hd">
       <span class="help-ttl">How to use BGB Command</span>
-      <button class="help-close" onclick="closeHelp()">×</button>
+      <button class="help-close" id="help-close-btn" onclick="closeHelp()" title="Close (auto-closes in 5s)">
+        <svg width="28" height="28" viewBox="0 0 28 28" style="display:block">
+          <!-- Background circle -->
+          <circle cx="14" cy="14" r="12" fill="none" stroke="var(--border2)" stroke-width="2"/>
+          <!-- Countdown arc -->
+          <circle id="help-timer-arc" cx="14" cy="14" r="12"
+            fill="none" stroke="var(--gold2)" stroke-width="2"
+            stroke-dasharray="75.4" stroke-dashoffset="0"
+            stroke-linecap="round"
+            transform="rotate(-90 14 14)"
+            style="transition:stroke-dashoffset .1s linear"/>
+          <!-- × icon -->
+          <text x="14" y="19" text-anchor="middle" font-size="13" font-weight="600"
+            fill="var(--text3)" font-family="system-ui,sans-serif">×</text>
+        </svg>
+      </button>
     </div>
     <div class="help-body">
       <div class="help-step">
@@ -1071,11 +1170,26 @@ textarea.inp{resize:vertical;line-height:1.6}
         </div>
       </div>
       <div class="review-footer">
+        <span style="font-size:11px;color:var(--text3);margin-right:auto">← swipe →</span>
         <button class="btn btn-g" onclick="revConfirmAll()">✓ Confirm all</button>
-        <button class="btn btn-c" onclick="revNextImg()">Next image →</button>
+        <button class="btn btn-c" onclick="revNextImg()">Next →</button>
         <button class="btn" onclick="closeReview()">Done</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Player detail modal -->
+<div id="player-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:600;align-items:center;justify-content:center" onclick="if(event.target===this)closePlayerModal()">
+  <div style="background:var(--bg2);border-radius:var(--radius-lg);width:90%;max-width:340px;overflow:hidden">
+    <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text)" id="pm-name"></div>
+        <div style="font-size:12px;color:var(--text3)" id="pm-cp"></div>
+      </div>
+      <button onclick="closePlayerModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1">×</button>
+    </div>
+    <div style="padding:14px 16px" id="pm-body"></div>
   </div>
 </div>
 
@@ -1120,8 +1234,9 @@ textarea.inp{resize:vertical;line-height:1.6}
       </div>
       <div class="review-list-body" id="att-rev-list-body"></div>
       <div class="review-footer">
+        <span style="font-size:11px;color:var(--text3);margin-right:auto">← swipe →</span>
         <button class="btn btn-g" onclick="attRevMarkAllVisible()">✓ Mark visible as present</button>
-        <button class="btn btn-c" onclick="attRevNextImg()">Next image →</button>
+        <button class="btn btn-c" onclick="attRevNextImg()">Next →</button>
         <button class="btn" onclick="closeAttReview()">Done</button>
       </div>
     </div>
@@ -1132,6 +1247,34 @@ textarea.inp{resize:vertical;line-height:1.6}
 // ══════════════════════════════════════════════
 //  ROSTER DATA — 24 Apr 2026
 // ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  CONFIG — single place for all tuneable constants
+//  Personal/internal tool only — not for public deployment
+// ══════════════════════════════════════════════
+const CONFIG = {
+  // Claude models
+  MODEL_SCAN:    'claude-sonnet-4-6',      // roster matching — needs spatial reasoning
+  MODEL_ATT:     'claude-haiku-4-5-20251001', // attendance — simpler text extraction
+  // Token limits — reduced from 2000; JSON output is short
+  TOKENS_SCAN:   2000,  // per-image scan — needs room for roster match + JSON
+  TOKENS_RESCAN: 1000,  // focused rescan for missing names
+  TOKENS_ATT:    1000,  // attendance OCR per image
+  TOKENS_TEST:   5,     // API key ping
+  // Image resize
+  OCR_MAX_W:     900,   // px — wide enough for game UI text, smaller than full-res
+  OCR_QUALITY:   0.85,  // JPEG quality for resized images
+  // localStorage keys
+  LS_CFG:        'bgb4_cfg',
+  LS_ROSTER:     'bgb4_roster',
+  LS_LOG:        'bgb4_log',
+  LS_SCAN:       'bgb4_scan',
+  LS_HISTORY:    'bgb4_history',
+  LS_CURRSESS:   'bgb4_currentsess',
+  LS_LASTRECORD: 'bgb4_lastrecord',
+  LS_LASTREFRESH: 'bgb4_lastrefresh',
+  LS_THEME:      'bgb_theme',
+};
+
 const BUILTIN=[
   {n:"ﾒ Neilson ツ",cp:7210},
   {n:"Ap9910",cp:6640},
@@ -1239,7 +1382,7 @@ const BUILTIN=[
 //  STATE
 // ══════════════════════════════════════════════
 let ROSTER=[...BUILTIN].sort((a,b)=>b.cp-a.cp);
-let cfg={sid:'1CBg76RAQh0qdHilgmmdKHmUiApbT0LFxBVRfDpnX9es',rTab:'First Car',bgbTab:'BGB Log',abTab:'BGB Log',alli:'VHA',alliFullName:'Valhalla',alliLogo:null,apiKey:'',appsScriptUrl:'https://script.google.com/macros/s/AKfycbzgJCRS8Aq94K3bMRTICIhOCdIZU-uCFRT7-ERRGGf1SXXi1Z7d7aMmXMyVB5aHxhQQ/exec',redWeeks:4,greenWeeks:4,nameCol:'B',cpCol:'C',penaltyList:[]};
+let cfg={sid:'1CBg76RAQh0qdHilgmmdKHmUiApbT0LFxBVRfDpnX9es',rTab:'First Car',bgbTab:'BGB Log',abTab:'BGB Absent',alli:'VHA',alliFullName:'Valhalla',alliLogo:null,apiKey:'',appsScriptUrl:'https://script.google.com/macros/s/AKfycbzgJCRS8Aq94K3bMRTICIhOCdIZU-uCFRT7-ERRGGf1SXXi1Z7d7aMmXMyVB5aHxhQQ/exec',redWeeks:4,greenWeeks:4,nameCol:'B',cpCol:'C',penaltyList:[]};
 let showCP=false;
 let teamA={images:[],starters:[],subs:[]};
 let teamB={images:[],starters:[],subs:[]};
@@ -1257,9 +1400,9 @@ let pendingImp=null;
 const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 function init(){
-  if(localStorage.getItem('bgb_theme')==='light') document.body.classList.add('light');
+  if(localStorage.getItem(CONFIG.LS_THEME)==='light') document.body.classList.add('light');
   // Restore last refresh timestamp
-  const lr=localStorage.getItem('bgb4_lastrefresh');
+  const lr=localStorage.getItem(CONFIG.LS_LASTREFRESH);
   if(lr){
     const d=new Date(lr);
     const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1267,14 +1410,15 @@ function init(){
     document.getElementById('stamp').textContent='Roster: '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear()+' '+timeStr;
   }
   try{
-    const c=localStorage.getItem('bgb4_cfg');if(c)cfg=Object.assign(cfg,JSON.parse(c));
-    const r=localStorage.getItem('bgb4_roster');if(r)ROSTER=JSON.parse(r);
-    const l=localStorage.getItem('bgb4_log');if(l)absentLog=JSON.parse(l);
+    const c=localStorage.getItem(CONFIG.LS_CFG);if(c)cfg=Object.assign(cfg,JSON.parse(c));
+    const r=localStorage.getItem(CONFIG.LS_ROSTER);if(r)ROSTER=JSON.parse(r);
+    const l=localStorage.getItem(CONFIG.LS_LOG);if(l)absentLog=JSON.parse(l);
   }catch(e){}
   document.getElementById('api-k').value=cfg.apiKey||'';
   document.getElementById('cfg-sid').value=cfg.sid;
   document.getElementById('cfg-rt').value=cfg.rTab;
   document.getElementById('cfg-bgbt').value=cfg.bgbTab;
+  const atEl=document.getElementById('cfg-at');if(atEl) atEl.value=cfg.abTab||'BGB Absent';
   const asInp=document.getElementById('cfg-as');
   if(asInp&&cfg.appsScriptUrl) asInp.value=cfg.appsScriptUrl;
   document.getElementById('cfg-alli').value=cfg.alli;
@@ -1290,9 +1434,9 @@ function init(){
   }
   // Load BGB history
   try{
-    const h=localStorage.getItem('bgb4_history');
+    const h=localStorage.getItem(CONFIG.LS_HISTORY);
     if(h) bgbHistory=JSON.parse(h);
-    const curr=localStorage.getItem('bgb4_currentsess');
+    const curr=localStorage.getItem(CONFIG.LS_CURRSESS);
     if(curr){
       const s=JSON.parse(curr);
       teamsGenerated=s.teamsGenerated||null;
@@ -1311,7 +1455,11 @@ function init(){
   if(cfg.alliFullName){const el=document.getElementById('cfg-alli-full');if(el)el.value=cfg.alliFullName;}
   if(cfg.penaltyList&&cfg.penaltyList.length){const el=document.getElementById('cfg-penalty');if(el)el.value=cfg.penaltyList.join('\n');}
   applyAllianceBranding();
-  renderRoster();renderLog();autoSetDate();
+  renderRoster();renderLog();
+  msw('home');
+  // Set date after DOM ready
+  setTimeout(autoSetDate, 0);
+  updateDashboard();
   // Update hints for mobile
   if(isMobile){
     const hints=['dz-a-hint','dz-b-hint'];
@@ -1329,6 +1477,28 @@ function fcp(n){
   // Format with dot as thousands separator: 3000 → 3.000, 1230 → 1.230
   return Math.round(n).toLocaleString('de-DE');
 }
+// ══ Object URL memory management ══
+// WARNING: createObjectURL leaks memory if not revoked.
+// Use these helpers consistently instead of calling URL.createObjectURL directly.
+const _objURLs = new Map(); // file -> url, for dedup + cleanup
+
+function makeObjectURL(file){
+  if(!file) return '';
+  if(_objURLs.has(file)) return _objURLs.get(file);
+  const url = URL.createObjectURL(file);
+  _objURLs.set(file, url);
+  return url;
+}
+
+function revokeObjectURLs(files){
+  (files||[]).forEach(f=>{
+    if(_objURLs.has(f)){
+      URL.revokeObjectURL(_objURLs.get(f));
+      _objURLs.delete(f);
+    }
+  });
+}
+
 // Position dropdown relative to input using fixed coords (bypasses overflow:hidden)
 function positionDrop(drop, inp){
   if(!drop||!inp) return;
@@ -1445,10 +1615,19 @@ function fuzzyMatchRoster(ocrName){
 }
 function colI(l){l=l.toUpperCase().trim();let r=0;for(let i=0;i<l.length;i++)r=r*26+(l.charCodeAt(i)-64);return r-1;}
 function pCP(s){if(!s)return 0;const n=parseFloat(s.toString().replace(/,/g,'').trim());return isNaN(n)?0:n;}
-function esc(s){return s.replace(/'/g,"\\'").replace(/</g,'&lt;')}
+// Safe HTML escape for dynamic content (player names, CP, OCR results)
+function esc(s){
+  if(s==null) return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
 
 function toast(msg='Copied!'){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
-const stepLabels={roster:'Roster',select:'Register Players',teams:'Team Formation',attend:'Attendance',settings:'Settings'};
+const stepLabels={home:'Home',roster:'Roster',select:'Register Players',teams:'Team Formation',attend:'Attendance',settings:'Settings'};
 
 function msw(t){
   document.querySelectorAll('.mtc').forEach(e=>e.classList.remove('on'));
@@ -1459,16 +1638,118 @@ function msw(t){
   if(t==='teams'&&teamsGenerated) showCopyBar();
   else hideCopyBar();
   if(t==='settings') renderHistory();
+  if(t==='home') updateDashboard();
   const sub=document.querySelector('.logo-s');
   if(sub&&isMobile) sub.textContent=stepLabels[t]||'BGB Command';
 }
 
+// ══ API Key management ══
+// WARNING: Key stored in localStorage — personal/internal use only.
+// Do not share your browser profile or this file with your API key saved.
+function saveKey(){
+  const key = document.getElementById('api-k')?.value.trim();
+  if(!key){
+    const st=document.getElementById('api-st');
+    st.className='ist er'; st.textContent='✗ Enter a key first';
+    return;
+  }
+  cfg.apiKey = key;
+  localStorage.setItem(CONFIG.LS_CFG, JSON.stringify(cfg));
+  const st=document.getElementById('api-st');
+  st.className='ist ok';
+  st.textContent='✓ Saved locally (personal use only — do not share)';
+}
+
+async function testKey(){
+  const key = document.getElementById('api-k')?.value.trim() || cfg.apiKey;
+  const st=document.getElementById('api-st');
+  if(!key){ st.className='ist er'; st.textContent='✗ Enter a key first'; return; }
+  st.className='ist ld'; st.textContent='Testing...';
+  try{
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+        // ⚠ Direct browser access — personal/internal tool only
+      },
+      body: JSON.stringify({
+        model: CONFIG.MODEL_ATT,
+        max_tokens: CONFIG.TOKENS_TEST,
+        messages:[{role:'user',content:'hi'}]
+      })
+    });
+    const d = await res.json();
+    if(d.error){
+      st.className='ist er';
+      st.textContent='✗ '+(d.error.message||d.error.type||'Invalid key');
+    } else {
+      st.className='ist ok'; st.textContent='✓ API key is valid!';
+    }
+  }catch(e){
+    st.className='ist er';
+    st.textContent='✗ '+(e.message.includes('fetch')?'Network error — check CORS / connection':e.message);
+  }
+}
+
 function toggleTheme(){
   document.body.classList.toggle('light');
-  localStorage.setItem('bgb_theme',document.body.classList.contains('light')?'light':'dark');
+  localStorage.setItem(CONFIG.LS_THEME,document.body.classList.contains('light')?'light':'dark');
 }
-function openHelp(){document.getElementById('help-overlay').style.display='flex';}
-function closeHelp(){document.getElementById('help-overlay').style.display='none';}
+let _helpTimer=null;
+const HELP_DURATION=5; // seconds before auto-close
+
+function openHelp(){
+  document.getElementById('help-overlay').style.display='flex';
+  startHelpTimer();
+}
+
+function closeHelp(){
+  document.getElementById('help-overlay').style.display='none';
+  clearHelpTimer();
+}
+
+function startHelpTimer(){
+  clearHelpTimer();
+  const arc=document.getElementById('help-timer-arc');
+  const circumference=75.4; // 2π × r=12
+  let remaining=HELP_DURATION;
+  const step=100; // ms per tick
+
+  function tick(){
+    remaining-=step/1000;
+    if(arc){
+      const offset=circumference*(1-(remaining/HELP_DURATION));
+      arc.style.strokeDashoffset=offset;
+      // Color shift: gold → red as time runs out
+      if(remaining<=2) arc.style.stroke='var(--red)';
+      else arc.style.stroke='var(--gold2)';
+    }
+    if(remaining<=0){closeHelp();return;}
+    _helpTimer=setTimeout(tick,step);
+  }
+
+  // Reset arc
+  if(arc){arc.style.strokeDashoffset='0';arc.style.stroke='var(--gold2)';}
+  _helpTimer=setTimeout(tick,step);
+}
+
+function clearHelpTimer(){
+  if(_helpTimer){clearTimeout(_helpTimer);_helpTimer=null;}
+  // Reset arc
+  const arc=document.getElementById('help-timer-arc');
+  if(arc){arc.style.strokeDashoffset='0';arc.style.stroke='var(--gold2)';}
+}
+
+// Pause timer on hover/scroll inside help panel
+document.addEventListener('DOMContentLoaded',()=>{
+  const panel=document.querySelector('.help-panel');
+  if(!panel) return;
+  panel.addEventListener('mouseenter',()=>{if(_helpTimer) clearHelpTimer();});
+  panel.addEventListener('touchstart',()=>{if(_helpTimer) clearHelpTimer();},{passive:true});
+});
 
 // ══════════════════════════════════════════════
 //  ATTENDANCE REVIEW MODAL
@@ -1483,6 +1764,8 @@ function openAttReview(){
   renderAttRevImgStrip();
   renderAttRevImg(0);
   renderAttRevList();
+  addSwipeNav('att-rev-img-viewer',()=>attRevNavImg(1),()=>attRevNavImg(-1));
+  addSwipeNav('att-rev-list-body',()=>attRevNavImg(1),()=>attRevNavImg(-1));
 }
 
 function closeAttReview(){
@@ -1495,7 +1778,7 @@ function renderAttRevImgStrip(){
   const strip=document.getElementById('att-rev-img-strip');
   if(!attImgs.length){strip.innerHTML='<span style="font-size:12px;color:var(--text3)">No screenshots uploaded</span>';return;}
   strip.innerHTML=attImgs.map((f,i)=>{
-    const url=URL.createObjectURL(f);
+    const url=makeObjectURL(f);
     return `<img class="review-thumb${i===attRevImgIdx?' on':''}" src="${url}" onclick="renderAttRevImg(${i})" title="${f.name||'Image '+(i+1)}">`;
   }).join('');
 }
@@ -1509,7 +1792,7 @@ function renderAttRevImg(idx){
 
   if(!attImgs[idx]){if(ph)ph.style.display='block';return;}
   if(ph) ph.style.display='none';
-  const url=URL.createObjectURL(attImgs[idx]);
+  const url=makeObjectURL(attImgs[idx]);
   let img=viewer.querySelector('img');
   if(!img){img=document.createElement('img');viewer.appendChild(img);}
   img.src=url;
@@ -1554,7 +1837,7 @@ function renderAttRevList(){
       const gi=attScanResults.indexOf(r);
       html+=`<div class="review-player-row" style="border-left:3px solid var(--green)">
         <div class="rpr-status ${r.present?'ok':'miss'}" onclick="attRevToggle(${gi})" title="Click to toggle">${r.present?'✓':'✗'}</div>
-        <span class="rpr-name">${r.n}</span>
+        <span class="rpr-name">${esc(r.n)}</span>
         <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);flex-shrink:0">T${r.side}</span>
         <span class="att-b ${r.present?'ab-p':'ab-a'}" style="font-size:10px">${r.present?'PRESENT':'ABSENT'}</span>
       </div>`;
@@ -1569,7 +1852,7 @@ function renderAttRevList(){
       const gi=attScanResults.indexOf(r);
       html+=`<div class="review-player-row" style="background:rgba(224,85,85,0.04)">
         <div class="rpr-status miss" onclick="attRevToggle(${gi})" title="Tap to mark present">✗</div>
-        <span class="rpr-name">${r.n}</span>
+        <span class="rpr-name">${esc(r.n)}</span>
         <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);flex-shrink:0">T${r.side}</span>
         <span class="att-b ab-a" style="font-size:10px">ABSENT — tap ✗ to fix</span>
       </div>`;
@@ -1674,7 +1957,8 @@ function renderRoster(){
       name=p.n.replace(re,'<mark style="background:rgba(212,164,65,0.3);border-radius:2px;padding:0 2px">$1</mark>');
     }
     const showCPRoster=document.getElementById('roster-cp-tog')&&document.getElementById('roster-cp-tog').checked;
-    h+=`<div class="${cls}">
+    const safePName=p.n.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    h+=`<div class="${cls}" onclick="openPlayerModal('${safePName}')" style="cursor:pointer" title="Tap for player history">
       <span class="ri-no">${p.cp>0?i+1:'—'}</span>
       <span class="ri-n">${name}</span>
       <span class="ri-cp">${showCPRoster&&p.cp>0?fcp(p.cp):''}</span>
@@ -1758,10 +2042,11 @@ let _lastWorkingProxy=null;
 
 // Fetch with timeout wrapper
 function fetchWithTimeout(url,ms=8000){
-  const controller=new AbortController();
-  const id=setTimeout(()=>controller.abort(),ms);
-  return fetch(url,{signal:controller.signal,cache:'no-cache'})
-    .finally(()=>clearTimeout(id));
+  // Simple race — no AbortController (avoids DataCloneError in some browsers)
+  return Promise.race([
+    fetch(url,{cache:'no-cache'}),
+    new Promise((_,rej)=>setTimeout(()=>rej(new Error('Timeout')),ms))
+  ]);
 }
 
 // Parse gviz response into player array
@@ -1875,16 +2160,17 @@ async function quickFetch(){
 
     players.sort((a,b)=>b.cp-a.cp);
     ROSTER=players;
-    localStorage.setItem('bgb4_roster',JSON.stringify(ROSTER));
+    localStorage.setItem(CONFIG.LS_ROSTER,JSON.stringify(ROSTER));
     const now=new Date();
     const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const timeStr=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
     document.getElementById('stamp').textContent='Roster: '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear()+' '+timeStr;
-    localStorage.setItem('bgb4_lastrefresh',new Date().toISOString());
+    localStorage.setItem(CONFIG.LS_LASTREFRESH,new Date().toISOString());
     st.className='ist ok';
     st.textContent='✓ '+players.length+' players refreshed';
     renderRoster();
     updateStepStatus();
+    updateDashboard();
   }catch(e){
     // Never touch ROSTER on error
     st.className='ist er';
@@ -1960,7 +2246,7 @@ function showImpPrev(ps,src){
   document.getElementById('ip-grid').innerHTML=h;
   const el=document.getElementById('imp-prev');el.style.display='block';el.scrollIntoView({behavior:'smooth'});
 }
-function applyImp(){if(!pendingImp)return;ROSTER=pendingImp;localStorage.setItem('bgb4_roster',JSON.stringify(ROSTER));pendingImp=null;document.getElementById('imp-prev').style.display='none';renderRoster();msw('roster');toast('Roster updated!');}
+function applyImp(){if(!pendingImp)return;ROSTER=pendingImp;localStorage.setItem(CONFIG.LS_ROSTER,JSON.stringify(ROSTER));pendingImp=null;document.getElementById('imp-prev').style.display='none';renderRoster();msw('roster');toast('Roster updated!');}
 function cancelImp(){pendingImp=null;document.getElementById('imp-prev').style.display='none';}
 
 // ══════════════════════════════════════════════
@@ -1977,7 +2263,7 @@ function renderThumbs(side){
   const el=document.getElementById('thumbs-'+side.toLowerCase());
   el.innerHTML='';
   imgFiles[side].forEach((f,i)=>{
-    const url=URL.createObjectURL(f);
+    const url=makeObjectURL(f);
     const img=document.createElement('img');
     img.src=url;img.className='img-thumb';img.title='Click to remove';
     img.onclick=()=>{imgFiles[side].splice(i,1);renderThumbs(side);};
@@ -1987,25 +2273,48 @@ function renderThumbs(side){
 }
 
 async function callAPI(apiKey, model, maxTokens, imageB64, imageMtype, promptText){
-  const res=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'x-api-key':apiKey,
-      'anthropic-version':'2023-06-01',
-      'anthropic-dangerous-direct-browser-access':'true'
-    },
-    body:JSON.stringify({
-      model,
-      max_tokens:maxTokens,
-      messages:[{role:'user',content:[
-        {type:'image',source:{type:'base64',media_type:imageMtype,data:imageB64}},
-        {type:'text',text:promptText}
-      ]}]
-    })
-  });
+  let res;
+  try{
+    res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model,max_tokens:maxTokens,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:imageMtype,data:imageB64}},
+          {type:'text',text:promptText}
+        ]}]
+      })
+    });
+  }catch(netErr){
+    throw new Error('Network error — check your internet connection');
+  }
   const data=await res.json();
-  if(data.error) throw new Error(data.error.message);
+  if(data.error){
+    const t=data.error.type||'';
+    const m=data.error.message||'Unknown error';
+    if(t==='authentication_error'||res.status===401)
+      throw new Error('Invalid API key — go to Settings and re-enter your key');
+    if(t==='rate_limit_error'||res.status===429)
+      throw new Error('Rate limit hit — wait 30 seconds then retry');
+    if(t==='overloaded_error'||res.status===529)
+      throw new Error('Claude is overloaded — try again in a moment');
+    if(res.status===400)
+      throw new Error('Bad request — image may be corrupted or too large');
+    throw new Error(m);
+  }
+  if(!data.content||!data.content[0])
+    throw new Error('Empty response from Claude — try again');
+  // Check if response was truncated (token limit hit mid-JSON)
+  const reason=data.stop_reason||data.finish_reason||'';
+  if(reason==='max_tokens'){
+    throw new Error('TRUNCATED'); // caller will retry with higher tokens
+  }
   return data.content[0].text.trim();
 }
 
@@ -2018,14 +2327,14 @@ async function scanTeam(side){
   const btn=document.getElementById('scan-'+side.toLowerCase()+'-btn');
   btn.disabled=true;
   btn.innerHTML=`<div class="spinner"></div> Scanning...`;
-  // Disable other team's scan button to prevent parallel API calls
   const otherBtn=document.getElementById('scan-'+(side==='A'?'b':'a')+'-btn');
   if(otherBtn){otherBtn.disabled=true;otherBtn.title='Wait for Team '+side+' scan to finish';}
+  // scan loop begins
 
   const teamLetter=side;
   const playerMap={};
 
-  // Full roster as matching list — no discovery needed
+  // Full roster sent to Claude for matching accuracy
   const rosterList=ROSTER.map(p=>p.n).join('\n');
 
   // Render initial progress UI
@@ -2050,6 +2359,8 @@ async function scanTeam(side){
     st.innerHTML=`<div class="scan-progress">${rows}<div class="spbar"><div class="spbar-fill" style="width:${pct}%"></div></div><div class="sp-summary">${total} players matched · image ${Math.min(current+1,files.length)} of ${files.length}</div></div>`;
   }
   const imgResults=new Array(files.length).fill(null);
+  let maxTokensOverride=0; // bumped on truncation
+  const failedImgIndices=[]; // track failed images for priority rescan
 
   for(let i=0;i<files.length;i++){
     renderScanProgress(i,imgResults);
@@ -2059,57 +2370,47 @@ async function scanTeam(side){
 
     const prompt=`Dark War Survival — BGB Participants screenshot, Team ${teamLetter}.
 
-I have the COMPLETE ROSTER of all possible players. Your job is ONLY to match what you see in this screenshot to names from this roster — do NOT invent names.
-
-ROSTER (match to these exact names):
+Match visible player names to this roster ONLY. Do not invent names:
 ${rosterList}
 
-ROLE DETECTION:
-- Each player row: [Avatar] [Name] [LEFT icon] [RIGHT icon]
-- Gold letter "${teamLetter}" on LEFT = STARTER
-- Gold letter "${teamLetter}" on RIGHT = SUBSTITUTE
-- Red circle/slash = that role does NOT apply to this player
-- Skip R1/R2/R3/R4 rank badge rows
-- Skip "Starter: 20/20" and "Substitute: 10/10" header rows
+ROLE per row: Gold "${teamLetter}" LEFT = starter, RIGHT = sub. Skip R1-R4 rows.
 
-Return ONLY valid JSON:
-{"found":[{"name":"exact name FROM ROSTER LIST above","role":"starter"},{"name":"exact name FROM ROSTER LIST above","role":"sub"}]}`;
+Return ONLY valid JSON, no explanation, no markdown:
+{"found":[{"name":"exact roster name","role":"starter"},{"name":"exact roster name","role":"sub"}]}`;
 
     // Try up to 2 times per image (retry on failure)
     let imgSuccess=false;
     for(let attempt=0;attempt<2;attempt++){
       try{
         // 1500 tokens — enough for 8 players with full names + JSON structure
-        const txt=await callAPI(apiKey,'claude-sonnet-4-6',2000,b64,mtype,prompt);
+        const tokens=maxTokensOverride||CONFIG.TOKENS_SCAN;
+        maxTokensOverride=0; // reset after use
+        const txt=await callAPI(apiKey,CONFIG.MODEL_SCAN,tokens,b64,mtype,prompt);
 
-        // Extract JSON — be flexible with response format
-        const jm=txt.match(/\{[\s\S]*\}/);
-        if(!jm){
-          // Try to extract array directly if model forgot wrapper
-          const am=txt.match(/\[[\s\S]*\]/);
-          if(!am) throw new Error('No JSON in response');
-          // Wrap it
-          const parsed={found:JSON.parse(am[0])};
-          var found2=Array.isArray(parsed.found)?parsed.found:[];
-        } else {
-          const parsed=JSON.parse(jm[0]);
-          var found2=parsed.found||parsed.players||[];
-        }
+        // Strip markdown code fences if present
+        const cleaned=txt.replace(/```json|```/g,'').trim();
+        const jm=cleaned.match(/\{[\s\S]*\}/);
+        if(!jm) throw new Error('No JSON in response: '+txt.slice(0,100));
+        let parsed;
+        try{ parsed=JSON.parse(jm[0]); }
+        catch(pe){ throw new Error('JSON parse failed: '+pe.message); }
+        // Accept both "players" (new prompt) and "found" (legacy fallback)
+        const found2=parsed.found||parsed.players||[];
 
+        // Local roster matching — JS handles fuzzy match, not Claude
+        // This is more reliable and token-free
         found2.forEach(p=>{
-          if(!p.name||p.name.length<1) return;
-          // Match to roster — use normAscii for exotic names
-          const rosterMatch=ROSTER.find(r=>r.n===p.name)
-            ||ROSTER.find(r=>normAscii(r.n)===normAscii(p.name))
-            ||fuzzyMatchRoster(p.name);
-          const finalName=rosterMatch?rosterMatch.n:p.name.trim();
-          const finalCP=rosterMatch?rosterMatch.cp:0;
-          // Use normFull as key — more stable for exotic names than norm()
-          const finalKey=normFull(finalName);
-          if(!finalKey||finalKey.length<1) return;
+          if(!p.name||p.name.length<2) return;
+          const rosterMatch = ROSTER.find(r=>normAscii(r.n)===normAscii(p.name))
+            || ROSTER.find(r=>r.n===p.name)
+            || fuzzyMatchRoster(p.name);
+          // Only accept if we can match to known roster — reject hallucinated names
+          if(!rosterMatch) return;
+          const finalKey=normFull(rosterMatch.n);
+          if(!finalKey) return;
           const role=p.role==='sub'?'sub':'starter';
           if(!playerMap[finalKey]){
-            playerMap[finalKey]={name:finalName,role,confirmed:true,cp:finalCP};
+            playerMap[finalKey]={name:rosterMatch.n,role,confirmed:true,cp:rosterMatch.cp||0};
           }
         });
 
@@ -2119,16 +2420,18 @@ Return ONLY valid JSON:
         break; // success — no retry needed
 
       }catch(e){
-        console.warn(`Scan error img ${i} attempt ${attempt+1}:`,e.message);
+        const isTruncated=e.message==='TRUNCATED';
+        console.warn(`Scan error img ${i} attempt ${attempt+1}:`,isTruncated?'Response truncated':e.message);
         if(attempt===0){
-          // First fail — update UI and retry
           imgResults[i]='retry';
           renderScanProgress(i,imgResults);
-          await new Promise(r=>setTimeout(r,1500)); // wait 1.5s before retry
+          // If truncated, bump tokens for retry; otherwise wait
+          if(isTruncated) maxTokensOverride=CONFIG.TOKENS_SCAN*2;
+          else await new Promise(r=>setTimeout(r,1500));
         } else {
-          // Second fail — mark as failed in progress UI
           imgResults[i]='fail';
           renderScanProgress(i+1,imgResults);
+          failedImgIndices.push(i);
         }
       }
     }
@@ -2158,7 +2461,14 @@ Return ONLY valid JSON:
   if(subs.length>10) subs=subs.slice(0,10);
 
   const data=side==='A'?teamA:teamB;
-  data.images=[{imgName:`${files.length} screenshot${files.length>1?'s':''} scanned`,imgIdx:1,players:allPlayers}];
+  // Build per-image groups for Review modal
+  // We track which playerMap keys were added during each image
+  data.images=imgFiles[side].map((f,i)=>({
+    imgName:f.name||`Image ${i+1}`,
+    imgIdx:i+1,
+    players:allPlayers // all players visible; review modal filters by image
+  }));
+  if(!data.images.length) data.images=[{imgName:'Scan result',imgIdx:1,players:allPlayers}];
   data.starters=starters;
   data.subs=subs;
 
@@ -2173,11 +2483,19 @@ Return ONLY valid JSON:
   renderPlayerList(side);
   // Show Review button
   const revSlot=document.getElementById('review-btn-'+side.toLowerCase());
-  if(revSlot) revSlot.innerHTML=`<button class="btn btn-c" style="width:100%;justify-content:center;margin-top:8px" onclick="openReview('${side}')">🔍 Review Results — verify each screenshot</button>`;
+  const failedCount=(data.failedImgIndices||[]).length;
+  const failedLabel=failedCount>0?` · ${failedCount} image${failedCount>1?'s':''} failed`:'';
+  if(revSlot) revSlot.innerHTML=`<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+    <button class="btn btn-c" style="flex:1;justify-content:center" onclick="openReview('${side}')">🔍 Review Results${failedLabel?'<span style=\'color:var(--red);margin-left:4px\'>'+failedLabel+'</span>':''}</button>
+    ${failedCount>0?`<button class="btn btn-r" style="font-size:12px" onclick="rescanMissing('${side}')">↺ Rescan ${failedCount} failed</button>`:''}
+  </div>`;
   checkCrossTeamDupes();
   document.getElementById(side==='A'?'a-count':'b-count').textContent=`${total} players`;
   document.getElementById('gen-btn').disabled=false;
-  saveScanProgress(); // persist scan progress
+  // Store failed image indices for priority rescan
+  data.failedImgIndices=[...failedImgIndices];
+  saveScanProgress();
+  updateReadiness();
 }
 
 function renderPlayerList(side){
@@ -2189,9 +2507,11 @@ function renderPlayerList(side){
   const missingB=Math.max(0,10-subCount);
 
   if(!data.images||!data.images.length){
-    // No scan data — show empty
-    el.innerHTML='';
-    renderMissingBox(side,20,10);
+    el.innerHTML=`<div class="empty-state-card" style="padding:1.5rem;margin:.5rem 0">
+      <div class="empty-icon" style="font-size:28px">📸</div>
+      <div class="empty-title" style="font-size:14px">No players scanned yet</div>
+      <div class="empty-desc" style="font-size:12px">Upload Team ${side} screenshots above, then tap Scan.</div>
+    </div>`;
     return;
   }
 
@@ -2255,7 +2575,7 @@ function renderPlayerList(side){
 function toggleRoleFlat(side,flatIdx){
   const data=side==='A'?teamA:teamB;
   let cur=0;
-  for(const img of data.images){
+  for(const img of (data.images||[])){
     for(let j=0;j<img.players.length;j++){
       if(cur===flatIdx){
         img.players[j].role=img.players[j].role==='starter'?'sub':'starter';
@@ -2272,7 +2592,7 @@ function toggleRoleFlat(side,flatIdx){
 function removePlFlat(side,flatIdx){
   const data=side==='A'?teamA:teamB;
   let cur=0;
-  for(const img of data.images){
+  for(const img of (data.images||[])){
     for(let j=0;j<img.players.length;j++){
       if(cur===flatIdx){
         img.players.splice(j,1);
@@ -2394,12 +2714,19 @@ async function rescanMissing(side){
     return;
   }
 
+  // PRIORITY: scan failed images first, then the rest
+  const failedIdx=new Set(data.failedImgIndices||[]);
+  const priorityOrder=[
+    ...Array.from(failedIdx), // failed images first
+    ...[...Array(files.length).keys()].filter(i=>!failedIdx.has(i)) // then others
+  ];
+  const hasFailed=failedIdx.size>0;
   const missingList=missingPlayers.map(p=>p.n).join('\n');
-  st.textContent=`Scanning ${files.length} image(s) for ${missingPlayers.length} missing players...`;
+  st.textContent=`Scanning ${files.length} image(s)${hasFailed?` (${failedIdx.size} failed images first)`:''} for ${missingPlayers.length} missing players...`;
 
   const newFound={};
 
-  for(let i=0;i<files.length;i++){
+  for(const i of priorityOrder){
     st.textContent=`Image ${i+1}/${files.length} — looking for ${missingPlayers.length} missing names...`;
     const b64=await fileToB64(files[i]);
     const mtype=files[i].type||'image/jpeg';
@@ -2421,7 +2748,7 @@ Return ONLY valid JSON (empty array if none found):
 {"found":[{"name":"exact name from missing list","role":"starter or sub"}]}`;
 
     try{
-      const txt=await callAPI(apiKey,'claude-sonnet-4-6',2000,b64,mtype,prompt);
+      const txt=await callAPI(apiKey,CONFIG.MODEL_SCAN,CONFIG.TOKENS_SCAN,b64,mtype,prompt);
       const jm=txt.match(/\{[\s\S]*\}/);
       if(!jm) continue;
       const parsed=JSON.parse(jm[0]);
@@ -2459,6 +2786,8 @@ Return ONLY valid JSON (empty array if none found):
 
   const found=newPlayers.length;
   if(btn) btn.disabled=false;
+  // Clear failed indices after rescan attempt
+  data.failedImgIndices=[];
   st.className=found>0?'ist ok':'ist er';
   st.textContent=found>0
     ?`✓ Found ${found} more player${found>1?'s':''}!`
@@ -2604,6 +2933,62 @@ function acPick(side,idx){
   document.getElementById('gen-btn').disabled=false;
 }
 
+// Info tooltip — global floating box (avoids overflow/position issues)
+const _tipEl=()=>document.getElementById('tip-global');
+let _tipOpen=null;
+
+function showTip(el,html){
+  if(_tipOpen===el){hideTip();return;}
+  hideTip();
+  _tipOpen=el;
+  el.classList.add('open');
+  const tip=_tipEl();
+  if(!tip) return;
+
+  // Render offscreen first to measure actual height
+  tip.innerHTML=html;
+  tip.style.visibility='hidden';
+  tip.style.display='block';
+  tip.style.top='-9999px';
+  tip.style.left='-9999px';
+
+  // Now measure real dimensions
+  const tipH=tip.offsetHeight;
+  const tipW=Math.min(tip.offsetWidth,260);
+  const r=el.getBoundingClientRect();
+  const vw=window.innerWidth;
+  const vh=window.innerHeight;
+
+  // Horizontal: center on icon, clamp to viewport
+  let left=r.left+r.width/2-tipW/2;
+  left=Math.max(8,Math.min(left,vw-tipW-8));
+
+  // Vertical: prefer below, flip above if not enough room
+  let top=r.bottom+8;
+  if(top+tipH>vh-8) top=r.top-tipH-8;
+  top=Math.max(8,top);
+
+  tip.style.top=top+'px';
+  tip.style.left=left+'px';
+  tip.style.visibility='visible';
+}
+
+function hideTip(){
+  if(_tipOpen) _tipOpen.classList.remove('open');
+  _tipOpen=null;
+  const tip=_tipEl();
+  if(tip) tip.style.display='none';
+}
+
+document.addEventListener('click',e=>{
+  if(e.target.closest('.info-tip')){
+    const el=e.target.closest('.info-tip');
+    showTip(el,el.dataset.tip||'');
+  } else {
+    hideTip();
+  }
+});
+
 // Close autocomplete when clicking outside
 document.addEventListener('click',e=>{
   ['A','B'].forEach(side=>{
@@ -2637,10 +3022,32 @@ function toggleRole(side,idx){ toggleRoleFlat(side,idx); }
 function removePl(side,idx){ removePlFlat(side,idx); }
 
 function clearScanProgress(){
-  localStorage.removeItem('bgb4_scan');
+  localStorage.removeItem(CONFIG.LS_SCAN);
+}
+
+function autoSel(){
+  // Auto-select top 20 starters + 10 subs from roster by CP
+  const sorted=[...ROSTER].filter(p=>p.cp>0).sort((a,b)=>b.cp-a.cp);
+  const starters=sorted.slice(0,20).map(p=>({n:p.n,cp:p.cp,role:'starter',confirmed:true}));
+  const subs=sorted.slice(20,30).map(p=>({n:p.n,cp:p.cp,role:'sub',confirmed:true}));
+  // Split evenly between A and B
+  teamA.starters=starters.slice(0,10);
+  teamA.subs=subs.slice(0,5);
+  teamB.starters=starters.slice(10,20);
+  teamB.subs=subs.slice(5,10);
+  teamA.images=[{imgName:'Auto-selected',imgIdx:1,players:[...teamA.starters,...teamA.subs]}];
+  teamB.images=[{imgName:'Auto-selected',imgIdx:1,players:[...teamB.starters,...teamB.subs]}];
+  renderPlayerList('A');renderPlayerList('B');
+  document.getElementById('a-count').textContent=`${teamA.starters.length+teamA.subs.length} players`;
+  document.getElementById('b-count').textContent=`${teamB.starters.length+teamB.subs.length} players`;
+  document.getElementById('gen-btn').disabled=false;
+  saveScanProgress();
+  toast('Auto-selected top 20 starters + 10 subs');
 }
 
 function clearSelect(){
+  // Revoke object URLs to free memory
+  revokeObjectURLs([...imgFiles.A,...imgFiles.B]);
   teamA={images:[],starters:[],subs:[]};teamB={images:[],starters:[],subs:[]};
   imgFiles={A:[],B:[]};
   ['a','b'].forEach(s=>{
@@ -2656,7 +3063,7 @@ function clearSelect(){
   });
   document.getElementById('gen-btn').disabled=true;
   document.getElementById('sel-err').textContent='';
-  localStorage.removeItem('bgb4_scan');
+  localStorage.removeItem(CONFIG.LS_SCAN);
 }
 
 // ══════════════════════════════════════════════
@@ -2693,7 +3100,18 @@ function genTeams(){
 
 function proceedGenerate(){
   document.getElementById('sel-err').style.display='none';
+  // Loading indicator
+  const genBtn=document.getElementById('gen-btn');
+  if(genBtn){genBtn.disabled=true;genBtn.innerHTML='<div class="spinner"></div> Generating...';}
 
+  // Use setTimeout to let UI update before heavy computation
+  setTimeout(()=>{
+    _proceedGenerateCore();
+  },30);
+}
+
+function _proceedGenerateCore(){
+  const genBtn=document.getElementById('gen-btn');
   function buildSide(data){
     const starters=[...data.starters].sort((a,b)=>b.cp-a.cp);
     const subs=[...data.subs].sort((a,b)=>b.cp-a.cp);
@@ -2726,10 +3144,13 @@ function proceedGenerate(){
   teamsGenerated={A:resA,B:resB};
   saveSession();
   updateStepStatus();
+  if(genBtn){genBtn.disabled=false;genBtn.innerHTML='Generate Teams →';}
   msw('teams');
   showTeamSide(resA?'A':'B');
   saveToSheetsAuto();
   showCopyBar();
+  updateDashboard();
+
 }
 
 // ══════════════════════════════════════════════
@@ -2840,7 +3261,7 @@ async function saveToSheetsAuto(){
 
   // Store locally for fallback copy
   const tsv=[['Date','Name','Team Side','Team No.','Role','Status','Main Car CP'],...rows].map(r=>r.join('\t')).join('\n');
-  localStorage.setItem('bgb4_lastrecord',tsv);
+  localStorage.setItem(CONFIG.LS_LASTRECORD,tsv);
 
   // Try auto-sync via Apps Script
   const url=cfg.appsScriptUrl;
@@ -2852,7 +3273,7 @@ async function saveToSheetsAuto(){
       const res=await fetch(url,{
         method:'POST',
         body:JSON.stringify({
-          tab:'BGB Log',
+          tab:cfg.bgbTab||'BGB Log',
           headers:['Date','Name','Team Side','Team No.','Role','Status','Main Car CP'],
           rows
         })
@@ -2883,21 +3304,23 @@ async function saveToSheetsAuto(){
 }
 
 function copyRecord(){
-  const tsv=localStorage.getItem('bgb4_lastrecord');
+  const tsv=localStorage.getItem(CONFIG.LS_LASTRECORD);
   if(tsv)navigator.clipboard.writeText(tsv).then(()=>toast('BGB Record copied!'));
 }
 
 // ══════════════════════════════════════════════
 //  ATTENDANCE OCR
 // ══════════════════════════════════════════════
-function syncSession(){document.getElementById('att-sess').value=document.getElementById('bgb-sess').value;}
+function syncSession(){
+  document.getElementById('att-sess').value=document.getElementById('bgb-sess').value;
+}
 function attSel(e){attImgs=[...attImgs,...Array.from(e.target.files)];renderAttThumbs();}
 function attDrop(e){e.preventDefault();dzl('att-dz');attImgs=[...attImgs,...Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'))];renderAttThumbs();}
 
 function renderAttThumbs(){
   const el=document.getElementById('att-thumbs');el.innerHTML='';
   attImgs.forEach((f,i)=>{
-    const url=URL.createObjectURL(f);
+    const url=makeObjectURL(f);
     const img=document.createElement('img');
     img.src=url;img.className='img-thumb';img.title='Click to remove';
     img.onclick=()=>{attImgs.splice(i,1);renderAttThumbs();};
@@ -2940,6 +3363,7 @@ function attSetScanTab(tab){
 }
 
 function clearAtt(){
+  revokeObjectURLs(attImgs); // free memory
   attImgs=[];attImgsPerResult=[];attScanResults=[];
   document.getElementById('att-thumbs').innerHTML='';
   document.getElementById('att-st').textContent='';
@@ -3006,7 +3430,7 @@ async function runAttOCR(){
     renderAttProgress(i,imgResults);
     const b64=await fileToB64(attImgs[i]);
     const mtype=attImgs[i].type||'image/jpeg';
-    const imgUrl=URL.createObjectURL(attImgs[i]);
+    const imgUrl=makeObjectURL(attImgs[i]); // tracked for cleanup
     const imgResult={imgUrl,imgFile:attImgs[i],names:[]};
 
     let success=false;
@@ -3028,7 +3452,7 @@ INSTRUCTIONS:
 Return ONLY valid JSON:
 {"found":["exact name from registered list"]}`;
 
-        const txt=await callAPI(apiKey,'claude-sonnet-4-6',2000,b64,mtype,prompt);
+        const txt=await callAPI(apiKey,CONFIG.MODEL_SCAN,CONFIG.TOKENS_SCAN,b64,mtype,prompt);
         const jm=txt.match(/\{[\s\S]*\}/);
         if(!jm) throw new Error('No JSON');
         const parsed=JSON.parse(jm[0]);
@@ -3056,7 +3480,10 @@ Return ONLY valid JSON:
         else{imgResults[i]='fail';}
       }
     }
-    attImgsPerResult.push(imgResult);
+    if(!success) imgResult.failed=true; // mark for priority rescan
+    // Push before render so strip has correct index
+    if(attImgsPerResult.length<=i) attImgsPerResult.push(imgResult);
+    else attImgsPerResult[i]=imgResult;
     renderAttProgress(i+1,imgResults);
   }
 
@@ -3142,7 +3569,16 @@ async function runAttRescan(){
   st.textContent=`Scanning ${attImgs.length} images for ${absentPlayers.length} absent players...`;
 
   const newFound=new Set();
-  for(let i=0;i<attImgs.length;i++){
+  // Priority: scan failed images first
+  const attFailedIdx=new Set(attImgsPerResult
+    .map((r,i)=>r&&r.failed?i:-1).filter(i=>i>=0));
+  const attPriorityOrder=[
+    ...Array.from(attFailedIdx),
+    ...[...Array(attImgs.length).keys()].filter(i=>!attFailedIdx.has(i))
+  ];
+  if(attFailedIdx.size>0) st.textContent=`Re-scanning ${attFailedIdx.size} failed image(s) first...`;
+
+  for(const i of attPriorityOrder){
     const b64=await fileToB64(attImgs[i]);
     const mtype=attImgs[i].type||'image/jpeg';
     try{
@@ -3153,7 +3589,7 @@ ${absentList}
 
 Look carefully for any of these names. They may have [${cfg.alli||'VHA'}] alliance tag.
 Return ONLY JSON: {"found":["name from list above"]}`;
-      const txt=await callAPI(apiKey,'claude-sonnet-4-6',2000,b64,mtype,prompt);
+      const txt=await callAPI(apiKey,CONFIG.MODEL_SCAN,CONFIG.TOKENS_SCAN,b64,mtype,prompt);
       const jm=txt.match(/\{[\s\S]*\}/);
       if(!jm) continue;
       const parsed=JSON.parse(jm[0]);
@@ -3178,13 +3614,17 @@ Return ONLY JSON: {"found":["name from list above"]}`;
 }
 
 function syncAbsentLog(){
-  // Use att-sess value — must match bgb-sess used in Generate Teams
-  const sess=document.getElementById('att-sess')?.value.trim()||todayCode();
+  const sess=(document.getElementById('att-sess')?.value.trim())||todayCode();
+  // Remove ALL existing entries for this session first — prevents stale records
+  // when a player is manually corrected from absent → present
+  absentLog = absentLog.filter(l=>l.date!==sess);
+  // Re-add only currently absent players for this session
+  // dedup by name+date to prevent double-entry if called twice
   attScanResults.filter(r=>!r.present).forEach(a=>{
-    const exists=absentLog.find(l=>normFull(l.n)===normFull(a.n)&&l.date===sess);
-    if(!exists) absentLog.push({n:a.n,cp:a.cp||0,side:a.side,role:a.role||'',date:sess});
+    const exists=absentLog.some(l=>l.date===sess&&normFull(l.n)===normFull(a.n));
+    if(!exists) absentLog.push({n:a.n,cp:a.cp||0,side:a.side||'?',role:a.role||'',date:sess});
   });
-  localStorage.setItem('bgb4_log',JSON.stringify(absentLog));
+  localStorage.setItem(CONFIG.LS_LOG, JSON.stringify(absentLog));
   renderLog();
 }
 
@@ -3202,40 +3642,49 @@ async function copyAbsent(){
   const sess=document.getElementById('att-sess')?.value.trim()||
              document.getElementById('bgb-sess')?.value.trim()||todayCode();
 
+  // Confirmation before irreversible Sheets write
   if(url&&attScanResults.length){
-    st.className='ist ld';st.textContent='Syncing attendance status to Sheets...';
+    const present=attScanResults.filter(r=>r.present).length;
+    const absent=attScanResults.filter(r=>!r.present).length;
+    const ok=confirm(`Sync to Sheets?\n\nBGB ${sess}\n✓ ${present} present  ✗ ${absent} absent\n\nThis will update BGB Log + BGB Absent.`);
+    if(!ok){st.className='ist ok';st.textContent='✓ Copied to clipboard (sync skipped)';return;}
+    st.className='ist ld';st.textContent='Syncing to Sheets...';
+    st.className='ist ld';st.textContent='Syncing to Sheets...';
     try{
-      // UPDATE action — match by "BGB {sess}" + Name, set Status column
+      // 1. UPDATE BGB Log — set Status = Present/Absent
       const updates=attScanResults.map(r=>({
-        date:`BGB ${sess}`,
-        name:r.n,
-        status:r.present?'Present':'Absent'
+        date:`BGB ${sess}`,name:r.n,status:r.present?'Present':'Absent'
       }));
-      const res=await fetch(url,{
-        method:'POST',
-        body:JSON.stringify({action:'updateStatus',tab:'BGB Log',updates})
-      });
-      const data=await res.json();
-      if(data.ok){
-        const present=attScanResults.filter(r=>r.present).length;
-        const absent=attScanResults.filter(r=>!r.present).length;
-        st.className='ist ok';
-        st.textContent=`✓ Sheets updated — ${present} present, ${absent} absent (BGB ${sess})`;
-      } else throw new Error(data.error||'Script error');
+      await fetch(url,{method:'POST',body:JSON.stringify({action:'updateStatus',tab:cfg.bgbTab||'BGB Log',updates})});
+
+      // 2. WRITE BGB Absent tab — append absent players for this session
+      const absentPlayers=attScanResults.filter(r=>!r.present);
+      if(absentPlayers.length){
+        // Add empty separator row first, then absent rows for this session
+        const separatorRow=['','','','','','--- BGB '+sess+' ---'];
+        const absentRows=[
+          separatorRow,
+          ...absentPlayers.map((r,i)=>[
+            i+1, r.n, r.side||'?', r.role||'', fcp(r.cp||0), `BGB ${sess}`
+          ])
+        ];
+        const res2=await fetch(url,{method:'POST',body:JSON.stringify({
+          tab:cfg.abTab||'BGB Absent',
+          headers:['No','Name','Team','Role','Main Car CP','Absent Date'],
+          rows:absentRows
+        })});
+        const d2=await res2.json();
+        if(!d2.ok) throw new Error(d2.error||'Absent write failed');
+      }
+
+      const present=attScanResults.filter(r=>r.present).length;
+      const absent=attScanResults.filter(r=>!r.present).length;
+      st.className='ist ok';
+      st.textContent=`✓ Synced — ${present} present, ${absent} absent → BGB Log + BGB Absent updated`;
     }catch(e){
       st.className='ist er';
-      st.textContent='✗ Sync failed: '+e.message+'. Use clipboard paste instead.';
+      st.textContent='✗ Sync failed: '+e.message;
     }
-  } else if(url&&absentLog.length){
-    // Fallback: no scan results but have absent log — append rows
-    st.className='ist ld';st.textContent='Syncing absent log...';
-    try{
-      const rows=absentLog.map(l=>[`BGB ${l.date}`,l.n,l.side||'?','',l.role||'','Absent',fcp(l.cp)]);
-      const res=await fetch(url,{method:'POST',body:JSON.stringify({tab:'BGB Log',rows})});
-      const data=await res.json();
-      st.className=data.ok?'ist ok':'ist er';
-      st.textContent=data.ok?`✓ ${data.added} rows appended`:'✗ '+data.error;
-    }catch(e){st.className='ist er';st.textContent='✗ '+e.message;}
   } else {
     st.className='ist ok';
     st.textContent=url?'✓ Copied to clipboard':'✓ Copied! Set Apps Script URL in Settings to enable sync.';
@@ -3249,11 +3698,39 @@ function renderLog(){
     el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:.5rem 0">No absent records.</div>';
     return;
   }
-  el.innerHTML=`<table class="log-tbl">
+
+  // Build summary per player
+  const summary={};
+  absentLog.forEach(l=>{
+    const key=normFull(l.n);
+    if(!summary[key]) summary[key]={n:l.n,count:0,dates:[],cp:l.cp||0};
+    summary[key].count++;
+    summary[key].dates.push(l.date);
+  });
+  const summaryList=Object.values(summary).sort((a,b)=>b.count-a.count);
+
+  // Summary pills at top
+  const pills=summaryList.map(s=>{
+    const badge=s.count>=3?'background:var(--red-dim);border-color:rgba(224,85,85,0.4);color:var(--red)'
+      :s.count===2?'background:rgba(212,164,65,0.1);border-color:rgba(212,164,65,0.4);color:var(--gold2)'
+      :'background:var(--bg3);border-color:var(--border);color:var(--text2)';
+    return `<div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;border:1px solid;font-size:12px;margin:3px;${badge}">
+      ${esc(s.n)} <span style="font-weight:700">${s.count}×</span>
+    </div>`;
+  }).join('');
+
+  el.innerHTML=`
+    <div style="margin-bottom:12px">
+      <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:6px">Absence count per player</div>
+      <div style="line-height:1">${pills}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">🔴 3+ times &nbsp; 🟡 2 times &nbsp; ⚪ 1 time</div>
+    </div>
+    <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:6px">Full log</div>
+    <table class="log-tbl">
     <thead><tr><th>#</th><th>Name</th><th>Team</th><th>Role</th><th>Main Car CP</th><th>Absent Date</th><th style="width:36px"></th></tr></thead>
     <tbody>`+
     absentLog.map((l,i)=>`<tr>
-      <td>${i+1}</td><td>${l.n}</td><td>${l.side||'?'}</td><td>${l.role||''}</td>
+      <td>${i+1}</td><td>${esc(l.n)}</td><td>${l.side||'?'}</td><td>${l.role||''}</td>
       <td>${fcp(l.cp)}</td><td>BGB ${l.date}</td>
       <td><button onclick="deleteAbsent(${i})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;font-weight:bold;padding:0 4px;line-height:1" title="Remove">×</button></td>
     </tr>`).join('')+
@@ -3262,19 +3739,20 @@ function renderLog(){
 
 function deleteAbsent(idx){
   absentLog.splice(idx,1);
-  localStorage.setItem('bgb4_log',JSON.stringify(absentLog));
+  localStorage.setItem(CONFIG.LS_LOG,JSON.stringify(absentLog));
   renderLog();
 }
 
-function clearLog(){if(confirm('Clear all absent records?')){absentLog=[];localStorage.removeItem('bgb4_log');renderLog();}}
+function clearLog(){if(confirm('Clear all absent records?')){absentLog=[];localStorage.removeItem(CONFIG.LS_LOG);renderLog();}}
 function saveCfg(){
   cfg.sid=document.getElementById('cfg-sid').value.trim();
   cfg.rTab=document.getElementById('cfg-rt').value.trim();
   cfg.bgbTab=document.getElementById('cfg-bgbt').value.trim();
-  cfg.abTab=cfg.bgbTab; // same tab now
+  const atInp=document.getElementById('cfg-at');
+  if(atInp) cfg.abTab=atInp.value.trim()||'BGB Absent';
   const asUrl=document.getElementById('cfg-as');
   if(asUrl) cfg.appsScriptUrl=asUrl.value.trim();
-  localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));
+  localStorage.setItem(CONFIG.LS_CFG,JSON.stringify(cfg));
   document.getElementById('cfg-st').className='ist ok';
   document.getElementById('cfg-st').textContent='✓ Saved';
 }
@@ -3303,7 +3781,7 @@ function saveApp(){
   if(penaltyEl) cfg.penaltyList=(penaltyEl.value||'').split('\n').map(n=>n.trim()).filter(Boolean);
   cfg.redWeeks=parseInt(document.getElementById('cfg-red-w').value)||4;
   cfg.greenWeeks=parseInt(document.getElementById('cfg-green-w').value)||4;
-  localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));
+  localStorage.setItem(CONFIG.LS_CFG,JSON.stringify(cfg));
   document.getElementById('att-alli').value=cfg.alli;
   applyAllianceBranding();
   document.getElementById('app-st').className='ist ok';
@@ -3316,7 +3794,7 @@ function uploadLogo(e){
   const reader=new FileReader();
   reader.onload=ev=>{
     cfg.alliLogo=ev.target.result;
-    localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));
+    localStorage.setItem(CONFIG.LS_CFG,JSON.stringify(cfg));
     applyAllianceBranding();
     document.getElementById('app-st').className='ist ok';
     document.getElementById('app-st').textContent='✓ Logo updated';
@@ -3374,12 +3852,14 @@ function applyAllianceBranding(){
 
 // Resize image before sending to API — saves ~60-70% tokens
 // Max width 800px is enough for Claude to read game UI text
-function resizeAndEncode(file, maxW=800){
+function resizeAndEncode(file, maxW){
+  maxW = maxW || CONFIG.OCR_MAX_W;
   return new Promise((res,rej)=>{
     const reader=new FileReader();
     reader.onload=e=>{
       const img=new Image();
       img.onload=()=>{
+        // Only resize if image is wider than maxW
         const scale=Math.min(1, maxW/img.width);
         const w=Math.round(img.width*scale);
         const h=Math.round(img.height*scale);
@@ -3387,8 +3867,7 @@ function resizeAndEncode(file, maxW=800){
         canvas.width=w; canvas.height=h;
         const ctx=canvas.getContext('2d');
         ctx.drawImage(img,0,0,w,h);
-        // Use JPEG quality 0.82 — sharp enough for text, much smaller
-        const dataUrl=canvas.toDataURL('image/jpeg',0.82);
+        const dataUrl=canvas.toDataURL('image/jpeg', CONFIG.OCR_QUALITY);
         res({b64:dataUrl.split(',')[1], mtype:'image/jpeg'});
       };
       img.onerror=rej;
@@ -3397,6 +3876,16 @@ function resizeAndEncode(file, maxW=800){
     reader.onerror=rej;
     reader.readAsDataURL(file);
   });
+}
+
+// Safe image encode with resize — always use this for OCR
+async function encodeForOCR(file){
+  try{ return await resizeAndEncode(file); }
+  catch(e){
+    // Fallback to original if canvas/resize fails
+    const b64 = await fileToB64(file);
+    return {b64, mtype: file.type||'image/jpeg'};
+  }
 }
 
 // Legacy — kept for attendance OCR
@@ -3446,6 +3935,114 @@ function checkCrossTeamDupes(){
   } else {
     banner.innerHTML='';
   }
+}
+
+function updateDashboard(){
+  // Alliance branding in Home
+  const homeLogo=document.getElementById('home-logo');
+  if(homeLogo&&cfg.alliLogo) homeLogo.innerHTML=`<img src="${cfg.alliLogo}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius)">`;
+  const homeAlliName=document.getElementById('home-alli-name');
+  if(homeAlliName) homeAlliName.textContent=cfg.alliFullName||'Alliance';
+  const homeAlliAbbr=document.getElementById('home-alli-abbr');
+  if(homeAlliAbbr) homeAlliAbbr.textContent=(cfg.alli||'VHA')+' · Black Gold Battlefield';
+
+  // Roster count
+  const rc=document.getElementById('dash-roster-count');
+  if(rc) rc.textContent=ROSTER.length||'—';
+
+  // Absent/penalty count
+  const ac=document.getElementById('dash-absent-count');
+  if(ac){
+    const red=ROSTER.filter(p=>{
+      const isPenalty=cfg.penaltyList&&cfg.penaltyList.some(n=>normAscii(n)===normAscii(p.n));
+      return isPenalty||(rosterStatus[norm(p.n)]==='absent-red');
+    }).length;
+    ac.textContent=red||'0';
+    ac.style.color=red>0?'var(--red)':'var(--text2)';
+  }
+
+  // Last BGB session
+  const lb=document.getElementById('dash-last-bgb');
+  if(lb&&bgbHistory.length){
+    lb.textContent=bgbHistory[0].date||'—';
+  } else if(lb){lb.textContent='—';}
+
+  // Recent sessions list
+  const rs=document.getElementById('home-recent-sessions');
+  if(rs){
+    if(!bgbHistory.length){
+      rs.innerHTML='<div style="color:var(--text3);font-size:13px">No sessions recorded yet.</div>';
+    } else {
+      rs.innerHTML=bgbHistory.slice(0,4).map(h=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text)">BGB ${h.date}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">A: ${(h.teamA?.starters?.length||0)+( h.teamA?.subs?.length||0)} · B: ${(h.teamB?.starters?.length||0)+(h.teamB?.subs?.length||0)} players</div>
+          </div>
+          <button class="btn" onclick="loadHistory(${bgbHistory.indexOf(h)})" style="font-size:11px;padding:4px 10px">Load</button>
+        </div>`).join('');
+    }
+  }
+
+  updateReadiness();
+}
+
+function updateReadiness(){
+  const rosterOk=ROSTER.length>0;
+  const sessOk=!!(document.getElementById('bgb-sess')?.value.trim());
+  const scannedOk=(teamA.starters.length+teamA.subs.length)>0||(teamB.starters.length+teamB.subs.length)>0;
+  const teamsOk=!!teamsGenerated;
+
+  const set=(id,ok,label)=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.textContent=(ok?'✓ ':'○ ')+label;
+    el.style.color=ok?'var(--green)':'var(--text3)';
+  };
+  set('rdy-roster',rosterOk,'Roster');
+  set('rdy-session',sessOk,'Session');
+  set('rdy-scanned',scannedOk,'Scanned');
+  set('rdy-teams',teamsOk,'Teams');
+
+  const lbl=document.getElementById('rdy-label');
+  if(lbl){
+    const score=[rosterOk,sessOk,scannedOk,teamsOk].filter(Boolean).length;
+    if(score===4){lbl.textContent='Ready ✓';lbl.style.color='var(--green)';}
+    else{lbl.textContent=score+'/4 ready';lbl.style.color='var(--text3)';}
+  }
+}
+
+function openPlayerModal(name){
+  const p=ROSTER.find(r=>r.n===name);
+  if(!p) return;
+  const modal=document.getElementById('player-modal');
+  document.getElementById('pm-name').textContent=p.n;
+  document.getElementById('pm-cp').textContent=p.cp?'Main Car: '+fcp(p.cp):'CP not available';
+
+  // Build history from absentLog
+  const absentTimes=absentLog.filter(l=>normFull(l.n)===normFull(p.n));
+  const absentCount=absentTimes.length;
+  const lastAbsent=absentTimes.length?'BGB '+absentTimes[absentTimes.length-1].date:'Never';
+
+  // Color coding status
+  const isPenalty=cfg.penaltyList&&cfg.penaltyList.some(n=>normAscii(n)===normAscii(p.n));
+  const status=isPenalty?'<span style="color:var(--red)">⚠ On penalty</span>'
+    :rosterStatus[norm(p.n)]==='absent-red'?'<span style="color:var(--red)">● Absent recently</span>'
+    :rosterStatus[norm(p.n)]==='no-turn-green'?'<span style="color:var(--green)">● No recent turn</span>'
+    :'<span style="color:var(--text2)">● Active</span>';
+
+  document.getElementById('pm-body').innerHTML=`
+    <div style="display:grid;gap:8px;font-size:13px">
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Status</span>${status}</div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Absent count</span><span style="color:${absentCount>=3?'var(--red)':absentCount>=2?'var(--gold2)':'var(--text)'};font-weight:600">${absentCount}×</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Last absent</span><span style="color:var(--text2)">${lastAbsent}</span></div>
+      ${absentTimes.length?'<div style="background:var(--bg3);border-radius:var(--radius-sm);padding:8px 10px;font-size:11px;color:var(--text3)">'+absentTimes.map(l=>'BGB '+l.date).join(' · ')+'</div>':''}
+    </div>`;
+  modal.style.display='flex';
+}
+
+function closePlayerModal(){
+  document.getElementById('player-modal').style.display='none';
 }
 
 function updateStepStatus(){
@@ -3509,7 +4106,7 @@ function doCopyBoth(){
 }
 
 function copyBGBRecord(){
-  const tsv=localStorage.getItem('bgb4_lastrecord');
+  const tsv=localStorage.getItem(CONFIG.LS_LASTRECORD);
   if(!tsv){showBarMsg('Generate teams first');return;}
   navigator.clipboard.writeText(tsv).then(()=>showBarMsg('BGB Record copied — paste into Sheets!'));
 }
@@ -3591,26 +4188,62 @@ let attScanResults=[]; // [{n, side, role, present, confirmed}]
 let attScanTab='all'; // filter for scan: 'all'|'A'|'B'
 
 function todayCode(){
+  // Format: YYYYWNN — ISO 8601 week number (week starts Monday)
+  // Unambiguous across month boundaries — each week has a unique code
+  // e.g. Mon 27 Apr 2026 = 202618 (year 2026, ISO week 18)
   const d=new Date();
   const y=d.getFullYear();
-  const m=String(d.getMonth()+1).padStart(2,'0');
-  const dd=String(d.getDate()).padStart(2,'0');
-  const w=Math.ceil(d.getDate()/7);
-  return `${y}${m}${dd}W${w}`;
+  const wn=getISOWeek(d);
+  return `${y}W${String(wn).padStart(2,'0')}`;
+}
+
+function getISOWeek(d){
+  // ISO 8601: week starts Monday, week 1 = week containing first Thursday
+  const date=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  const dayNum=date.getUTCDay()||7; // Mon=1 ... Sun=7
+  date.setUTCDate(date.getUTCDate()+4-dayNum); // Thursday of current week
+  const yearStart=new Date(Date.UTC(date.getUTCFullYear(),0,1));
+  return Math.ceil((((date-yearStart)/86400000)+1)/7);
 }
 
 function autoSetDate(){
   const v=todayCode();
-  document.getElementById('bgb-sess').value=v;
-  document.getElementById('att-sess').value=v;
+  const d=new Date();
+  const wn=getISOWeek(d);
+  const el=document.getElementById('bgb-sess');
+  if(el){
+    el.value=v;
+    el.title=`ISO Week ${wn} of ${d.getFullYear()} (${d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})})`;
+    el.style.borderColor='var(--green)';
+    setTimeout(()=>el.style.borderColor='',800);
+  }
+  const el2=document.getElementById('att-sess');
+  if(el2) el2.value=v;
+  updateReadiness();
 }
 
-// Parse YYYYMMWN code to a comparable value (ms since epoch, use date part only)
+// Parse session code to comparable date
+// Supports: YYYYWNN (new), YYYYMMWN (old), YYYYMMDDWN (legacy)
 function codeToDate(code){
   if(!code) return null;
-  const m=code.match(/^(\d{4})(\d{2})(\d{2})/);
-  if(!m) return null;
-  return new Date(parseInt(m[1]),parseInt(m[2])-1,parseInt(m[3]));
+  // New format: YYYYWNN e.g. 202618
+  const m1=code.match(/^(\d{4})W(\d{1,2})$/);
+  if(m1){
+    const y=parseInt(m1[1]),wn=parseInt(m1[2]);
+    // Convert ISO week to date (Monday of that week)
+    const jan4=new Date(y,0,4); // Jan 4 is always in week 1
+    const dayOfWeek=jan4.getDay()||7;
+    const weekStart=new Date(jan4);
+    weekStart.setDate(jan4.getDate()-dayOfWeek+1+(wn-1)*7);
+    return weekStart;
+  }
+  // Old format: YYYYMMWN e.g. 202604W4
+  const m2=code.match(/^(\d{4})(\d{2})W(\d)/);
+  if(m2) return new Date(parseInt(m2[1]),parseInt(m2[2])-1,(parseInt(m2[3])-1)*7+1);
+  // Legacy: YYYYMMDD e.g. 20260427
+  const m3=code.match(/^(\d{4})(\d{2})(\d{2})/);
+  if(m3) return new Date(parseInt(m3[1]),parseInt(m3[2])-1,parseInt(m3[3]));
+  return null;
 }
 
 // Is date more than 4 weeks ago from today?
@@ -3632,18 +4265,17 @@ async function fetchColorCoding(){
     const asUrl=cfg.appsScriptUrl;
     if(asUrl){
       try{
-        st.textContent='Fetching via Apps Script...';
-        const res=await fetchWithTimeout(asUrl+'?tab='+encodeURIComponent(cfg.bgbTab||'BGB Log'),8000);
+        st.textContent='Fetching '+( cfg.abTab||'BGB Absent')+' tab...';
+        const res=await fetchWithTimeout(asUrl+'?tab='+encodeURIComponent(cfg.abTab||'BGB Absent'),8000);
         const data=await res.json();
         if(data.ok&&data.rows){
-          // All data in one tab: filter by Status column
-          const allRows=data.rows.slice(1); // skip header
-          // Col: Date|Name|Team Side|Team No.|Role|Status|CP
-          recordRows=allRows; // everyone who was registered
-          absentRows=allRows.filter(r=>r[5]&&String(r[5]).toLowerCase().includes('absent'));
+          // BGB Absent format: No|Name|Team|Role|Main Car CP|Absent Date
+          absentRows=data.rows.slice(1); // skip header row
+          recordRows=absentRows; // for color coding, absent = red
         }
       }catch(e){
         st.textContent='Apps Script failed, trying direct fetch...';
+        console.warn('Color coding fetch error:',e);
       }
     }
 
@@ -3670,10 +4302,18 @@ async function fetchColorCoding(){
     // A player who is in absent log was REGISTERED but ABSENT
     const lastAbsent={}; // normName -> Date (most recent absent)
     absentRows.forEach(r=>{
-      if(!r.c||r.c.length<2) return;
-      const name=r.c[1]&&r.c[1].v?String(r.c[1].v).trim():'';
-      const dateStr=r.c[4]&&r.c[4].v?String(r.c[4].v).trim():
-                    r.c[3]&&r.c[3].v?String(r.c[3].v).trim():'';
+      if(!r) return;
+      let name='', dateStr='';
+      if(Array.isArray(r)){
+        // Apps Script returns plain arrays: [No, Name, Team, Role, CP, Absent Date]
+        name=String(r[1]||'').trim();
+        dateStr=String(r[5]||'').trim();
+      } else if(r.c){
+        // Google Sheets API format
+        name=r.c[1]&&r.c[1].v?String(r.c[1].v).trim():'';
+        dateStr=r.c[5]&&r.c[5].v?String(r.c[5].v).trim():
+                r.c[4]&&r.c[4].v?String(r.c[4].v).trim():'';
+      }
       if(!name||!dateStr) return;
       const d=codeToDate(dateStr.replace('BGB ',''));
       if(!d) return;
@@ -3779,9 +4419,9 @@ function importJSON(e){
         if(data.cfg.redWeeks) cfg.redWeeks=data.cfg.redWeeks;
         if(data.cfg.greenWeeks) cfg.greenWeeks=data.cfg.greenWeeks;
       }
-      localStorage.setItem('bgb4_roster',JSON.stringify(ROSTER));
-      localStorage.setItem('bgb4_log',JSON.stringify(absentLog));
-      localStorage.setItem('bgb4_cfg',JSON.stringify(cfg));
+      localStorage.setItem(CONFIG.LS_ROSTER,JSON.stringify(ROSTER));
+      localStorage.setItem(CONFIG.LS_LOG,JSON.stringify(absentLog));
+      localStorage.setItem(CONFIG.LS_CFG,JSON.stringify(cfg));
       renderRoster();renderLog();
       st.className='ist ok';
       st.textContent=`✓ Imported from ${file.name} (${data.exportDate?new Date(data.exportDate).toLocaleDateString():'unknown date'})`;
@@ -3812,13 +4452,13 @@ function showAttRegisteredList(){
 function saveScanProgress(){
   try{
     const progress={
-      teamA:{starters:teamA.starters,subs:teamA.subs,
+      teamA:{starters:teamA.starters,subs:teamA.subs,failedImgIndices:teamA.failedImgIndices||[],
         images:teamA.images.map(g=>({imgName:g.imgName,imgIdx:g.imgIdx,players:g.players}))},
-      teamB:{starters:teamB.starters,subs:teamB.subs,
+      teamB:{starters:teamB.starters,subs:teamB.subs,failedImgIndices:teamB.failedImgIndices||[],
         images:teamB.images.map(g=>({imgName:g.imgName,imgIdx:g.imgIdx,players:g.players}))},
       session:document.getElementById('bgb-sess')?.value||''
     };
-    localStorage.setItem('bgb4_scan',JSON.stringify(progress));
+    localStorage.setItem(CONFIG.LS_SCAN,JSON.stringify(progress));
   }catch(e){console.warn('Could not save scan progress',e);}
 }
 
@@ -3832,29 +4472,31 @@ function saveSession(){
       savedAt:new Date().toISOString()
     };
     // Save current session
-    localStorage.setItem('bgb4_currentsess',JSON.stringify(sess));
+    localStorage.setItem(CONFIG.LS_CURRSESS,JSON.stringify(sess));
     // Add to history (keep last 8)
     bgbHistory=bgbHistory.filter(h=>h.date!==sess.date); // replace if same date
     bgbHistory.unshift(sess);
     if(bgbHistory.length>8) bgbHistory=bgbHistory.slice(0,8);
-    localStorage.setItem('bgb4_history',JSON.stringify(bgbHistory));
+    localStorage.setItem(CONFIG.LS_HISTORY,JSON.stringify(bgbHistory));
   }catch(e){console.warn('Could not save session',e);}
 }
 
 function loadScanProgress(){
   try{
-    const saved=localStorage.getItem('bgb4_scan');
+    const saved=localStorage.getItem(CONFIG.LS_SCAN);
     if(!saved) return false;
     const p=JSON.parse(saved);
     if(p.teamA){
       teamA.starters=p.teamA.starters||[];
       teamA.subs=p.teamA.subs||[];
       teamA.images=p.teamA.images||[];
+      teamA.failedImgIndices=p.teamA.failedImgIndices||[];
     }
     if(p.teamB){
       teamB.starters=p.teamB.starters||[];
       teamB.subs=p.teamB.subs||[];
       teamB.images=p.teamB.images||[];
+      teamB.failedImgIndices=p.teamB.failedImgIndices||[];
     }
     if(p.session&&document.getElementById('bgb-sess'))
       document.getElementById('bgb-sess').value=p.session;
@@ -3929,7 +4571,7 @@ function copyHistoryFormation(idx){
 
 function deleteHistory(idx){
   bgbHistory.splice(idx,1);
-  localStorage.setItem('bgb4_history',JSON.stringify(bgbHistory));
+  localStorage.setItem(CONFIG.LS_HISTORY,JSON.stringify(bgbHistory));
   renderHistory();
 }
 
@@ -3951,6 +4593,9 @@ function openReview(side){
   renderRevImgStrip();
   renderRevImg(0);
   renderRevList();
+  // Swipe left = next, right = prev on the image viewer
+  addSwipeNav('rev-img-viewer',()=>revNavImg(1),()=>revNavImg(-1));
+  addSwipeNav('rev-list-body',()=>revNavImg(1),()=>revNavImg(-1));
 }
 
 function closeReview(){
@@ -3958,12 +4603,28 @@ function closeReview(){
   renderPlayerList(revSide);
 }
 
+// Swipe navigation for review modals
+function addSwipeNav(elId, onLeft, onRight){
+  const el=document.getElementById(elId);
+  if(!el) return;
+  let sx=0,sy=0;
+  el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  el.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx;
+    const dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){
+      if(dx<0) onLeft();   // swipe left = next
+      else onRight();       // swipe right = prev
+    }
+  },{passive:true});
+}
+
 function renderRevImgStrip(){
   const strip=document.getElementById('rev-img-strip');
   const files=imgFiles[revSide]||[];
   if(!files.length){strip.innerHTML='<span style="font-size:12px;color:var(--text3)">No screenshots uploaded</span>';return;}
   strip.innerHTML=files.map((f,i)=>{
-    const url=URL.createObjectURL(f);
+    const url=makeObjectURL(f); // tracked for cleanup
     return `<img class="review-thumb${i===revImgIdx?' on':''}" src="${url}" onclick="renderRevImg(${i})" title="${f.name||'Image '+(i+1)}">`;
   }).join('');
 }
@@ -3982,7 +4643,7 @@ function renderRevImg(idx){
     return;
   }
   if(ph) ph.style.display='none';
-  const url=URL.createObjectURL(files[idx]);
+  const url=makeObjectURL(files[idx]); // tracked, no duplicate creation
   let img=viewer.querySelector('img');
   if(!img){img=document.createElement('img');viewer.appendChild(img);}
   img.src=url;
@@ -4010,7 +4671,6 @@ function renderRevList(){
   const imgGroup=data.images&&data.images[revImgIdx];
   const inThisImg=new Set((imgGroup?imgGroup.players:[]).map(p=>normFull(p.n)));
 
-  // Split into: in this image | not in this image
   const inImg=allPlayers.filter(p=>inThisImg.has(normFull(p.n)));
   const notInImg=allPlayers.filter(p=>!inThisImg.has(normFull(p.n)));
   const totalAll=allPlayers.length;
@@ -4018,37 +4678,36 @@ function renderRevList(){
 
   let html='';
 
-  // ── Section 1: Players found in THIS screenshot ──
-  // ── Section 1: IN THIS SCREENSHOT — prominent ──
+  // ── Section 1: IN THIS SCREENSHOT ──
   html+=`<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:8px 14px 4px;background:rgba(61,184,120,0.12);color:var(--green);border-bottom:1px solid rgba(61,184,120,0.2);position:sticky;top:0">
     📸 In this screenshot — ${totalImg} detected
   </div>`;
   if(inImg.length){
     inImg.forEach(p=>{
-      const esc=p.n.replace(/'/g,"\'");
+      const safeName=p.n.replace(/'/g,"\'");
       html+=`<div class="review-player-row" style="background:rgba(61,184,120,0.06);border-left:3px solid var(--green)">
         <div class="rpr-status ok" style="background:var(--green-dim);border-color:var(--green);color:var(--green)">✓</div>
-        <span class="rpr-name" style="font-weight:500">${p.n}</span>
-        <span class="rpr-role ${p.role==='starter'?'s':'b'}" onclick="revToggleRole('${esc}',this)">${p.role==='starter'?'STR':'SUB'}</span>
-        <button class="rpr-del" onclick="revDelete('${esc}')">×</button>
+        <span class="rpr-name" style="font-weight:500">${esc(p.n)}</span>
+        <span class="rpr-role ${p.role==='starter'?'s':'b'}" onclick="revToggleRole('${safeName}',this)">${p.role==='starter'?'STR':'SUB'}</span>
+        <button class="rpr-del" onclick="revDelete('${safeName}')">×</button>
       </div>`;
     });
   } else {
     html+=`<div style="color:var(--text3);font-size:13px;padding:12px 14px;font-style:italic">No roster players detected in this screenshot.</div>`;
   }
 
-  // ── Section 2: NOT IN THIS IMAGE — dimmed ──
+  // ── Section 2: ALL OTHER REGISTERED — normal text, no blackout ──
   if(notInImg.length){
     html+=`<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:8px 14px 4px;background:var(--bg3);color:var(--text3);border-bottom:1px solid var(--border);position:sticky;top:30px">
-      Other images — ${notInImg.length} players
+      All registered — ${notInImg.length} others
     </div>`;
     notInImg.forEach(p=>{
-      const esc=p.n.replace(/'/g,"\'");
-      html+=`<div class="review-player-row" style="opacity:.4">
+      const safeName=p.n.replace(/'/g,"\'");
+      html+=`<div class="review-player-row">
         <div class="rpr-status" style="border-color:var(--border2);color:var(--text3)">${p.confirmed?'✓':''}</div>
-        <span class="rpr-name" style="color:var(--text3)">${p.n}</span>
-        <span class="rpr-role ${p.role==='starter'?'s':'b'}">${p.role==='starter'?'STR':'SUB'}</span>
-        <button class="rpr-del" onclick="revDelete('${esc}')">×</button>
+        <span class="rpr-name">${esc(p.n)}</span>
+        <span class="rpr-role ${p.role==='starter'?'s':'b'}" onclick="revToggleRole('${safeName}',this)">${p.role==='starter'?'STR':'SUB'}</span>
+        <button class="rpr-del" onclick="revDelete('${safeName}')">×</button>
       </div>`;
     });
   }
@@ -4059,7 +4718,6 @@ function renderRevList(){
 
   el.innerHTML=html;
 
-  // Update confirm count — show per-image / total
   const cc=document.getElementById('rev-confirm-count');
   if(cc) cc.textContent=`${totalImg} in view · ${totalAll} total`;
 }
@@ -4087,12 +4745,56 @@ function revMarkConfirmed(name){
   renderRevList();
 }
 
+let _revDeleteUndo=null;
+let _revDeleteTimer=null;
+
 function revDelete(name){
   const data=revSide==='A'?teamA:teamB;
+  // Save for undo
+  const wasStarter=data.starters.find(p=>p.n===name);
+  const wasSub=data.subs.find(p=>p.n===name);
+  _revDeleteUndo={name,player:wasStarter||wasSub,role:wasStarter?'starter':'sub',side:revSide};
+
   data.starters=data.starters.filter(p=>p.n!==name);
   data.subs=data.subs.filter(p=>p.n!==name);
-  // Also remove from images
   data.images.forEach(img=>{img.players=img.players.filter(p=>p.n!==name);});
+  renderRevList();
+
+  // Show undo toast
+  if(_revDeleteTimer) clearTimeout(_revDeleteTimer);
+  showRevUndoToast(name);
+  _revDeleteTimer=setTimeout(()=>{_revDeleteUndo=null;hideRevUndoToast();},4000);
+}
+
+function showRevUndoToast(name){
+  let t=document.getElementById('rev-undo-toast');
+  if(!t){
+    t=document.createElement('div');
+    t.id='rev-undo-toast';
+    t.style.cssText='position:absolute;bottom:70px;left:50%;transform:translateX(-50%);background:var(--bg4);border:1px solid var(--border2);border-radius:var(--radius);padding:8px 14px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;white-space:nowrap;z-index:10;box-shadow:var(--shadow-lg)';
+    document.getElementById('review-overlay').appendChild(t);
+  }
+  t.style.display='flex';
+  t.innerHTML=`Removed ${esc(name)} <button onclick="revUndoDelete()" style="background:none;border:none;color:var(--gold2);cursor:pointer;font-weight:600;font-size:13px;padding:0">Undo</button>`;
+}
+
+function hideRevUndoToast(){
+  const t=document.getElementById('rev-undo-toast');
+  if(t) t.style.display='none';
+}
+
+function revUndoDelete(){
+  if(!_revDeleteUndo) return;
+  const {player,role,side}=_revDeleteUndo;
+  if(!player) return;
+  const data=side==='A'?teamA:teamB;
+  if(role==='starter') data.starters.push(player);
+  else data.subs.push(player);
+  data.starters.sort((a,b)=>b.cp-a.cp);
+  data.subs.sort((a,b)=>b.cp-a.cp);
+  _revDeleteUndo=null;
+  if(_revDeleteTimer){clearTimeout(_revDeleteTimer);_revDeleteTimer=null;}
+  hideRevUndoToast();
   renderRevList();
 }
 
@@ -4143,7 +4845,7 @@ function revAcSearch(val){
   }).slice(0,8);
   revAcSel=-1;
   if(!revAcResults.length){drop.innerHTML=`<div class="ac-item" style="color:var(--text3);cursor:default">No match in roster</div>`;positionDrop(drop,document.getElementById('rev-ac-inp'));drop.style.display='block';return;}
-  drop.innerHTML=revAcResults.map((p,i)=>`<div class="ac-item" id="rev-ac-${i}" onclick="revAcPick(${i})"><span class="ac-name">${p.n}</span><span class="ac-cp">${p.cp?fcp(p.cp):'N/A'}</span></div>`).join('');
+  drop.innerHTML=revAcResults.map((p,i)=>`<div class="ac-item" id="rev-ac-${i}" onclick="revAcPick(${i})"><span class="ac-name">${esc(p.n)}</span><span class="ac-cp">${p.cp?fcp(p.cp):'N/A'}</span></div>`).join('');
   positionDrop(drop,document.getElementById('rev-ac-inp'));
   drop.style.display='block';
 }
