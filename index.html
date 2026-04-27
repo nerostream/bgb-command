@@ -1639,6 +1639,12 @@ function msw(t){
   else hideCopyBar();
   if(t==='settings') renderHistory();
   if(t==='home') updateDashboard();
+  // Auto-sync session date when switching to Attendance
+  if(t==='attend'){
+    const bgb=document.getElementById('bgb-sess')?.value;
+    const att=document.getElementById('att-sess');
+    if(bgb&&att&&!att.value) att.value=bgb;
+  }
   const sub=document.querySelector('.logo-s');
   if(sub&&isMobile) sub.textContent=stepLabels[t]||'BGB Command';
 }
@@ -3387,7 +3393,15 @@ async function runAttOCR(){
   // Warn if session dates don't match
   const bgbSess=document.getElementById('bgb-sess')?.value.trim();
   const attSess=document.getElementById('att-sess')?.value.trim();
-  if(bgbSess&&attSess&&bgbSess!==attSess){
+  // Normalize both session codes to ISO week for comparison
+  // Handles mixed formats: 20260426W4 vs 2026W18 = same week
+  const normSess=(s)=>{
+    if(!s) return '';
+    const d=codeToDate(s);
+    if(!d) return s;
+    return d.getFullYear()+'W'+String(getISOWeek(d)).padStart(2,'0');
+  };
+  if(bgbSess&&attSess&&normSess(bgbSess)!==normSess(attSess)){
     const warn=confirm(`Session mismatch!\nRegister: "${bgbSess}"\nAttendance: "${attSess}"\n\nThese must match for Sheets sync to work correctly.\nContinue anyway?`);
     if(!warn){btn.disabled=false;btn.innerHTML='Scan Attendance';return;}
   }
